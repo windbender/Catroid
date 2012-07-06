@@ -20,57 +20,33 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package at.tugraz.ist.catroid.content.bricks;
+package at.tugraz.ist.catroid.content;
 
-import android.content.Context;
-import android.view.View;
-import android.widget.BaseAdapter;
-import at.tugraz.ist.catroid.R;
-import at.tugraz.ist.catroid.content.Script;
-import at.tugraz.ist.catroid.content.Sprite;
+import java.io.Serializable;
+import java.util.List;
 
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
+public class Formula implements Serializable {
 
-public class WhenStartedBrick implements Brick {
 	private static final long serialVersionUID = 1L;
+	private FormulaElement root;
+	private int numberOfElements = 0;
 
-	protected Script script;
-	private Sprite sprite;
-
-	@XStreamOmitField
-	private transient View view;
-
-	public WhenStartedBrick(Sprite sprite, Script script) {
-		this.script = script;
-		this.sprite = sprite;
+	public Formula() {
+		root = new FormulaElement(0, -1, "root");
 	}
 
-	public int getRequiredResources() {
-		return NO_RESOURCES;
+	public void addChild(int id, int type, String name, int parentId) {
+		numberOfElements++;
+		FormulaElement parentItem = findItem(parentId);
+		parentItem.addChild(new FormulaElement(numberOfElements, type, name));
 	}
 
-	public void execute() {
+	public FormulaElement findItem(int parentID) {
+		return root.getItemWithId(parentID);
 	}
 
-	public Sprite getSprite() {
-		return sprite;
-	}
-
-	public View getView(Context context, int brickId, final BaseAdapter adapter) {
-		if (view == null) {
-			view = View.inflate(context, R.layout.brick_started, null);
-		}
-
-		return view;
-	}
-
-	public View getPrototypeView(Context context) {
-		return View.inflate(context, R.layout.brick_started, null);
-	}
-
-	@Override
-	public Brick clone() {
-		return new WhenStartedBrick(getSprite(), script);
+	public List<FormulaElement> getAllChildren(int parentID) {
+		return root.getAllChildren(parentID);
 	}
 
 }
