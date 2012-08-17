@@ -20,37 +20,34 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package at.tugraz.ist.catroid.content.bricks;
+package at.tugraz.ist.catroid.test.ui;
 
-import java.io.Serializable;
+import android.content.Intent;
+import android.test.ActivityUnitTestCase;
+import at.tugraz.ist.catroid.ProjectManager;
+import at.tugraz.ist.catroid.test.utils.TestMainMenuActivity;
 
-import android.content.Context;
-import android.view.View;
-import android.widget.BaseAdapter;
-import at.tugraz.ist.catroid.content.Sprite;
+public class MainMenuActivityTest extends ActivityUnitTestCase<TestMainMenuActivity> {
+	public MainMenuActivityTest() {
+		super(TestMainMenuActivity.class);
+	}
 
-public interface Brick extends Serializable {
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+	}
 
-	//use bitwise | for using multiple ressources in a brick
-	public static final int NO_RESOURCES = 0x0;
-	//	public static final int SOUND_MANAGER = 0x1;
-	public static final int TEXT_TO_SPEECH = 0x2;
-	public static final int BLUETOOTH_LEGO_NXT = 0x4;
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+	}
 
-	//	public static final int BLUETOOTH_ARDUINO = 0x8;
+	public void testShouldNotCrashIfProjectIsNull() {
+		startActivity(new Intent(), null, null);
 
-	public void execute();
+		ProjectManager.getInstance().setProject(null);
 
-	public Sprite getSprite();
-
-	public View getView(Context context, int brickId, BaseAdapter adapter);
-
-	public View getPrototypeView(Context context);
-
-	public Brick clone();
-	
-	public Brick cloneCopySprite(Sprite sprite);
-
-	public int getRequiredResources();
-
+		getActivity().onPostCreate(null);
+		assertTrue("Test failed!", true);
+	}
 }

@@ -20,37 +20,17 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package at.tugraz.ist.catroid.content.bricks;
+package at.tugraz.ist.catroid.test.utils;
 
-import java.io.Serializable;
+import android.os.Bundle;
+import at.tugraz.ist.catroid.ui.MainMenuActivity;
 
-import android.content.Context;
-import android.view.View;
-import android.widget.BaseAdapter;
-import at.tugraz.ist.catroid.content.Sprite;
-
-public interface Brick extends Serializable {
-
-	//use bitwise | for using multiple ressources in a brick
-	public static final int NO_RESOURCES = 0x0;
-	//	public static final int SOUND_MANAGER = 0x1;
-	public static final int TEXT_TO_SPEECH = 0x2;
-	public static final int BLUETOOTH_LEGO_NXT = 0x4;
-
-	//	public static final int BLUETOOTH_ARDUINO = 0x8;
-
-	public void execute();
-
-	public Sprite getSprite();
-
-	public View getView(Context context, int brickId, BaseAdapter adapter);
-
-	public View getPrototypeView(Context context);
-
-	public Brick clone();
-	
-	public Brick cloneCopySprite(Sprite sprite);
-
-	public int getRequiredResources();
-
+/**
+ * This class simply provides public access to protected methods which shall be tested.
+ */
+public class TestMainMenuActivity extends MainMenuActivity {
+	@Override
+	public void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+	}
 }
