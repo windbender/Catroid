@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.catrobat.catroid.ui;
+package org.catrobat.catroid.ui.fragment;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -29,11 +29,11 @@ import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.stage.PreStageActivity;
-import org.catrobat.catroid.stage.StageActivity;
 import org.catrobat.catroid.transfers.CheckTokenTask;
 import org.catrobat.catroid.transfers.CheckTokenTask.OnCheckTokenCompleteListener;
 import org.catrobat.catroid.transfers.ProjectDownloadService;
-import org.catrobat.catroid.ui.dialogs.AboutDialogFragment;
+import org.catrobat.catroid.ui.MyProjectsActivity;
+import org.catrobat.catroid.ui.ProjectActivity;
 import org.catrobat.catroid.ui.dialogs.LoginRegisterDialog;
 import org.catrobat.catroid.ui.dialogs.NewProjectDialog;
 import org.catrobat.catroid.ui.dialogs.UploadProjectDialog;
@@ -42,6 +42,7 @@ import org.catrobat.catroid.utils.StatusBarNotificationManager;
 import org.catrobat.catroid.utils.UtilZip;
 import org.catrobat.catroid.utils.Utils;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -50,17 +51,15 @@ import android.os.Handler;
 import android.os.ResultReceiver;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.app.SherlockFragment;
 
-public class MainMenuActivity extends SherlockFragmentActivity implements OnCheckTokenCompleteListener,
-		ErrorListenerInterface {
+public class MainMenuFragment extends SherlockFragment implements OnCheckTokenCompleteListener, ErrorListenerInterface {
 
 	private class DownloadReceiver extends ResultReceiver {
 
@@ -88,37 +87,34 @@ public class MainMenuActivity extends SherlockFragmentActivity implements OnChec
 		}
 	}
 
-	private static final String TAG = "MainMenuActivity";
+	private static final String TAG = "MainMenuFragment";
 	private static final String PROJECTNAME_TAG = "fname=";
 
 	private ProjectManager projectManager;
 
-	private ActionBar actionBar;
+	private View rootView;
 
 	private boolean ignoreResume = false;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		Utils.updateScreenWidthAndHeight(this);
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
 
-		setContentView(R.layout.activity_main_menu);
-
-		actionBar = getSupportActionBar();
-		actionBar.setDisplayUseLogoEnabled(true);
-		actionBar.setTitle(R.string.app_name);
+		Activity activity = getActivity();
+		Utils.updateScreenWidthAndHeight(activity);
 
 		projectManager = ProjectManager.getInstance();
-		Utils.loadProjectIfNeeded(this, this);
+		Utils.loadProjectIfNeeded(activity, this);
 
 		if (projectManager.getCurrentProject() == null) {
-			findViewById(R.id.main_menu_button_continue).setEnabled(false);
+			rootView.findViewById(R.id.main_menu_button_continue).setEnabled(false);
 		}
 
 		// Load external project from URL or local file system.
-		Uri loadExternalProjectUri = getIntent().getData();
-		getIntent().setData(null);
+		Uri loadExternalProjectUri = activity.getIntent().getData();
+		activity.getIntent().setData(null);
 
+		// TODO move this block (external url loading) to ProjectAcitivty
 		if (loadExternalProjectUri == null) {
 			return;
 		}
@@ -132,76 +128,62 @@ public class MainMenuActivity extends SherlockFragmentActivity implements OnChec
 				Log.e(TAG, "Could not decode project name: " + projectName, e);
 			}
 
-			Intent downloadIntent = new Intent(this, ProjectDownloadService.class);
+			Intent downloadIntent = new Intent(activity, ProjectDownloadService.class);
 			downloadIntent.putExtra("receiver", new DownloadReceiver(new Handler()));
 			downloadIntent.putExtra("downloadName", projectName);
 			downloadIntent.putExtra("url", url);
 			int notificationId = createNotification(projectName);
 			downloadIntent.putExtra("notificationId", notificationId);
-			startService(downloadIntent);
-
+			activity.startService(downloadIntent);
 		} else if (loadExternalProjectUri.getScheme().equals("file")) {
-
 			String path = loadExternalProjectUri.getPath();
 			int a = path.lastIndexOf('/') + 1;
 			int b = path.lastIndexOf('.');
 			String projectName = path.substring(a, b);
 			if (!UtilZip.unZipFile(path, Utils.buildProjectPath(projectName))) {
-				Utils.displayErrorMessageFragment(getSupportFragmentManager(),
+				Utils.displayErrorMessageFragment(getFragmentManager(),
 						getResources().getString(R.string.error_load_project));
 			}
 		}
-	}
-
-	public int createNotification(String downloadName) {
-		StatusBarNotificationManager manager = StatusBarNotificationManager.INSTANCE;
-		int notificationId = manager.createNotification(downloadName, this, Constants.DOWNLOAD_NOTIFICATION);
-		return notificationId;
-	}
-
-	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
 
 		ignoreResume = false;
 		PreStageActivity.shutdownPersistentResources();
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.menu_main_menu, menu);
-		return super.onCreateOptionsMenu(menu);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		rootView = inflater.inflate(R.layout.fragment_main_menu, null);
+		initOnClickListeners();
+		return rootView;
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.menu_settings: {
-				Intent intent = new Intent(MainMenuActivity.this, SettingsActivity.class);
-				startActivity(intent);
-				return true;
-			}
-			case R.id.menu_about: {
-				AboutDialogFragment aboutDialog = new AboutDialogFragment();
-				aboutDialog.show(getSupportFragmentManager(), AboutDialogFragment.DIALOG_FRAGMENT_TAG);
-				return true;
-			}
-		}
-		return super.onOptionsItemSelected(item);
+	public int createNotification(String downloadName) {
+		StatusBarNotificationManager manager = StatusBarNotificationManager.INSTANCE;
+		int notificationId = manager.createNotification(downloadName, getActivity(), Constants.DOWNLOAD_NOTIFICATION);
+		return notificationId;
 	}
 
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == PreStageActivity.REQUEST_RESOURCES_INIT && resultCode == RESULT_OK) {
-			Intent intent = new Intent(MainMenuActivity.this, StageActivity.class);
-			startActivity(intent);
-		}
-	}
+	//	@Override
+	//	public boolean onOptionsItemSelected(MenuItem item) {
+	//		switch (item.getItemId()) {
+	//			case R.id.menu_settings: {
+	//				Intent intent = new Intent(MainMenuActivity.this, SettingsActivity.class);
+	//				startActivity(intent);
+	//				return true;
+	//			}
+	//			case R.id.menu_about: {
+	//				AboutDialogFragment aboutDialog = new AboutDialogFragment();
+	//				aboutDialog.show(getSupportFragmentManager(), AboutDialogFragment.DIALOG_FRAGMENT_TAG);
+	//				return true;
+	//			}
+	//		}
+	//		return super.onOptionsItemSelected(item);
+	//	}
 
 	@Override
-	protected void onResume() {
+	public void onResume() {
 		super.onResume();
-		if (!Utils.checkForSdCard(this)) {
+		if (!Utils.checkForSdCard(getActivity())) {
 			return;
 		}
 		if (ProjectManager.INSTANCE.getCurrentProject() == null) {
@@ -212,18 +194,9 @@ public class MainMenuActivity extends SherlockFragmentActivity implements OnChec
 		}
 		ignoreResume = false;
 
-		ProjectManager.INSTANCE.loadProject(ProjectManager.INSTANCE.getCurrentProject().getName(), this, this, false);
+		ProjectManager.INSTANCE.loadProject(projectManager.getCurrentProject().getName(), getActivity(), this, false);
 
-		StatusBarNotificationManager.INSTANCE.displayDialogs(this);
-	}
-
-	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		super.onWindowFocusChanged(hasFocus);
-
-		if (projectManager.getCurrentProject() == null) {
-			return;
-		}
+		StatusBarNotificationManager.INSTANCE.displayDialogs(getActivity(), this);
 	}
 
 	@Override
@@ -234,7 +207,7 @@ public class MainMenuActivity extends SherlockFragmentActivity implements OnChec
 		// also when you switch activities
 		if (ProjectManager.INSTANCE.getCurrentProject() != null) {
 			ProjectManager.INSTANCE.saveProject();
-			Utils.saveToPreferences(this, Constants.PREF_PROJECTNAME_KEY, ProjectManager.INSTANCE.getCurrentProject()
+			Utils.saveToPreferences(getActivity(), Constants.PREF_PROJECTNAME_KEY, projectManager.getCurrentProject()
 					.getName());
 		}
 	}
@@ -243,11 +216,32 @@ public class MainMenuActivity extends SherlockFragmentActivity implements OnChec
 	// onDestroy() and unbindDrawables() methods taken from
 	// http://stackoverflow.com/a/6779067
 	@Override
-	protected void onDestroy() {
+	public void onDestroy() {
 		super.onDestroy();
 
-		unbindDrawables(findViewById(R.id.main_menu));
+		unbindDrawables(rootView);
 		System.gc();
+	}
+
+	@Override
+	public void onTokenNotValid() {
+		showLoginRegisterDialog();
+	}
+
+	@Override
+	public void onCheckTokenSuccess() {
+		UploadProjectDialog uploadProjectDialog = new UploadProjectDialog();
+		uploadProjectDialog.show(getFragmentManager(), UploadProjectDialog.DIALOG_FRAGMENT_TAG);
+	}
+
+	private void showLoginRegisterDialog() {
+		LoginRegisterDialog loginRegisterDialog = new LoginRegisterDialog();
+		loginRegisterDialog.show(getFragmentManager(), LoginRegisterDialog.DIALOG_FRAGMENT_TAG);
+	}
+
+	@Override
+	public void showErrorDialog(String errorMessage) {
+		Utils.displayErrorMessageFragment(getFragmentManager(), errorMessage);
 	}
 
 	private void unbindDrawables(View view) {
@@ -262,64 +256,82 @@ public class MainMenuActivity extends SherlockFragmentActivity implements OnChec
 		}
 	}
 
-	public void handleContinueButton(View v) {
+	private void initOnClickListeners() {
+		rootView.findViewById(R.id.main_menu_button_continue).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				handleContinueButton();
+			}
+		});
+		rootView.findViewById(R.id.main_menu_button_new).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				handleNewButton();
+			}
+		});
+		rootView.findViewById(R.id.main_menu_button_programs).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				handleProgramsButton();
+			}
+		});
+		rootView.findViewById(R.id.main_menu_button_forum).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				handleForumButton();
+			}
+		});
+		rootView.findViewById(R.id.main_menu_button_upload).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				handleUploadButton();
+			}
+		});
+		rootView.findViewById(R.id.main_menu_button_web).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				handleWebButton();
+			}
+		});
+	}
+
+	private void handleContinueButton() {
 		if (ProjectManager.INSTANCE.getCurrentProject() != null) {
-			Intent intent = new Intent(MainMenuActivity.this, ProjectActivity.class);
+			Intent intent = new Intent(getActivity(), ProjectActivity.class);
 			startActivity(intent);
 		}
 	}
 
-	public void handleNewButton(View v) {
+	private void handleNewButton() {
 		NewProjectDialog dialog = new NewProjectDialog();
-		dialog.show(getSupportFragmentManager(), NewProjectDialog.DIALOG_FRAGMENT_TAG);
+		dialog.show(getFragmentManager(), NewProjectDialog.DIALOG_FRAGMENT_TAG);
 	}
 
-	public void handleProgramsButton(View v) {
-		Intent intent = new Intent(MainMenuActivity.this, MyProjectsActivity.class);
+	private void handleProgramsButton() {
+		Intent intent = new Intent(getActivity(), MyProjectsActivity.class);
 		startActivity(intent);
 	}
 
-	public void handleUploadButton(View v) {
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+	private void handleUploadButton() {
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 		String token = preferences.getString(Constants.TOKEN, null);
 
 		if (token == null || token.length() == 0 || token.equals("0")) {
 			showLoginRegisterDialog();
 		} else {
-			CheckTokenTask checkTokenTask = new CheckTokenTask(this, token);
+			CheckTokenTask checkTokenTask = new CheckTokenTask(getActivity(), token);
 			checkTokenTask.setOnCheckTokenCompleteListener(this);
 			checkTokenTask.execute();
 		}
 	}
 
-	public void handleWebButton(View v) {
+	private void handleWebButton() {
 		Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getText(R.string.catroid_website).toString()));
 		startActivity(browserIntent);
 	}
 
-	public void handleForumButton(View v) {
+	private void handleForumButton() {
 		Intent browerIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getText(R.string.catrobat_forum).toString()));
 		startActivity(browerIntent);
-	}
-
-	@Override
-	public void onTokenNotValid() {
-		showLoginRegisterDialog();
-	}
-
-	@Override
-	public void onCheckTokenSuccess() {
-		UploadProjectDialog uploadProjectDialog = new UploadProjectDialog();
-		uploadProjectDialog.show(getSupportFragmentManager(), UploadProjectDialog.DIALOG_FRAGMENT_TAG);
-	}
-
-	private void showLoginRegisterDialog() {
-		LoginRegisterDialog loginRegisterDialog = new LoginRegisterDialog();
-		loginRegisterDialog.show(getSupportFragmentManager(), LoginRegisterDialog.DIALOG_FRAGMENT_TAG);
-	}
-
-	@Override
-	public void showErrorDialog(String errorMessage) {
-		Utils.displayErrorMessageFragment(getSupportFragmentManager(), errorMessage);
 	}
 }

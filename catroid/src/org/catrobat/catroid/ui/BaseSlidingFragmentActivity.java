@@ -23,24 +23,44 @@
 package org.catrobat.catroid.ui;
 
 import org.catrobat.catroid.R;
+import org.catrobat.catroid.ui.fragment.MainMenuFragment;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 
-import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.view.MenuItem;
+import com.slidingmenu.lib.SlidingMenu;
+import com.slidingmenu.lib.app.SlidingFragmentActivity;
 
-public class SettingsActivity extends BaseSlidingPreferenceActivity {
+public class BaseSlidingFragmentActivity extends SlidingFragmentActivity {
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		addPreferencesFromResource(R.xml.preferences);
+		setBehindContentView(R.layout.view_fragment_container);
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		ft.replace(R.id.fl_fragment_container, new MainMenuFragment()).commit();
 
-		ActionBar actionBar = getSupportActionBar();
+		SlidingMenu slidingMenu = getSlidingMenu();
+		slidingMenu.setShadowWidthRes(R.dimen.shadow_width);
+		slidingMenu.setShadowDrawable(R.drawable.shadow);
+		slidingMenu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+		slidingMenu.setFadeDegree(0.35f);
+		slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
 
-		actionBar.setTitle(R.string.pref_title);
-		actionBar.setHomeButtonEnabled(true);
-		actionBar.setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case android.R.id.home: {
+				toggle();
+				return true;
+			}
+		}
+
+		return super.onOptionsItemSelected(item);
 	}
 }
