@@ -153,7 +153,6 @@ public class WhenKeyBrick extends ScriptBrick {
 			}
 		});
 
-		//keySpinner.setSelection(key.ordinal());
 		keySpinner.setSelection(Key.getKeyPositionByKey(key));
 		keySpinner.setFocusable(false);
 

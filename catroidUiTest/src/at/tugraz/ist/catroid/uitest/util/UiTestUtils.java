@@ -217,6 +217,8 @@ public class UiTestUtils {
 		brickCategoryMap.put(R.string.brick_forever, R.string.category_control);
 		brickCategoryMap.put(R.string.brick_repeat, R.string.category_control);
 
+		brickCategoryMap.put(R.string.brick_xperia_play, R.string.category_control);
+
 		brickCategoryMap.put(R.string.brick_motor_action, R.string.category_lego_nxt);
 	}
 
