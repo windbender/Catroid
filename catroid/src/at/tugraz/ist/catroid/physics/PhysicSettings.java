@@ -22,7 +22,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class PhysicSettings {
 
-	public final static boolean DEBUGFLAG = true;
+	public final static boolean DEBUGFLAG = false;
 
 	public static class Render {
 		public final static boolean RENDER_COLLISION_FRAMES = false;

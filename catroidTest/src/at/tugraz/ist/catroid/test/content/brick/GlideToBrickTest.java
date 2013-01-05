@@ -23,6 +23,7 @@
 package at.tugraz.ist.catroid.test.content.brick;
 
 import android.test.AndroidTestCase;
+import at.tugraz.ist.catroid.ProjectManager;
 import at.tugraz.ist.catroid.content.Script;
 import at.tugraz.ist.catroid.content.Sprite;
 import at.tugraz.ist.catroid.content.StartScript;
@@ -55,7 +56,7 @@ public class GlideToBrickTest extends AndroidTestCase {
 
 		GlideToBrick glideToBrick = new GlideToBrick(physicWorld, sprite, xPosition, yPosition, duration);
 		glideToBrick.execute();
-		assertFalse(physicWorld.isPhysicObject(sprite));
+		assertFalse(ProjectManager.getInstance().getCurrentProject().getPhysicWorld().isPhysicObject(sprite));
 		Thread.sleep(1200);
 
 		assertEquals("Incorrect sprite x position after GlideToBrick executed", (float) xPosition,

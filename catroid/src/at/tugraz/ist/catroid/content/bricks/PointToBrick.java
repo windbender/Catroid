@@ -123,7 +123,7 @@ public class PointToBrick implements Brick {
 			}
 		}
 
-		if (physicWorld.isPhysicObject(sprite)) {
+		if (ProjectManager.getInstance().getCurrentProject().getPhysicWorld().isPhysicObject(sprite)) {
 			physicWorld.getPhysicObject(sprite).setAngle((-(float) rotationDegrees) + 90f);
 		} else {
 			sprite.costume.setRotation((-(float) rotationDegrees) + 90f);

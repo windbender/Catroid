@@ -30,6 +30,7 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import at.tugraz.ist.catroid.ProjectManager;
 import at.tugraz.ist.catroid.R;
 import at.tugraz.ist.catroid.content.Sprite;
 import at.tugraz.ist.catroid.physics.PhysicObject;
@@ -84,7 +85,7 @@ public class GlideToBrick implements Brick, OnClickListener {
 		long startTime = System.currentTimeMillis();
 		int duration = durationInMilliSeconds;
 
-		if (physicWorld.isPhysicObject(sprite)) {
+		if (ProjectManager.getInstance().getCurrentProject().getPhysicWorld().isPhysicObject(sprite)) {
 			PhysicObject physicObject = physicWorld.getPhysicObject(sprite);
 			if (oldPhysicObjectType == null) { // Multi-Touching is bad 
 				oldPhysicObjectType = physicObject.getType();
@@ -127,7 +128,7 @@ public class GlideToBrick implements Brick, OnClickListener {
 			// -stay at last position
 		} else {
 
-			if (physicWorld.isPhysicObject(sprite)) {
+			if (ProjectManager.getInstance().getCurrentProject().getPhysicWorld().isPhysicObject(sprite)) {
 				PhysicObject physicObject = physicWorld.getPhysicObject(sprite);
 
 				Vector2 newPos = new Vector2(xDestination, yDestination);
@@ -153,7 +154,7 @@ public class GlideToBrick implements Brick, OnClickListener {
 		float xPosition = sprite.costume.getXPosition();
 		float yPosition = sprite.costume.getYPosition();
 
-		if (physicWorld.isPhysicObject(sprite)) {
+		if (ProjectManager.getInstance().getCurrentProject().getPhysicWorld().isPhysicObject(sprite)) {
 			sprite.costume.releaseXYWidthHeightLock();
 			xPosition = (xDestination - xPosition) / (duration / 1000f);
 			yPosition = (yDestination - yPosition) / (duration / 1000f);

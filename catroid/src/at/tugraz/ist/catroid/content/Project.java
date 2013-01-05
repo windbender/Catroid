@@ -132,6 +132,13 @@ public class Project implements Serializable {
 	}
 
 	public PhysicWorld getPhysicWorld() {
+		if (physicWorld == null) {
+			synchronized (this) {
+				if (physicWorld == null) {
+					physicWorld = new PhysicWorld();
+				}
+			}
+		}
 		return this.physicWorld;
 	}
 }

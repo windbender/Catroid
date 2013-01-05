@@ -31,6 +31,7 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import at.tugraz.ist.catroid.ProjectManager;
 import at.tugraz.ist.catroid.R;
 import at.tugraz.ist.catroid.content.Sprite;
 import at.tugraz.ist.catroid.physics.PhysicWorld;
@@ -68,7 +69,7 @@ public class MoveNStepsBrick implements Brick, OnClickListener {
 		int newXPosition = (int) Math.round(sprite.costume.getXPosition() + steps * Math.cos(radians));
 		int newYPosition = (int) Math.round(sprite.costume.getYPosition() + steps * Math.sin(radians));
 
-		if (physicWorld.isPhysicObject(sprite)) {
+		if (ProjectManager.getInstance().getCurrentProject().getPhysicWorld().isPhysicObject(sprite)) {
 			sprite.costume.releaseXYWidthHeightLock();
 			Vector2 newPos = new Vector2(newXPosition, newYPosition);
 			physicWorld.getPhysicObject(sprite).setPosition(newPos);
@@ -115,7 +116,7 @@ public class MoveNStepsBrick implements Brick, OnClickListener {
 	@Override
 	public void onClick(View view) {
 		ScriptTabActivity activity = (ScriptTabActivity) view.getContext();
-		
+
 		BrickTextDialog editDialog = new BrickTextDialog() {
 			@Override
 			protected void initialize() {
@@ -124,7 +125,7 @@ public class MoveNStepsBrick implements Brick, OnClickListener {
 						| InputType.TYPE_NUMBER_FLAG_SIGNED);
 				input.setSelectAllOnFocus(true);
 			}
-			
+
 			@Override
 			protected boolean handleOkButton() {
 				try {
@@ -132,11 +133,11 @@ public class MoveNStepsBrick implements Brick, OnClickListener {
 				} catch (NumberFormatException exception) {
 					Toast.makeText(getActivity(), R.string.error_no_number_entered, Toast.LENGTH_SHORT).show();
 				}
-				
+
 				return true;
 			}
 		};
-		
+
 		editDialog.show(activity.getSupportFragmentManager(), "dialog_move_n_steps_brick");
 	}
 }

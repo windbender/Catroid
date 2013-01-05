@@ -30,6 +30,7 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import at.tugraz.ist.catroid.ProjectManager;
 import at.tugraz.ist.catroid.R;
 import at.tugraz.ist.catroid.content.Sprite;
 import at.tugraz.ist.catroid.physics.PhysicWorld;
@@ -72,7 +73,7 @@ public class ChangeXByBrick implements Brick, OnClickListener {
 			xPosition += xMovement;
 		}
 
-		if (physicWorld.isPhysicObject(sprite)) {
+		if (ProjectManager.getInstance().getCurrentProject().getPhysicWorld().isPhysicObject(sprite)) {
 			sprite.costume.releaseXYWidthHeightLock();
 			Vector2 newPos = new Vector2(xPosition, sprite.costume.getYPosition());
 			physicWorld.getPhysicObject(sprite).setPosition(newPos);

@@ -29,6 +29,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Spinner;
+import at.tugraz.ist.catroid.ProjectManager;
 import at.tugraz.ist.catroid.R;
 import at.tugraz.ist.catroid.content.Sprite;
 import at.tugraz.ist.catroid.physics.PhysicWorld;
@@ -84,7 +85,7 @@ public class PointInDirectionBrick implements Brick, OnItemSelectedListener {
 	public void execute() {
 		double degreeOffset = 90f;
 
-		if (physicWorld.isPhysicObject(sprite)) {
+		if (ProjectManager.getInstance().getCurrentProject().getPhysicWorld().isPhysicObject(sprite)) {
 			physicWorld.getPhysicObject(sprite).setAngle((float) (-degrees + degreeOffset));
 		} else {
 			sprite.costume.setRotation((float) (-degrees + degreeOffset));

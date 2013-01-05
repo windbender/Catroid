@@ -45,6 +45,7 @@ import at.tugraz.ist.catroid.content.Sprite;
 import at.tugraz.ist.catroid.content.StartScript;
 import at.tugraz.ist.catroid.content.WhenScript;
 import at.tugraz.ist.catroid.content.bricks.BroadcastBrick;
+import at.tugraz.ist.catroid.content.bricks.ChangeSizeByNBrick;
 import at.tugraz.ist.catroid.content.bricks.PlaceAtBrick;
 import at.tugraz.ist.catroid.content.bricks.PointInDirectionBrick;
 import at.tugraz.ist.catroid.content.bricks.PointInDirectionBrick.Direction;
@@ -53,6 +54,7 @@ import at.tugraz.ist.catroid.content.bricks.SetCostumeBrick;
 import at.tugraz.ist.catroid.content.bricks.SetFrictionBrick;
 import at.tugraz.ist.catroid.content.bricks.SetGravityBrick;
 import at.tugraz.ist.catroid.content.bricks.SetPhysicObjectTypeBrick;
+import at.tugraz.ist.catroid.content.bricks.SetVelocityBrick;
 import at.tugraz.ist.catroid.content.bricks.TurnLeftBrick;
 import at.tugraz.ist.catroid.content.bricks.TurnLeftSpeedBrick;
 import at.tugraz.ist.catroid.content.bricks.WaitBrick;
@@ -129,8 +131,25 @@ public class StandardProjectHandler {
 		background.addScript(startScript);
 
 		// Ball
-		createElement(ball, physicWorld, "pinball", R.drawable.pinball, new Vector2(-200.0f, 300.0f), Float.NaN);
-		setPhysicProperties(ball, physicWorld, Type.DYNAMIC, 20.0f, 80.0f);
+		Script ballStartScript = createElement(ball, physicWorld, "pinball", R.drawable.pinball, new Vector2(-200.0f,
+				300.0f), Float.NaN);
+		setPhysicProperties(ball, physicWorld, ballStartScript, Type.DYNAMIC, 20.0f, 80.0f);
+
+		// Ball v2
+		String ballBroadcastMessage = "restart ball";
+		BroadcastBrick ballBroadcastBrick = new BroadcastBrick(ball);
+		ballBroadcastBrick.setSelectedMessage(ballBroadcastMessage);
+		ballStartScript.addBrick(ballBroadcastBrick);
+		ball.addScript(ballStartScript);
+
+		BroadcastScript ballBroadcastScript = new BroadcastScript(ball);
+		ballBroadcastScript.setBroadcastMessage(ballBroadcastMessage);
+		ballBroadcastScript.addBrick(new PlaceAtBrick(physicWorld, ball, -200, 300));
+		ballBroadcastScript.addBrick(new SetVelocityBrick(physicWorld, ball, new Vector2()));
+		SetCostumeBrick ballSetCostumeBrick = new SetCostumeBrick(ball);
+		ballSetCostumeBrick.setCostume(ball.getCostumeDataList().get(0));
+		ballBroadcastScript.addBrick(ballSetCostumeBrick);
+		ball.addScript(ballBroadcastScript);
 
 		// Buttons
 		createElement(leftButton, physicWorld, "button", R.drawable.button, new Vector2(-175.0f, -330.0f), Float.NaN);
@@ -139,65 +158,94 @@ public class StandardProjectHandler {
 		createButtonPressed(rightButton, rightButtonPressed);
 
 		// Arms
-		createElement(leftArm, physicWorld, "left_arm", R.drawable.left_arm, new Vector2(-80.0f, -315.0f), Float.NaN);
-		setPhysicProperties(leftArm, physicWorld, Type.FIXED, 50.0f, -1.0f);
+		Script leftArmStartScript = createElement(leftArm, physicWorld, "left_arm", R.drawable.left_arm, new Vector2(
+				-80.0f, -315.0f), Float.NaN);
+		setPhysicProperties(leftArm, physicWorld, leftArmStartScript, Type.FIXED, 50.0f, -1.0f);
 		createMovingArm(leftArm, leftButtonPressed, physicWorld, armMovingSpeed);
-		createElement(rightArm, physicWorld, "right_arm", R.drawable.right_arm, new Vector2(80.0f, -315.0f), Float.NaN);
-		setPhysicProperties(rightArm, physicWorld, Type.FIXED, 50.0f, -1.0f);
+		Script rightArmStartScript = createElement(rightArm, physicWorld, "right_arm", R.drawable.right_arm,
+				new Vector2(80.0f, -315.0f), Float.NaN);
+		setPhysicProperties(rightArm, physicWorld, rightArmStartScript, Type.FIXED, 50.0f, -1.0f);
 		createMovingArm(rightArm, rightButtonPressed, physicWorld, -armMovingSpeed);
 
 		// Lower walls
-		createElement(leftVerticalWall, physicWorld, "vertical_wall", R.drawable.vertical_wall, new Vector2(-232.0f,
-				-160.0f), 8.0f);
-		setPhysicProperties(leftVerticalWall, physicWorld, Type.FIXED, 5.0f, -1.0f);
-		createElement(rightVerticalWall, physicWorld, "vertical_wall", R.drawable.vertical_wall, new Vector2(232.0f,
-				-160.0f), -8.0f);
-		setPhysicProperties(rightVerticalWall, physicWorld, Type.FIXED, 5.0f, -1.0f);
+		Script leftVerticalWallStartScript = createElement(leftVerticalWall, physicWorld, "vertical_wall",
+				R.drawable.vertical_wall, new Vector2(-232.0f, -160.0f), 8.0f);
+		setPhysicProperties(leftVerticalWall, physicWorld, leftVerticalWallStartScript, Type.FIXED, 5.0f, -1.0f);
+		Script rightVerticalWallStartScript = createElement(rightVerticalWall, physicWorld, "vertical_wall",
+				R.drawable.vertical_wall, new Vector2(232.0f, -160.0f), -8.0f);
+		setPhysicProperties(rightVerticalWall, physicWorld, rightVerticalWallStartScript, Type.FIXED, 5.0f, -1.0f);
 
-		createElement(leftBottomWall, physicWorld, "wall_bottom", R.drawable.wall_bottom,
-				new Vector2(-155.0f, -255.0f), 58.5f);
-		setPhysicProperties(leftBottomWall, physicWorld, Type.FIXED, 5.0f, -1.0f);
-		createElement(rightBottomWall, physicWorld, "wall_bottom", R.drawable.wall_bottom,
-				new Vector2(155.0f, -255.0f), -58.5f);
-		setPhysicProperties(rightBottomWall, physicWorld, Type.FIXED, 5.0f, -1.0f);
+		Script leftBottomWallStartScript = createElement(leftBottomWall, physicWorld, "wall_bottom",
+				R.drawable.wall_bottom, new Vector2(-155.0f, -255.0f), 58.5f);
+		setPhysicProperties(leftBottomWall, physicWorld, leftBottomWallStartScript, Type.FIXED, 5.0f, -1.0f);
+		Script rightBottomWallStartScript = createElement(rightBottomWall, physicWorld, "wall_bottom",
+				R.drawable.wall_bottom, new Vector2(155.0f, -255.0f), -58.5f);
+		setPhysicProperties(rightBottomWall, physicWorld, rightBottomWallStartScript, Type.FIXED, 5.0f, -1.0f);
 
 		// Hard Bouncer
-		createElement(leftHardBouncer, physicWorld, "left_hard_bouncer", R.drawable.left_hard_bouncer, new Vector2(
-				-140.0f, -165.0f), Float.NaN);
-		setPhysicProperties(leftHardBouncer, physicWorld, Type.FIXED, 10.0f, -1.0f);
-		createElement(leftHardBouncerBouncer, physicWorld, "left_light_bouncer", R.drawable.left_light_bouncer,
-				new Vector2(-129.0f, -163.0f), Float.NaN);
-		setPhysicProperties(leftHardBouncerBouncer, physicWorld, Type.FIXED, 124.0f, -1.0f);
+		Script leftHardBouncerStartScript = createElement(leftHardBouncer, physicWorld, "left_hard_bouncer",
+				R.drawable.left_hard_bouncer, new Vector2(-140.0f, -165.0f), Float.NaN);
+		setPhysicProperties(leftHardBouncer, physicWorld, leftHardBouncerStartScript, Type.FIXED, 10.0f, -1.0f);
+		Script leftHardBouncerBouncerStartScript = createElement(leftHardBouncerBouncer, physicWorld,
+				"left_light_bouncer", R.drawable.left_light_bouncer, new Vector2(-129.0f, -163.0f), Float.NaN);
+		setPhysicProperties(leftHardBouncerBouncer, physicWorld, leftHardBouncerBouncerStartScript, Type.FIXED, 124.0f,
+				-1.0f);
 
-		createElement(rightHardBouncer, physicWorld, "right_hard_bouncer", R.drawable.right_hard_bouncer, new Vector2(
-				140.0f, -165.0f), Float.NaN);
-		setPhysicProperties(rightHardBouncer, physicWorld, Type.FIXED, 10.0f, -1.0f);
-		createElement(rightHardBouncerBouncer, physicWorld, "right_light_bouncer", R.drawable.right_light_bouncer,
-				new Vector2(129.0f, -163.0f), Float.NaN);
-		setPhysicProperties(rightHardBouncerBouncer, physicWorld, Type.FIXED, 124.0f, -1.0f);
+		Script rightHardBouncerStartScript = createElement(rightHardBouncer, physicWorld, "right_hard_bouncer",
+				R.drawable.right_hard_bouncer, new Vector2(140.0f, -165.0f), Float.NaN);
+		setPhysicProperties(rightHardBouncer, physicWorld, rightHardBouncerStartScript, Type.FIXED, 10.0f, -1.0f);
+		Script rightHardBouncerBouncerStartScript = createElement(rightHardBouncerBouncer, physicWorld,
+				"right_light_bouncer", R.drawable.right_light_bouncer, new Vector2(129.0f, -163.0f), Float.NaN);
+		setPhysicProperties(rightHardBouncerBouncer, physicWorld, rightHardBouncerBouncerStartScript, Type.FIXED,
+				124.0f, -1.0f);
 
 		// Lower wool bouncers
 		Vector2[] lowerBouncersPositions = { new Vector2(-100.0f, -80.0f + doodlydoo),
 				new Vector2(0.0f, -140.0f + doodlydoo), new Vector2(100.0f, -80.0f + doodlydoo) };
 		for (int index = 0; index < lowerBouncers.length; index++) {
-			createElement(lowerBouncers[index], physicWorld, "wolle_bouncer", R.drawable.wolle_bouncer,
-					lowerBouncersPositions[index], new Random().nextInt(360));
-			setPhysicProperties(lowerBouncers[index], physicWorld, Type.FIXED, 116.0f, -1.0f);
+			Script lowerBouncerStartScript = createElement(lowerBouncers[index], physicWorld, "wolle_bouncer",
+					R.drawable.wolle_bouncer, lowerBouncersPositions[index], new Random().nextInt(360));
+			setPhysicProperties(lowerBouncers[index], physicWorld, lowerBouncerStartScript, Type.FIXED, 116.0f, -1.0f);
 		}
 
 		// Middle bouncer
-		createElement(middleBouncer, physicWorld, "middle_cat_bouncer", R.drawable.middle_cat_bouncer, new Vector2(
-				0.0f, 75.0f + doodlydoo), Float.NaN);
-		setPhysicProperties(middleBouncer, physicWorld, Type.FIXED, 40.0f, 80.0f);
+		Script middleBouncerStartScript = createElement(middleBouncer, physicWorld, "lego", R.drawable.lego,
+				new Vector2(0.0f, 75.0f + doodlydoo), Float.NaN);
+		setPhysicProperties(middleBouncer, physicWorld, middleBouncerStartScript, Type.FIXED, 40.0f, 80.0f);
+		middleBouncerStartScript.addBrick(new TurnLeftSpeedBrick(physicWorld, middleBouncer, 145));
+
+		WhenScript whenPressedScript = new WhenScript(middleBouncer);
+		whenPressedScript.setAction(0);
+
+		BroadcastBrick bb = new BroadcastBrick(middleBouncer);
+		bb.setSelectedMessage(ballBroadcastMessage);
+		whenPressedScript.addBrick(bb);
+		whenPressedScript.addBrick(new ChangeSizeByNBrick(middleBouncer, 20));
+		middleBouncer.addScript(whenPressedScript);
 
 		// Upper bouncers
 		Vector2[] upperBouncersPositions = { new Vector2(0.0f, 240.f + doodlydoo),
 				new Vector2(150.0f, 200.0f + doodlydoo) };
 		for (int index = 0; index < upperBouncers.length; index++) {
-			createElement(upperBouncers[index], physicWorld, "cat_bouncer", R.drawable.cat_bouncer,
-					upperBouncersPositions[index], Float.NaN);
-			setPhysicProperties(upperBouncers[index], physicWorld, Type.FIXED, 106.0f, -1.0f);
+			Script upperBouncersStartScript = createElement(upperBouncers[index], physicWorld, "cat_bouncer",
+					R.drawable.cat_bouncer, upperBouncersPositions[index], Float.NaN);
+			setPhysicProperties(upperBouncers[index], physicWorld, upperBouncersStartScript, Type.FIXED, 106.0f, -1.0f);
 		}
+
+		Sprite leftWall = new Sprite("Left wall");
+		Sprite rightWall = new Sprite("Right wall");
+		Sprite topWall = new Sprite("Top wall");
+
+		Script leftWallStartScript = createElement(leftWall, physicWorld, "wall", R.drawable.wall, new Vector2(-260,
+				110), 0);
+		setPhysicProperties(leftWall, physicWorld, leftWallStartScript, Type.FIXED, -1, -1);
+		Script rightWallStartScript = createElement(rightWall, physicWorld, "wall", R.drawable.wall, new Vector2(260,
+				110), 0);
+		setPhysicProperties(rightWall, physicWorld, rightWallStartScript, Type.FIXED, -1, -1);
+
+		Script topWallStartScript = createElement(topWall, physicWorld, "wall", R.drawable.wall, new Vector2(0, 415),
+				90);
+		setPhysicProperties(topWall, physicWorld, topWallStartScript, Type.FIXED, -1, -1);
 
 		defaultProject.addSprite(leftButton);
 		defaultProject.addSprite(rightButton);
@@ -213,6 +261,9 @@ public class StandardProjectHandler {
 		defaultProject.addSprite(leftBottomWall);
 		defaultProject.addSprite(rightVerticalWall);
 		defaultProject.addSprite(rightBottomWall);
+		defaultProject.addSprite(topWall);
+		defaultProject.addSprite(leftWall);
+		defaultProject.addSprite(rightWall);
 
 		for (Sprite sprite : upperBouncers) {
 			defaultProject.addSprite(sprite);
@@ -225,7 +276,7 @@ public class StandardProjectHandler {
 		return defaultProject;
 	}
 
-	private static void createElement(Sprite sprite, PhysicWorld physicWorld, String fileName, int fileId,
+	private static Script createElement(Sprite sprite, PhysicWorld physicWorld, String fileName, int fileId,
 			Vector2 position, float angle) throws IOException {
 		File file = savePictureFromResourceInProject(projectName, fileName, fileId, context);
 		CostumeData costumeData = new CostumeData();
@@ -248,11 +299,14 @@ public class StandardProjectHandler {
 		}
 
 		sprite.addScript(startScript);
+		return startScript;
 	}
 
-	private static void setPhysicProperties(Sprite sprite, PhysicWorld physicWorld, PhysicObject.Type type,
-			float bounce, float friction) {
-		Script startScript = new StartScript(sprite);
+	private static Script setPhysicProperties(Sprite sprite, PhysicWorld physicWorld, Script startScript,
+			PhysicObject.Type type, float bounce, float friction) {
+		if (startScript == null) {
+			startScript = new StartScript(sprite);
+		}
 
 		startScript.addBrick(new SetPhysicObjectTypeBrick(physicWorld, sprite, type));
 
@@ -265,6 +319,7 @@ public class StandardProjectHandler {
 		}
 
 		sprite.addScript(startScript);
+		return startScript;
 	}
 
 	private static void createButtonPressed(Sprite sprite, String broadcastMessage) throws IOException {
