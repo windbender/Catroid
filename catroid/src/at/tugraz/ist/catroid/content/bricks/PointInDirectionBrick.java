@@ -86,6 +86,7 @@ public class PointInDirectionBrick implements Brick, OnItemSelectedListener {
 		double degreeOffset = 90f;
 
 		if (ProjectManager.getInstance().getCurrentProject().getPhysicWorld().isPhysicObject(sprite)) {
+			physicWorld = ProjectManager.getInstance().getCurrentProject().getPhysicWorld();
 			physicWorld.getPhysicObject(sprite).setAngle((float) (-degrees + degreeOffset));
 		} else {
 			sprite.costume.setRotation((float) (-degrees + degreeOffset));

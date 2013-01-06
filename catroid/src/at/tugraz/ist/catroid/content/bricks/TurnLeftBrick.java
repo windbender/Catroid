@@ -60,6 +60,7 @@ public class TurnLeftBrick implements Brick, OnClickListener {
 	@Override
 	public void execute() {
 		if (ProjectManager.getInstance().getCurrentProject().getPhysicWorld().isPhysicObject(sprite)) {
+			physicWorld = ProjectManager.getInstance().getCurrentProject().getPhysicWorld();
 			physicWorld.getPhysicObject(sprite).setAngle((sprite.costume.getRotation() % 360) + (float) degrees);
 		} else {
 			sprite.costume.setRotation((sprite.costume.getRotation() % 360) + (float) degrees);

@@ -29,6 +29,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Spinner;
+import at.tugraz.ist.catroid.ProjectManager;
 import at.tugraz.ist.catroid.R;
 import at.tugraz.ist.catroid.content.Sprite;
 import at.tugraz.ist.catroid.physics.PhysicObject;
@@ -58,6 +59,7 @@ public class SetPhysicObjectTypeBrick implements Brick {
 
 	@Override
 	public void execute() {
+		physicWorld = ProjectManager.getInstance().getCurrentProject().getPhysicWorld();
 		physicWorld.getPhysicObject(sprite).setType(type);
 	}
 

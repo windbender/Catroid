@@ -124,6 +124,7 @@ public class PointToBrick implements Brick {
 		}
 
 		if (ProjectManager.getInstance().getCurrentProject().getPhysicWorld().isPhysicObject(sprite)) {
+			physicWorld = ProjectManager.getInstance().getCurrentProject().getPhysicWorld();
 			physicWorld.getPhysicObject(sprite).setAngle((-(float) rotationDegrees) + 90f);
 		} else {
 			sprite.costume.setRotation((-(float) rotationDegrees) + 90f);

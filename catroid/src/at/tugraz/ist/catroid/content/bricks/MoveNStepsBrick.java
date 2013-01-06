@@ -70,6 +70,7 @@ public class MoveNStepsBrick implements Brick, OnClickListener {
 		int newYPosition = (int) Math.round(sprite.costume.getYPosition() + steps * Math.sin(radians));
 
 		if (ProjectManager.getInstance().getCurrentProject().getPhysicWorld().isPhysicObject(sprite)) {
+			physicWorld = ProjectManager.getInstance().getCurrentProject().getPhysicWorld();
 			sprite.costume.releaseXYWidthHeightLock();
 			Vector2 newPos = new Vector2(newXPosition, newYPosition);
 			physicWorld.getPhysicObject(sprite).setPosition(newPos);

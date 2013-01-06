@@ -54,6 +54,7 @@ public class IfOnEdgeBounceBrick implements Brick {
 	@Override
 	public void execute() {
 		if (ProjectManager.getInstance().getCurrentProject().getPhysicWorld().isPhysicObject(sprite)) {
+			physicWorld = ProjectManager.getInstance().getCurrentProject().getPhysicWorld();
 			physicWorld.getPhysicObject(sprite).setIfOnEdgeBounce(true);
 		} else {
 

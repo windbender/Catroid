@@ -86,6 +86,7 @@ public class GlideToBrick implements Brick, OnClickListener {
 		int duration = durationInMilliSeconds;
 
 		if (ProjectManager.getInstance().getCurrentProject().getPhysicWorld().isPhysicObject(sprite)) {
+			physicWorld = ProjectManager.getInstance().getCurrentProject().getPhysicWorld();
 			PhysicObject physicObject = physicWorld.getPhysicObject(sprite);
 			if (oldPhysicObjectType == null) { // Multi-Touching is bad 
 				oldPhysicObjectType = physicObject.getType();

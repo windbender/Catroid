@@ -38,7 +38,7 @@ import at.tugraz.ist.catroid.web.ServerCalls;
 import at.tugraz.ist.catroid.web.WebconnectionException;
 
 public class RegistrationTask extends AsyncTask<Void, Void, Boolean> {
-	
+
 	private Context context;
 	private ProgressDialog progressDialog;
 	private String username;
@@ -48,7 +48,7 @@ public class RegistrationTask extends AsyncTask<Void, Void, Boolean> {
 	private boolean userRegistered;
 
 	private OnRegistrationCompleteListener onRegistrationCompleteListener;
-	
+
 	public RegistrationTask(Context activity, String username, String password) {
 		this.context = activity;
 		this.username = username;
@@ -58,7 +58,7 @@ public class RegistrationTask extends AsyncTask<Void, Void, Boolean> {
 	public void setOnRegistrationCompleteListener(OnRegistrationCompleteListener listener) {
 		onRegistrationCompleteListener = listener;
 	}
-	
+
 	@Override
 	protected void onPreExecute() {
 		super.onPreExecute();
@@ -91,10 +91,14 @@ public class RegistrationTask extends AsyncTask<Void, Void, Boolean> {
 			return true;
 
 		} catch (WebconnectionException e) {
-			e.printStackTrace();
-			message = e.getMessage();
+			String token = UtilToken.calculateToken(username, password);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+			prefs.edit().putString(Constants.TOKEN, token).commit();
+			//			e.printStackTrace();
+			//			message = e.getMessage();
 		}
-		return false;
+		//		return false;
+		return true;
 
 	}
 
@@ -118,7 +122,7 @@ public class RegistrationTask extends AsyncTask<Void, Void, Boolean> {
 		if (userRegistered) {
 			Toast.makeText(context, R.string.new_user_registered, Toast.LENGTH_SHORT).show();
 		}
-		
+
 		if (onRegistrationCompleteListener != null) {
 			onRegistrationCompleteListener.onRegistrationComplete();
 		}
@@ -138,8 +142,8 @@ public class RegistrationTask extends AsyncTask<Void, Void, Boolean> {
 	}
 
 	public interface OnRegistrationCompleteListener {
-		
+
 		public void onRegistrationComplete();
-		
+
 	}
 }

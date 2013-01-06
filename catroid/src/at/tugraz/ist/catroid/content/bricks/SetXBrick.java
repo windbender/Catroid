@@ -63,6 +63,7 @@ public class SetXBrick implements Brick, OnClickListener {
 	@Override
 	public void execute() {
 		if (ProjectManager.getInstance().getCurrentProject().getPhysicWorld().isPhysicObject(sprite)) {
+			physicWorld = ProjectManager.getInstance().getCurrentProject().getPhysicWorld();
 			Vector2 newPos = new Vector2(xPosition, sprite.costume.getYPosition());
 			physicWorld.getPhysicObject(sprite).setPosition(newPos);
 		} else {

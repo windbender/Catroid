@@ -29,6 +29,7 @@ import android.view.View.OnClickListener;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.Toast;
+import at.tugraz.ist.catroid.ProjectManager;
 import at.tugraz.ist.catroid.R;
 import at.tugraz.ist.catroid.content.Sprite;
 import at.tugraz.ist.catroid.physics.PhysicSettings;
@@ -60,6 +61,7 @@ public class SetMassBrick implements Brick, OnClickListener {
 
 	@Override
 	public void execute() {
+		physicWorld = ProjectManager.getInstance().getCurrentProject().getPhysicWorld();
 		physicWorld.getPhysicObject(sprite).setMass(mass);
 	}
 

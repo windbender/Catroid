@@ -64,6 +64,7 @@ public class PlaceAtBrick implements Brick, OnClickListener {
 	@Override
 	public void execute() {
 		if (ProjectManager.getInstance().getCurrentProject().getPhysicWorld().isPhysicObject(sprite)) {
+			physicWorld = ProjectManager.getInstance().getCurrentProject().getPhysicWorld();
 			physicWorld.getPhysicObject(sprite).setPosition(xPosition, yPosition);
 		} else {
 			sprite.costume.aquireXYWidthHeightLock();
