@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -91,7 +91,7 @@ public class NextCostumeBrick implements Brick {
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View view = inflater.inflate(R.layout.brick_next_costume, null);
 		if (sprite.getName().equals(context.getString(R.string.background))) {
-			TextView textView = (TextView) view.findViewById(R.id.textview_next_costume);
+			TextView textView = (TextView) view.findViewById(R.id.brick_next_costume_text_view);
 			textView.setText(R.string.brick_next_background);
 		}
 		return view;
@@ -115,7 +115,7 @@ public class NextCostumeBrick implements Brick {
 		}
 
 		if (sprite.getName().equals(context.getString(R.string.background))) {
-			TextView textView = (TextView) view.findViewById(R.id.textview_next_costume);
+			TextView textView = (TextView) view.findViewById(R.id.brick_next_costume_text_view);
 			textView.setText(R.string.brick_next_background);
 		}
 

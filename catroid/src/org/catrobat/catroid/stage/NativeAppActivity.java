@@ -26,7 +26,6 @@ import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.common.Values;
-import org.catrobat.catroid.ui.dialogs.AboutDialog;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -35,8 +34,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.Menu;
-import android.view.MenuItem;
 
 public class NativeAppActivity extends StageActivity {
 	private static Context context = null;
@@ -87,20 +84,20 @@ public class NativeAppActivity extends StageActivity {
 		NativeAppActivity.context = context;
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.nativeapp_menu, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.nativeappMenuAbout) {
-			AboutDialog aboutDialog = new AboutDialog(this);
-			aboutDialog.show();
-		}
-		return true;
-	}
+	//	@Override
+	//	public boolean onCreateOptionsMenu(Menu menu) {
+	//		getMenuInflater().inflate(R.menu.nativeapp_menu, menu);
+	//		return true;
+	//	}
+	//
+	//	@Override
+	//	public boolean onOptionsItemSelected(MenuItem item) {
+	//		if (item.getItemId() == R.id.nativeappMenuAbout) {
+	//			AboutDialog aboutDialog = new AboutDialog(this);
+	//			aboutDialog.show();
+	//		}
+	//		return true;
+	//	}
 
 	@Override
 	public void onBackPressed() {

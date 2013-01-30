@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ package org.catrobat.catroid.content.bricks;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.livewallpaper.WallpaperCostume;
-import org.catrobat.catroid.ui.ScriptTabActivity;
+import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.dialogs.BrickTextDialog;
 
 import android.content.Context;
@@ -77,7 +77,7 @@ public class ChangeBrightnessByNBrick implements Brick, OnClickListener {
 
 		view = View.inflate(context, R.layout.brick_change_brightness, null);
 
-		TextView textX = (TextView) view.findViewById(R.id.brick_change_brightness_text_view);
+		TextView textX = (TextView) view.findViewById(R.id.brick_change_brightness_prototype_text_view);
 		EditText editX = (EditText) view.findViewById(R.id.brick_change_brightness_edit_text);
 		editX.setText(String.valueOf(changeBrightness));
 
@@ -101,7 +101,7 @@ public class ChangeBrightnessByNBrick implements Brick, OnClickListener {
 
 	@Override
 	public void onClick(View view) {
-		ScriptTabActivity activity = (ScriptTabActivity) view.getContext();
+		ScriptActivity activity = (ScriptActivity) view.getContext();
 
 		BrickTextDialog editDialog = new BrickTextDialog() {
 			@Override
