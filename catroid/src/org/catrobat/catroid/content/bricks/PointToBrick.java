@@ -27,14 +27,18 @@ import java.util.ArrayList;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.content.Sprite;
+import org.catrobat.catroid.ui.ScriptActivity;
+import org.catrobat.catroid.ui.dialogs.NewSpriteDialog;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 
 public class PointToBrick implements Brick {
@@ -42,6 +46,9 @@ public class PointToBrick implements Brick {
 	private static final long serialVersionUID = 1L;
 	private Sprite sprite;
 	private Sprite pointedSprite;
+
+	private Spinner spinner;
+	private ArrayAdapter<String> spinnerAdapter;
 
 	public PointToBrick(Sprite sprite, Sprite pointedSprite) {
 		this.sprite = sprite;
@@ -133,13 +140,13 @@ public class PointToBrick implements Brick {
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View brickView = inflater.inflate(R.layout.brick_point_to, null);
 
-		final Spinner spinner = (Spinner) brickView.findViewById(R.id.brick_point_to_spinner);
+		spinner = (Spinner) brickView.findViewById(R.id.brick_point_to_spinner);
 		spinner.setFocusableInTouchMode(false);
 		spinner.setFocusable(false);
 		spinner.setClickable(true);
 		spinner.setEnabled(true);
 
-		ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item);
+		spinnerAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item);
 		spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinnerAdapter.add(context.getString(R.string.broadcast_nothing_selected));
 
@@ -148,7 +155,8 @@ public class PointToBrick implements Brick {
 		for (Sprite sprite : spriteList) {
 			String spriteName = sprite.getName();
 			String temp = this.sprite.getName();
-			if (!spriteName.equals(temp) && !spriteName.equals("Background")) {
+			if (!spriteName.equals(temp)
+					&& !spriteName.equals(context.getString(R.string.default_project_backgroundname))) {
 				spinnerAdapter.add(sprite.getName());
 			}
 		}
@@ -158,6 +166,7 @@ public class PointToBrick implements Brick {
 
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
 				String itemSelected = parent.getSelectedItem().toString();
 				String nothingSelected = context.getString(R.string.broadcast_nothing_selected);
 				final ArrayList<Sprite> spriteList = (ArrayList<Sprite>) ProjectManager.getInstance()
@@ -185,6 +194,42 @@ public class PointToBrick implements Brick {
 		} else {
 			spinner.setSelection(0);
 		}
+
+		Button newPointToSprite = (Button) brickView.findViewById(R.id.brick_point_to_button_new_message);
+
+		newPointToSprite.setClickable(true);
+		newPointToSprite.setFocusable(true);
+		newPointToSprite.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				ScriptActivity activity = (ScriptActivity) context;
+
+				NewSpriteDialog dialog = new NewSpriteDialog() {
+					@Override
+					protected boolean handleOkButton() {
+						if (super.handleOkButton()) {
+							String newSpriteName = (input.getText().toString()).trim();
+
+							if (newSpriteName.length() == 0
+									|| newSpriteName.equals(context.getString(R.string.broadcast_nothing_selected))) {
+								dismiss();
+								return false;
+							}
+
+							spinnerAdapter.add(newSpriteName);
+							int position = spinnerAdapter.getPosition(newSpriteName);
+							spinner.setSelection(position);
+
+							return true;
+						}
+
+						return false;
+					}
+				};
+				dialog.show(activity.getSupportFragmentManager(), NewSpriteDialog.DIALOG_FRAGMENT_TAG);
+			}
+		});
 
 		return brickView;
 	}

@@ -39,6 +39,8 @@ import org.catrobat.catroid.uitest.util.UiTestUtils;
 
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.Smoke;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.jayway.android.robotium.solo.Solo;
@@ -86,7 +88,26 @@ public class PointToBrickTest extends ActivityInstrumentationTestCase2<ScriptAct
 		solo.waitForText(spinnerNothingSelectedText);
 		solo.clickInList(0);
 		solo.waitForText(spinnerNothingSelectedText);
-		assertEquals("Wrong selection", spinnerNothingSelectedText, solo.getCurrentSpinners().get(0).getSelectedItem());
+		assertEquals("Wrong selection", spinnerNothingSelectedText, solo.getCurrentSpinners().get(1).getSelectedItem());
+
+		Button newPointToSprite = (Button) solo.getCurrentActivity().findViewById(
+				R.id.brick_point_to_button_new_message);
+
+		String newSpriteName = "newSprite";
+		solo.clickOnButton(0);
+		solo.waitForView(EditText.class);
+		solo.enterText(0, newSpriteName);
+		solo.clickOnButton(solo.getString(R.string.ok));
+		assertEquals("Wrong selection", newSpriteName, solo.getCurrentSpinners().get(1).getSelectedItem());
+
+		solo.clickOnView(solo.getCurrentActivity().findViewById(R.id.brick_point_to_spinner));
+		solo.clickInList(0);
+		solo.waitForText(spinnerNothingSelectedText);
+
+		solo.clickOnButton(0);
+		solo.waitForView(EditText.class);
+		solo.clickOnButton(solo.getString(R.string.cancel_button));
+		assertEquals("Wrong selection", spinnerNothingSelectedText, solo.getCurrentSpinners().get(1).getSelectedItem());
 	}
 
 	private void createProject() {
