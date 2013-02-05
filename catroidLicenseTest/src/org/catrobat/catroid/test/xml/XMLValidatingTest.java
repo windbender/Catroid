@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@ import org.xml.sax.SAXException;
 
 public class XMLValidatingTest extends TestCase {
 
-	private static final String XMLSCHEMA_URL = "http://catroidtestserver.ist.tugraz.at/xmlSchema/version-0.3/catrobatXmlSchema.xsd";
+	private static final String XMLSCHEMA_URL = "http://catroid.org/CatrobatLanguage/xmlSchema/version-0.3/catrobatXmlSchema.xsd";
 
 	public void testXmlWithSchemaValidator() throws IOException, SAXException {
 

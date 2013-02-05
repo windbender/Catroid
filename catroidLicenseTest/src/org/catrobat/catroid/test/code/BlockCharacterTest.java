@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -28,9 +28,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
-import org.catrobat.catroid.test.utils.Utils;
-
 import junit.framework.TestCase;
+
+import org.catrobat.catroid.test.utils.Utils;
 
 public class BlockCharacterTest extends TestCase {
 
@@ -38,7 +38,7 @@ public class BlockCharacterTest extends TestCase {
 	private boolean errorFound;
 
 	private static final String[] DIRECTORIES = { "../catroidUiTest", "../catroidTest", "../catroid",
-			"../catroidLicenseTest" };
+			"../catroidSourceTest" };
 
 	private void checkFileForBlockCharacters(File file) throws IOException {
 		BufferedReader reader = new BufferedReader(new FileReader(file));

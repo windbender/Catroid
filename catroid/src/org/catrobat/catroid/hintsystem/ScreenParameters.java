@@ -29,6 +29,11 @@ package org.catrobat.catroid.hintsystem;
 public class ScreenParameters {
 	private static ScreenParameters screenParameters = new ScreenParameters();
 
+	private int textMarginTop = 10;
+	private int textMarginBottom = 5;
+	private int textMarginLeft = 10;
+	private int textMarginRight = 10;
+
 	private ScreenParameters() {
 
 	}
@@ -46,7 +51,7 @@ public class ScreenParameters {
 		return screenParameters;
 	}
 
-	public void setDensity(float density) {
+	public void setDensityParameter(float density) {
 		if (density < 1.0f) {
 			this.density = DENSITY.LDPI;
 		} else if (density == 1.0f) {
@@ -56,6 +61,41 @@ public class ScreenParameters {
 		} else if (density > 1.5f) {
 			this.density = DENSITY.XDPI;
 		}
+	}
+
+	public DENSITY getDensity() {
+		return density;
+	}
+
+	public int setCoordinatesToDensity(int value, boolean width) {
+		if (value > 100) {
+			value = 100;
+		}
+
+		if (width) {
+			value = (int) ((value / 100.0f) * Hint.getInstance().getScreenWidth());
+		} else {
+
+			value = (int) ((value / 100.0f) * Hint.getInstance().getScreenHeight());
+
+		}
+		return value;
+	}
+
+	public int getTextMarginTop() {
+		return textMarginTop;
+	}
+
+	public int getTextMarginBottom() {
+		return textMarginBottom;
+	}
+
+	public int getTextMarginLeft() {
+		return textMarginLeft;
+	}
+
+	public int getTextMarginRight() {
+		return textMarginRight;
 	}
 
 }

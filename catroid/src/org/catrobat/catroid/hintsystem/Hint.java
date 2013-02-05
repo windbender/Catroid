@@ -22,11 +22,15 @@
  */
 package org.catrobat.catroid.hintsystem;
 
+import java.util.ArrayList;
+
 import org.catrobat.catroid.common.Values;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.PixelFormat;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.WindowManager;
 
@@ -41,6 +45,9 @@ public class Hint {
 	private static Context context;
 	private WindowManager windowManager;
 	private HintOverlay hintOverlay;
+	private Resources res;
+
+	static HintController controller = new HintController();
 
 	private Hint() {
 
@@ -53,14 +60,14 @@ public class Hint {
 		return hint;
 	}
 
-	public static void setContext(Context context) {
-		Hint.context = context;
+	public static void setContext(Context con) {
+		context = con;
 	}
 
 	public void overlayHint() {
 		float density = context.getResources().getDisplayMetrics().density;
 		ScreenParameters screenparameters = ScreenParameters.getInstance();
-		screenparameters.setDensity(density);
+		screenparameters.setDensityParameter(density);
 
 		WindowManager.LayoutParams windowParameters = createLayoutParameters();
 		windowManager = ((Activity) context).getWindowManager();
@@ -70,10 +77,11 @@ public class Hint {
 	}
 
 	public void removeHint() {
+		windowManager = ((Activity) context).getWindowManager();
 		windowManager.removeView(hintOverlay);
-		hintOverlay = null;
-		System.gc();
-		System.runFinalization();
+		//		hintOverlay = null;
+		//		System.gc();
+		//		System.runFinalization();
 	}
 
 	public WindowManager.LayoutParams createLayoutParameters() {
@@ -85,5 +93,22 @@ public class Hint {
 				| WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
 		windowParameters.format = PixelFormat.TRANSLUCENT;
 		return windowParameters;
+	}
+
+	public static ArrayList<HintObject> getHints() {
+		ArrayList<HintObject> hints = controller.getHints(context);
+		return hints;
+	}
+
+	public int getScreenHeight() {
+		Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
+		int screenHeight = display.getHeight();
+		return screenHeight;
+	}
+
+	public int getScreenWidth() {
+		Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
+		int screenWidth = display.getWidth();
+		return screenWidth;
 	}
 }

@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@
  */
 package org.catrobat.catroid.content.bricks;
 
+import org.catrobat.catroid.R;
 import org.catrobat.catroid.content.Script;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.StartScript;
@@ -29,7 +30,6 @@ import org.catrobat.catroid.content.StartScript;
 import android.content.Context;
 import android.view.View;
 import android.widget.BaseAdapter;
-import org.catrobat.catroid.R;
 
 public class WhenStartedBrick extends ScriptBrick {
 	private static final long serialVersionUID = 1L;
@@ -65,7 +65,7 @@ public class WhenStartedBrick extends ScriptBrick {
 	@Override
 	public View getView(Context context, int brickId, final BaseAdapter adapter) {
 		if (view == null) {
-			view = View.inflate(context, R.layout.brick_started, null);
+			view = View.inflate(context, R.layout.brick_when_started, null);
 		}
 
 		return view;
@@ -73,7 +73,7 @@ public class WhenStartedBrick extends ScriptBrick {
 
 	@Override
 	public View getPrototypeView(Context context) {
-		return View.inflate(context, R.layout.brick_started, null);
+		return View.inflate(context, R.layout.brick_when_started, null);
 	}
 
 	@Override

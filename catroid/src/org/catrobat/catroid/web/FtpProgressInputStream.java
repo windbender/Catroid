@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ import org.catrobat.catroid.common.Constants;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 
-public class FtpProgressInputStream extends InputStream {
+class FtpProgressInputStream extends InputStream {
 
 	private static final Integer DATA_STREAM_UPDATE_SIZE = 1024 * 20; //20 KB
 	private InputStream inputStream;

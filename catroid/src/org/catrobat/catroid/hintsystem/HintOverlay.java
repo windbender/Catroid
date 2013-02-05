@@ -23,10 +23,12 @@
 package org.catrobat.catroid.hintsystem;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
+import org.catrobat.catroid.R;
+
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,8 +36,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -46,11 +47,9 @@ import android.view.SurfaceView;
  */
 public class HintOverlay extends SurfaceView implements SurfaceHolder.Callback {
 	private Context context;
-	List<Object> surfaceObjects;
 	private Paint paint = new Paint();
 	int alpha = 255;
 	private Resources res;
-	private Bitmap bitmap;
 
 	public HintOverlay(Context context) {
 		super(context);
@@ -60,14 +59,11 @@ public class HintOverlay extends SurfaceView implements SurfaceHolder.Callback {
 		this.setZOrderOnTop(true); //necessary 
 		getHolder().setFormat(PixelFormat.TRANSPARENT);
 		getHolder().addCallback(this);
-		surfaceObjects = Collections.synchronizedList(new ArrayList<Object>());
-		paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-
-		res = context.getResources();
-		BitmapFactory.Options opts = new BitmapFactory.Options();
-		opts.inScaled = false;
-		//bitmap = BitmapFactory.decodeResource(res, R.drawable., opts);
-
+		//wenn Hint aktiviert funktioniert alles nur im Portrait mode
+		Activity currentActivity = (Activity) context;
+		currentActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+		paint.setTextSize(25);
+		paint.setARGB(255, 0, 238, 0);
 	}
 
 	@Override
@@ -79,7 +75,38 @@ public class HintOverlay extends SurfaceView implements SurfaceHolder.Callback {
 
 	@Override
 	public void onDraw(Canvas canvas) {
-		canvas.drawBitmap(bitmap, 100, 100, paint);
+		ArrayList<HintObject> allHints = Hint.getHints();
+
+		for (int i = 0; i < allHints.size(); i++) {
+			HintObject hint = allHints.get(i);
+			Bitmap bitmap = createBitmap();
+			canvas.drawBitmap(bitmap, hint.getXCoordinate(), hint.getYCoordinate(), paint);
+			drawMultilineText(hint.getText(), hint.getTextXCoordinate(), hint.getTextYCoordinate(), paint, canvas);
+		}
+
+	}
+
+	void drawMultilineText(String str, int x, int y, Paint paint, Canvas canvas) {
+		int lineHeight = 0;
+		int yoffset = 0;
+		String[] lines = str.split("\n");
+		Rect bounds = new Rect();
+
+		paint.getTextBounds(str, 0, 2, bounds);
+		lineHeight = (int) (bounds.height() * 1.2);
+
+		for (int i = 0; i < lines.length; ++i) {
+			canvas.drawText(lines[i], x, y + yoffset, paint);
+			yoffset = yoffset + lineHeight;
+		}
+	}
+
+	public Bitmap createBitmap() {
+		res = context.getResources();
+		BitmapFactory.Options opts = new BitmapFactory.Options();
+		opts.inScaled = false;
+		Bitmap bitmap = BitmapFactory.decodeResource(res, R.drawable.arrow, opts);
+		return bitmap;
 	}
 
 	@Override
