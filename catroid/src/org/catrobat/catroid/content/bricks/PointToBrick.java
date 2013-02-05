@@ -219,7 +219,7 @@ public class PointToBrick implements Brick {
 
 							spinnerAdapter.add(newSpriteName);
 							int position = spinnerAdapter.getPosition(newSpriteName);
-							spinner.setSelection(position);
+							spinner.setSelection(position, true);
 
 							return true;
 						}
