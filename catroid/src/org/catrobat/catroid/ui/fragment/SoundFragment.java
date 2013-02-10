@@ -68,10 +68,14 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
@@ -89,6 +93,8 @@ public class SoundFragment extends ScriptActivityFragment implements OnSoundEdit
 	private static String deleteActionModeTitle;
 	private static String singleItemAppendixDeleteActionMode;
 	private static String multipleItemAppendixDeleteActionMode;
+
+	private TextView textViewActionModeTitle = null;
 
 	private static int currentSoundPosition = Constants.NO_POSITION;
 
@@ -277,7 +283,7 @@ public class SoundFragment extends ScriptActivityFragment implements OnSoundEdit
 		int numberOfSelectedItems = adapter.getAmountOfCheckedItems();
 
 		if (numberOfSelectedItems == 0) {
-			actionMode.setTitle(deleteActionModeTitle);
+			setActionModeTitle(deleteActionModeTitle);
 		} else {
 			String appendix = multipleItemAppendixDeleteActionMode;
 
@@ -295,7 +301,7 @@ public class SoundFragment extends ScriptActivityFragment implements OnSoundEdit
 					new ForegroundColorSpan(getResources().getColor(R.color.actionbar_title_color)), titleLength + 1,
 					titleLength + (1 + numberOfItems.length()), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-			actionMode.setTitle(completeSpannedTitle);
+			setActionModeTitle(completeSpannedTitle);
 		}
 	}
 
@@ -378,8 +384,9 @@ public class SoundFragment extends ScriptActivityFragment implements OnSoundEdit
 	}
 
 	public void stopSoundAndUpdateList() {
-		if(!mediaPlayer.isPlaying())
+		if (!mediaPlayer.isPlaying()) {
 			return;
+		}
 		stopSound();
 		adapter.notifyDataSetChanged();
 	}
@@ -612,6 +619,24 @@ public class SoundFragment extends ScriptActivityFragment implements OnSoundEdit
 			singleItemAppendixDeleteActionMode = getString(R.string.category_sound);
 			multipleItemAppendixDeleteActionMode = getString(R.string.sounds);
 
+			ScriptActivity activity = (ScriptActivity) getActivity();
+
+			View customView = LayoutInflater.from(activity).inflate(R.layout.activity_script_action_mode, null);
+			mode.setCustomView(customView);
+
+			textViewActionModeTitle = (TextView) activity.findViewById(R.id.action_mode_title);
+			Button buttonSelectAll = (Button) activity.findViewById(R.id.action_mode_select_all);
+
+			setActionModeTitle(deleteActionModeTitle);
+
+			buttonSelectAll.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Toast.makeText(getActivity(), "SELECT ALL", Toast.LENGTH_LONG).show();
+				}
+			});
+
 			return true;
 		}
 
@@ -637,6 +662,7 @@ public class SoundFragment extends ScriptActivityFragment implements OnSoundEdit
 			setSelectMode(Constants.SELECT_NONE);
 			adapter.clearCheckedItems();
 
+			textViewActionModeTitle = null;
 			actionMode = null;
 			setActionModeActive(false);
 
@@ -689,4 +715,15 @@ public class SoundFragment extends ScriptActivityFragment implements OnSoundEdit
 		Utils.setBottomBarActivated(getActivity(), isActive);
 	}
 
+	private void setActionModeTitle(String actionModeTitle) {
+		if (textViewActionModeTitle != null) {
+			textViewActionModeTitle.setText(actionModeTitle);
+		}
+	}
+
+	private void setActionModeTitle(Spannable actionModeTitle) {
+		if (textViewActionModeTitle != null) {
+			textViewActionModeTitle.setText(actionModeTitle);
+		}
+	}
 }
