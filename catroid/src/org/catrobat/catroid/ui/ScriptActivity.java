@@ -43,10 +43,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
@@ -80,6 +84,9 @@ public class ScriptActivity extends SherlockFragmentActivity implements ErrorLis
 
 	private ScriptActivityFragment currentFragment = null;
 
+	private LinearLayout bottomBarLayout = null;
+	private Button selectAllButton = null;
+
 	private static int currentFragmentPosition;
 
 	@Override
@@ -88,6 +95,17 @@ public class ScriptActivity extends SherlockFragmentActivity implements ErrorLis
 
 		setContentView(R.layout.activity_script);
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+		bottomBarLayout = (LinearLayout) findViewById(R.id.bottom_bar);
+		selectAllButton = (Button) findViewById(R.id.script_select_all);
+
+		selectAllButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(ScriptActivity.this, "SELECT ALL", Toast.LENGTH_LONG).show();
+			}
+		});
 
 		currentFragmentPosition = FRAGMENT_SCRIPTS;
 
@@ -361,5 +379,19 @@ public class ScriptActivity extends SherlockFragmentActivity implements ErrorLis
 				break;
 		}
 		return fragment;
+	}
+
+	public void hideBottomBarAndShowSelectAllButton() {
+		if (bottomBarLayout != null && selectAllButton != null) {
+			bottomBarLayout.setVisibility(View.GONE);
+			selectAllButton.setVisibility(View.VISIBLE);
+		}
+	}
+
+	public void showBottomBarAndHideSelectAllButton() {
+		if (bottomBarLayout != null && selectAllButton != null) {
+			bottomBarLayout.setVisibility(View.VISIBLE);
+			selectAllButton.setVisibility(View.GONE);
+		}
 	}
 }

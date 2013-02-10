@@ -572,6 +572,9 @@ public class SoundFragment extends ScriptActivityFragment implements OnSoundEdit
 
 			setActionModeActive(true);
 
+			ScriptActivity activity = (ScriptActivity) getActivity();
+			activity.hideBottomBarAndShowSelectAllButton();
+
 			return true;
 		}
 
@@ -595,6 +598,9 @@ public class SoundFragment extends ScriptActivityFragment implements OnSoundEdit
 
 			actionMode = null;
 			setActionModeActive(false);
+
+			ScriptActivity activity = (ScriptActivity) getActivity();
+			activity.showBottomBarAndHideSelectAllButton();
 
 			registerForContextMenu(listView);
 			setBottomBarActivated(true);

@@ -33,10 +33,27 @@
         android:id="@+id/bottom_bar"
         layout="@layout/bottom_bar" />
 
+    <Button
+        android:id="@+id/script_select_all"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/actionbar_height"
+        android:background="@color/actionbar_title_color"
+        android:clickable="true"
+        android:onClick="handleAddButton"
+        android:orientation="horizontal"
+        android:layout_above="@id/bottom_bar"
+        android:layout_alignParentBottom="true"
+        android:text="Select All"
+        android:textSize="@dimen/text_size_xxlarge"
+        android:textColor="@color/light_black"
+        android:textStyle="bold"
+        android:alpha="0.5"
+        android:visibility="gone" />
+
     <FrameLayout
         android:id="@+id/script_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/bottom_bar" />
+        android:layout_above="@id/script_select_all" />
 
 </RelativeLayout>
