@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -99,7 +99,7 @@ public class Project implements Serializable {
 
 		applicationName = context.getString(R.string.app_name);
 		Sprite background = new Sprite(context.getString(R.string.background));
-		background.costume.zPosition = Integer.MIN_VALUE;
+		background.look.zPosition = Integer.MIN_VALUE;
 		addSprite(background);
 	}
 

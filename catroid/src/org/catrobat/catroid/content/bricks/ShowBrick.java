@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ package org.catrobat.catroid.content.bricks;
 
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.livewallpaper.R;
-import org.catrobat.catroid.livewallpaper.WallpaperCostume;
+import org.catrobat.catroid.livewallpaper.WallpaperLook;
 
 import android.content.Context;
 import android.view.View;
@@ -51,7 +51,7 @@ public class ShowBrick implements Brick {
 
 	@Override
 	public void execute() {
-		sprite.costume.show = true;
+		sprite.look.show = true;
 	}
 
 	@Override
@@ -79,11 +79,11 @@ public class ShowBrick implements Brick {
 
 	@Override
 	public void executeLiveWallpaper() {
-		WallpaperCostume wallpaperCostume = sprite.getWallpaperCostume();
-		if (wallpaperCostume == null) {
-			wallpaperCostume = new WallpaperCostume(sprite, null);
+		WallpaperLook wallpaperLook = sprite.getWallpaperLook();
+		if (wallpaperLook == null) {
+			wallpaperLook = new WallpaperLook(sprite, null);
 		}
 
-		wallpaperCostume.setCostumeHidden(false);
+		wallpaperLook.setLookHidden(false);
 	}
 }

@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -41,24 +41,24 @@ public class UtilCamera {
 	private UtilCamera() {
 	}
 
-	public static Uri getDefaultCostumeFromCameraUri(String defCostumeName) {
-		File pictureFile = new File(Constants.TMP_PATH, defCostumeName + ".jpg");
+	public static Uri getDefaultLookFromCameraUri(String defLookName) {
+		File pictureFile = new File(Constants.TMP_PATH, defLookName + ".jpg");
 		return Uri.fromFile(pictureFile);
 	}
 
-	public static Uri rotatePictureIfNecessary(Uri costumeFromCameraUri, String defCostumeName) {
+	public static Uri rotatePictureIfNecessary(Uri lookFromCameraUri, String defLookName) {
 		Uri rotatedPictureUri;
-		int rotate = getPhotoRotationDegree(costumeFromCameraUri, costumeFromCameraUri.getPath());
+		int rotate = getPhotoRotationDegree(lookFromCameraUri, lookFromCameraUri.getPath());
 
 		if (rotate != 0) {
 			Project project = ProjectManager.getInstance().getCurrentProject();
-			File fullSizeImage = new File(costumeFromCameraUri.getPath());
+			File fullSizeImage = new File(lookFromCameraUri.getPath());
 
 			// Height and Width switched for proper scaling for portrait format photos from camera
 			Bitmap fullSizeBitmap = ImageEditing.getScaledBitmapFromPath(fullSizeImage.getAbsolutePath(),
 					project.virtualScreenHeight, project.virtualScreenWidth, true);
 			Bitmap rotatedBitmap = ImageEditing.rotateBitmap(fullSizeBitmap, rotate);
-			File downScaledCameraPicture = new File(Constants.TMP_PATH, defCostumeName + ".jpg");
+			File downScaledCameraPicture = new File(Constants.TMP_PATH, defLookName + ".jpg");
 			rotatedPictureUri = Uri.fromFile(downScaledCameraPicture);
 			try {
 				StorageHandler.saveBitmapToImageFile(downScaledCameraPicture, rotatedBitmap);
@@ -69,7 +69,7 @@ public class UtilCamera {
 			return rotatedPictureUri;
 		}
 
-		return costumeFromCameraUri;
+		return lookFromCameraUri;
 	}
 
 	private static int getPhotoRotationDegree(Uri imageUri, String imagePath) {

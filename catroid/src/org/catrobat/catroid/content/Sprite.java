@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -32,25 +32,25 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import org.catrobat.catroid.ProjectManager;
-import org.catrobat.catroid.common.CostumeData;
 import org.catrobat.catroid.common.FileChecksumContainer;
+import org.catrobat.catroid.common.LookData;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.bricks.Brick;
-import org.catrobat.catroid.livewallpaper.WallpaperCostume;
+import org.catrobat.catroid.livewallpaper.WallpaperLook;
 
 public class Sprite implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private String name;
 	private List<Script> scriptList;
-	private ArrayList<CostumeData> costumeList;
+	private ArrayList<LookData> lookList;
 	private ArrayList<SoundInfo> soundList;
-	public transient Costume costume;
+	public transient Look look;
 
 	public transient boolean isPaused;
 	public transient boolean isFinished;
 
-	private WallpaperCostume wallpaperCostume;
+	private WallpaperLook wallpaperLook;
 
 	private transient Map<Thread, Boolean> activeThreads;
 	private transient Map<Script, List<Thread>> activeScripts;
@@ -60,17 +60,22 @@ public class Sprite implements Serializable {
 	}
 
 	private Object readResolve() {
-		//filling FileChecksumContainer:
-		if (soundList != null && costumeList != null && ProjectManager.getInstance().getCurrentProject() != null) {
-			FileChecksumContainer container = ProjectManager.getInstance().getFileChecksumContainer();
+		// filling FileChecksumContainer:
+		if (soundList != null && lookList != null
+				&& ProjectManager.getInstance().getCurrentProject() != null) {
+			FileChecksumContainer container = ProjectManager.getInstance()
+					.getFileChecksumContainer();
 			if (container == null) {
-				ProjectManager.getInstance().setFileChecksumContainer(new FileChecksumContainer());
+				ProjectManager.getInstance().setFileChecksumContainer(
+						new FileChecksumContainer());
 			}
 			for (SoundInfo soundInfo : soundList) {
-				container.addChecksum(soundInfo.getChecksum(), soundInfo.getAbsolutePath());
+				container.addChecksum(soundInfo.getChecksum(),
+						soundInfo.getAbsolutePath());
 			}
-			for (CostumeData costumeData : costumeList) {
-				container.addChecksum(costumeData.getChecksum(), costumeData.getAbsolutePath());
+			for (LookData lookData : lookList) {
+				container.addChecksum(lookData.getChecksum(),
+						lookData.getAbsolutePath());
 			}
 		}
 		init();
@@ -78,14 +83,14 @@ public class Sprite implements Serializable {
 	}
 
 	private void init() {
-		costume = new Costume(this);
+		look = new Look(this);
 		isPaused = false;
 		isFinished = false;
 		if (soundList == null) {
 			soundList = new ArrayList<SoundInfo>();
 		}
-		if (costumeList == null) {
-			costumeList = new ArrayList<CostumeData>();
+		if (lookList == null) {
+			lookList = new ArrayList<LookData>();
 		}
 		activeThreads = new HashMap<Thread, Boolean>();
 		activeScripts = new HashMap<Script, List<Thread>>();
@@ -94,7 +99,7 @@ public class Sprite implements Serializable {
 	public Sprite(String name) {
 		this.name = name;
 		scriptList = new ArrayList<Script>();
-		costumeList = new ArrayList<CostumeData>();
+		lookList = new ArrayList<LookData>();
 		soundList = new ArrayList<SoundInfo>();
 		init();
 	}
@@ -149,7 +154,8 @@ public class Sprite implements Serializable {
 				activeScripts.get(script).add(t);
 				activeThreads.put(t, true);
 			} else {
-				ListIterator<Thread> currentScriptThreads = activeScripts.get(script).listIterator();
+				ListIterator<Thread> currentScriptThreads = activeScripts.get(
+						script).listIterator();
 				while (currentScriptThreads.hasNext()) {
 					Thread currentThread = currentScriptThreads.next();
 					activeThreads.put(currentThread, false);
@@ -162,7 +168,8 @@ public class Sprite implements Serializable {
 		t.start();
 	}
 
-	public synchronized void startScriptBroadcast(Script s, final CountDownLatch simultaneousStart) {
+	public synchronized void startScriptBroadcast(Script s,
+			final CountDownLatch simultaneousStart) {
 		final Script script = s;
 		Thread t = new Thread(new Runnable() {
 			@Override
@@ -180,7 +187,8 @@ public class Sprite implements Serializable {
 				activeScripts.get(script).add(t);
 				activeThreads.put(t, true);
 			} else {
-				ListIterator<Thread> currentScriptThreads = activeScripts.get(script).listIterator();
+				ListIterator<Thread> currentScriptThreads = activeScripts.get(
+						script).listIterator();
 				while (currentScriptThreads.hasNext()) {
 					Thread currentThread = currentScriptThreads.next();
 					activeThreads.put(currentThread, false);
@@ -193,8 +201,8 @@ public class Sprite implements Serializable {
 		t.start();
 	}
 
-	public synchronized void startScriptBroadcastWait(Script s, final CountDownLatch simultaneousStart,
-			final CountDownLatch wait) {
+	public synchronized void startScriptBroadcastWait(Script s,
+			final CountDownLatch simultaneousStart, final CountDownLatch wait) {
 		final Script script = s;
 		Thread t = new Thread(new Runnable() {
 			@Override
@@ -214,7 +222,8 @@ public class Sprite implements Serializable {
 				activeScripts.get(script).add(t);
 				activeThreads.put(t, true);
 			} else {
-				ListIterator<Thread> currentScriptThreads = activeScripts.get(script).listIterator();
+				ListIterator<Thread> currentScriptThreads = activeScripts.get(
+						script).listIterator();
 				while (currentScriptThreads.hasNext()) {
 					Thread currentThread = currentScriptThreads.next();
 					activeThreads.put(currentThread, false);
@@ -300,12 +309,20 @@ public class Sprite implements Serializable {
 		return scriptList.remove(script);
 	}
 
-	public ArrayList<CostumeData> getCostumeDataList() {
-		return costumeList;
+	public ArrayList<LookData> getLookDataList() {
+		return lookList;
+	}
+
+	public void setLookDataList(ArrayList<LookData> list) {
+		lookList = list;
 	}
 
 	public ArrayList<SoundInfo> getSoundList() {
 		return soundList;
+	}
+
+	public void setSoundList(ArrayList<SoundInfo> list) {
+		soundList = list;
 	}
 
 	public int getRequiredResources() {
@@ -337,11 +354,11 @@ public class Sprite implements Serializable {
 		}
 	}
 
-	public WallpaperCostume getWallpaperCostume() {
-		return wallpaperCostume;
+	public WallpaperLook getWallpaperLook() {
+		return wallpaperLook;
 	}
 
-	public void setWallpaperCostume(WallpaperCostume wallpaperCostume) {
-		this.wallpaperCostume = wallpaperCostume;
+	public void setWallpaperLook(WallpaperLook wallpaperLook) {
+		this.wallpaperLook = wallpaperLook;
 	}
 }

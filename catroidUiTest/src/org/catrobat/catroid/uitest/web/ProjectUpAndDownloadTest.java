@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -33,6 +33,7 @@ import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.livewallpaper.R;
 import org.catrobat.catroid.ui.MainMenuActivity;
 import org.catrobat.catroid.ui.ProgramMenuActivity;
+import org.catrobat.catroid.uitest.util.Reflection;
 import org.catrobat.catroid.uitest.util.UiTestUtils;
 import org.catrobat.catroid.utils.UtilFile;
 import org.catrobat.catroid.web.ServerCalls;
@@ -312,7 +313,7 @@ public class ProjectUpAndDownloadTest extends ActivityInstrumentationTestCase2<M
 		try {
 			boolean success = solo.waitForText(solo.getString(R.string.success_project_upload));
 			assertTrue("Upload failed. Internet connection?", success);
-			String resultString = (String) UiTestUtils.getPrivateField("resultString", ServerCalls.getInstance());
+			String resultString = (String) Reflection.getPrivateField(ServerCalls.getInstance(), "resultString");
 			JSONObject jsonObject;
 			jsonObject = new JSONObject(resultString);
 			serverProjectId = jsonObject.optInt("projectId");

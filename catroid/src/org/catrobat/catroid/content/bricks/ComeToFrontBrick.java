@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ import java.util.List;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.livewallpaper.R;
-import org.catrobat.catroid.livewallpaper.WallpaperCostume;
+import org.catrobat.catroid.livewallpaper.WallpaperLook;
 
 import android.content.Context;
 import android.view.View;
@@ -54,20 +54,21 @@ public class ComeToFrontBrick implements Brick {
 
 	@Override
 	public void execute() {
-		List<Sprite> spriteList = ProjectManager.getInstance().getCurrentProject().getSpriteList();
+		List<Sprite> spriteList = ProjectManager.getInstance()
+				.getCurrentProject().getSpriteList();
 		int highestPosition = 0;
 		for (Sprite sprite : spriteList) {
-			if (highestPosition < sprite.costume.zPosition) {
-				highestPosition = sprite.costume.zPosition;
+			if (highestPosition < sprite.look.zPosition) {
+				highestPosition = sprite.look.zPosition;
 				if (sprite == this.sprite) {
 					highestPosition--;
 				}
 			}
 		}
 		if (highestPosition > highestPosition + 1) {
-			sprite.costume.zPosition = Integer.MAX_VALUE;
+			sprite.look.zPosition = Integer.MAX_VALUE;
 		} else {
-			sprite.costume.zPosition = highestPosition + 1;
+			sprite.look.zPosition = highestPosition + 1;
 		}
 	}
 
@@ -80,7 +81,7 @@ public class ComeToFrontBrick implements Brick {
 	public View getView(Context context, int brickId, BaseAdapter adapter) {
 
 		if (view == null) {
-			view = View.inflate(context, R.layout.brick_come_to_front, null);
+			view = View.inflate(context, R.layout.brick_go_to_front, null);
 		}
 
 		return view;
@@ -93,30 +94,31 @@ public class ComeToFrontBrick implements Brick {
 
 	@Override
 	public View getPrototypeView(Context context) {
-		return View.inflate(context, R.layout.brick_come_to_front, null);
+		return View.inflate(context, R.layout.brick_go_to_front, null);
 	}
 
 	@Override
 	public void executeLiveWallpaper() {
-		List<Sprite> sprites = ProjectManager.getInstance().getCurrentProject().getSpriteList();
-		WallpaperCostume wallpaperCostume = sprite.getWallpaperCostume();
+		List<Sprite> sprites = ProjectManager.getInstance().getCurrentProject()
+				.getSpriteList();
+		WallpaperLook wallpaperLook = sprite.getWallpaperLook();
 
-		if (wallpaperCostume == null) {
-			wallpaperCostume = new WallpaperCostume(sprite, null);
+		if (wallpaperLook == null) {
+			wallpaperLook = new WallpaperLook(sprite, null);
 		}
 
-		int position = wallpaperCostume.getzPosition();
+		int position = wallpaperLook.getzPosition();
 
 		for (int index = position + 1; index < sprites.size(); index++) {
 			for (Sprite sprite : sprites) {
-				wallpaperCostume = sprite.getWallpaperCostume();
+				wallpaperLook = sprite.getWallpaperLook();
 
-				if (wallpaperCostume == null) {
-					wallpaperCostume = new WallpaperCostume(sprite, null);
+				if (wallpaperLook == null) {
+					wallpaperLook = new WallpaperLook(sprite, null);
 				}
 
-				if (wallpaperCostume.getzPosition() == index) {
-					wallpaperCostume.setzPosition(index - 1);
+				if (wallpaperLook.getzPosition() == index) {
+					wallpaperLook.setzPosition(index - 1);
 					break;
 				}
 
@@ -124,7 +126,7 @@ public class ComeToFrontBrick implements Brick {
 
 		}
 
-		sprite.getWallpaperCostume().setzPosition(sprites.size() - 1);
+		sprite.getWallpaperLook().setzPosition(sprites.size() - 1);
 
 	}
 }

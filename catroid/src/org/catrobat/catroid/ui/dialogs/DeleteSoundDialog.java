@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.livewallpaper.R;
-import org.catrobat.catroid.ui.ScriptTabActivity;
+import org.catrobat.catroid.ui.ScriptActivity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -55,20 +55,27 @@ public class DeleteSoundDialog extends DialogFragment {
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		final int selectedPosition = getArguments().getInt(BUNDLE_ARGUMENTS_SELECTED_POSITION);
+		final int selectedPosition = getArguments().getInt(
+				BUNDLE_ARGUMENTS_SELECTED_POSITION);
 
-		Dialog dialog = new AlertDialog.Builder(getActivity()).setTitle(R.string.delete_sound_dialog)
-				.setNegativeButton(R.string.cancel_button, new OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dismiss();
-					}
-				}).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						handleDeleteSound(selectedPosition);
-					}
-				}).create();
+		Dialog dialog = new AlertDialog.Builder(getActivity())
+				.setTitle(R.string.delete_sound_dialog)
+				.setNegativeButton(R.string.cancel_button,
+						new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								dismiss();
+							}
+						})
+				.setPositiveButton(R.string.ok,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								handleDeleteSound(selectedPosition);
+							}
+						}).create();
 
 		dialog.setCanceledOnTouchOutside(true);
 
@@ -76,10 +83,13 @@ public class DeleteSoundDialog extends DialogFragment {
 	}
 
 	private void handleDeleteSound(int position) {
-		ArrayList<SoundInfo> soundInfoList = ProjectManager.getInstance().getCurrentSprite().getSoundList();
-		StorageHandler.getInstance().deleteFile(soundInfoList.get(position).getAbsolutePath());
+		ArrayList<SoundInfo> soundInfoList = ProjectManager.getInstance()
+				.getCurrentSprite().getSoundList();
+		StorageHandler.getInstance().deleteFile(
+				soundInfoList.get(position).getAbsolutePath());
 		soundInfoList.remove(position);
 
-		getActivity().sendBroadcast(new Intent(ScriptTabActivity.ACTION_SOUND_DELETED));
+		getActivity().sendBroadcast(
+				new Intent(ScriptActivity.ACTION_SOUND_DELETED));
 	}
 }

@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -27,24 +27,21 @@ import java.util.ArrayList;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.CostumeData;
+import org.catrobat.catroid.common.LookData;
 import org.catrobat.catroid.common.Values;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Script;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.StartScript;
 import org.catrobat.catroid.content.bricks.Brick;
-import org.catrobat.catroid.content.bricks.SetCostumeBrick;
+import org.catrobat.catroid.content.bricks.SetLookBrick;
 import org.catrobat.catroid.content.bricks.SetSizeToBrick;
 import org.catrobat.catroid.livewallpaper.R;
 import org.catrobat.catroid.stage.StageActivity;
 import org.catrobat.catroid.stage.StageListener;
-import org.catrobat.catroid.ui.MainMenuActivity;
-import org.catrobat.catroid.ui.ProgramMenuActivity;
-import org.catrobat.catroid.ui.ProjectActivity;
-import org.catrobat.catroid.ui.ScriptTabActivity;
+import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.adapter.BrickAdapter;
-import org.catrobat.catroid.ui.fragment.ScriptFragment;
+import org.catrobat.catroid.uitest.util.Reflection;
 import org.catrobat.catroid.uitest.util.UiTestUtils;
 import org.catrobat.catroid.utils.UtilFile;
 
@@ -55,10 +52,11 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.Smoke;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.widget.ListView;
 
 import com.jayway.android.robotium.solo.Solo;
 
-public class SetSizeToBrickTest extends ActivityInstrumentationTestCase2<ScriptTabActivity> {
+public class SetSizeToBrickTest extends ActivityInstrumentationTestCase2<ScriptActivity> {
 	private static final int SCREEN_WIDTH = 480;
 	private static final int SCREEN_HEIGHT = 800;
 
@@ -68,11 +66,11 @@ public class SetSizeToBrickTest extends ActivityInstrumentationTestCase2<ScriptT
 	private Solo solo;
 	private Project project;
 	private SetSizeToBrick setSizeToBrick;
-	private SetCostumeBrick setCostumeBrick;
+	private SetLookBrick setLookBrick;
 	private int imageRawId = org.catrobat.catroid.uitest.R.raw.red_quad;
 
 	public SetSizeToBrickTest() {
-		super(ScriptTabActivity.class);
+		super(ScriptActivity.class);
 	}
 
 	@Override
@@ -96,28 +94,28 @@ public class SetSizeToBrickTest extends ActivityInstrumentationTestCase2<ScriptT
 
 	@Smoke
 	public void testSetSizeToBrick() {
-		ScriptTabActivity activity = (ScriptTabActivity) solo.getCurrentActivity();
-		ScriptFragment fragment = (ScriptFragment) activity.getTabFragment(ScriptTabActivity.INDEX_TAB_SCRIPTS);
-		BrickAdapter adapter = fragment.getAdapter();
+		ListView dragDropListView = UiTestUtils.getScriptListView(solo);
+		BrickAdapter adapter = (BrickAdapter) dragDropListView.getAdapter();
 
 		int childrenCount = adapter.getChildCountFromLastGroup();
 		int groupCount = adapter.getScriptCount();
 
-		assertEquals("Incorrect number of bricks.", 3 + 1, solo.getCurrentListViews().get(0).getChildCount()); // don't forget the footer
+		assertEquals("Incorrect number of bricks.", 3 + 1, dragDropListView.getChildCount()); // don't forget the footer
 		assertEquals("Incorrect number of bricks.", 2, childrenCount);
 
 		ArrayList<Brick> projectBrickList = project.getSpriteList().get(0).getScript(0).getBrickList();
 		assertEquals("Incorrect number of bricks.", 2, projectBrickList.size());
 
-		assertEquals("Wrong Brick instance.", projectBrickList.get(0), adapter.getChild(groupCount - 1, 0));
+		assertEquals("Wrong Brick instance.", projectBrickList.get(0).getClass().getSimpleName(),
+				adapter.getChild(groupCount - 1, 0).getClass().getSimpleName());
 		assertNotNull("TextView does not exist", solo.getText(solo.getString(R.string.brick_set_size_to)));
 
 		double newSize = 200;
 
 		UiTestUtils.clickEnterClose(solo, 0, newSize + "");
 
-		double size = (Double) UiTestUtils.getPrivateField("size", setSizeToBrick);
-		assertEquals("Wrong text in field", newSize, size);
+		double currentSize = (Double) Reflection.getPrivateField(setSizeToBrick, "size");
+		assertEquals("Wrong text in field", newSize, currentSize);
 		assertEquals("Text not updated", newSize, Double.parseDouble(solo.getEditText(0).getText().toString()));
 
 		// -------------------------------------------------------------------------------------------------------------
@@ -127,7 +125,7 @@ public class SetSizeToBrickTest extends ActivityInstrumentationTestCase2<ScriptT
 		Values.SCREEN_WIDTH = displayMetrics.widthPixels;
 		Values.SCREEN_HEIGHT = displayMetrics.heightPixels;
 
-		UiTestUtils.clickOnActionBar(solo, R.id.menu_start);
+		UiTestUtils.clickOnBottomBar(solo, R.id.button_play);
 
 		solo.assertCurrentActivity("Not in stage", StageActivity.class);
 
@@ -145,7 +143,7 @@ public class SetSizeToBrickTest extends ActivityInstrumentationTestCase2<ScriptT
 
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
-		Bitmap blackQuad = BitmapFactory.decodeFile(setCostumeBrick.getImagePath());
+		Bitmap blackQuad = BitmapFactory.decodeFile(setLookBrick.getImagePath());
 		int blackQuadHeight = blackQuad.getHeight();
 		int blackQuadWidth = blackQuad.getWidth();
 		Log.v(TAG, "black_quad.png x: " + blackQuadHeight + " y: " + blackQuadWidth);
@@ -164,24 +162,6 @@ public class SetSizeToBrickTest extends ActivityInstrumentationTestCase2<ScriptT
 		assertEquals("Wrong stage background color!", Color.WHITE, colorOutsideSizedQuad);
 	}
 
-	public void testResizeInputField() {
-		UiTestUtils.goToHomeActivity(getActivity());
-		solo.waitForActivity(MainMenuActivity.class.getSimpleName());
-		createTestProject();
-		solo.sleep(500);
-		solo.clickOnText(solo.getString(R.string.main_menu_continue));
-		solo.waitForActivity(ProjectActivity.class.getSimpleName());
-		solo.clickOnText(solo.getCurrentListViews().get(0).getItemAtPosition(0).toString());
-		solo.waitForActivity(ProgramMenuActivity.class.getSimpleName());
-		solo.clickOnText(solo.getString(R.string.scripts));
-		solo.waitForActivity(ScriptTabActivity.class.getSimpleName());
-
-		UiTestUtils.testDoubleEditText(solo, 0, 1.0, 60, true);
-		UiTestUtils.testDoubleEditText(solo, 0, 100.55, 60, true);
-		UiTestUtils.testDoubleEditText(solo, 0, -0.1, 60, true);
-		UiTestUtils.testDoubleEditText(solo, 0, 1000.55, 60, false);
-	}
-
 	private void createProject() {
 		Values.SCREEN_HEIGHT = SCREEN_HEIGHT;
 		Values.SCREEN_WIDTH = SCREEN_WIDTH;
@@ -190,10 +170,10 @@ public class SetSizeToBrickTest extends ActivityInstrumentationTestCase2<ScriptT
 		Sprite sprite = new Sprite("cat");
 		Script script = new StartScript(sprite);
 		setSizeToBrick = new SetSizeToBrick(sprite, 100);
-		setCostumeBrick = new SetCostumeBrick(sprite);
+		setLookBrick = new SetLookBrick(sprite);
 
 		script.addBrick(setSizeToBrick);
-		script.addBrick(setCostumeBrick);
+		script.addBrick(setLookBrick);
 
 		sprite.addScript(script);
 		project.addSprite(sprite);
@@ -206,28 +186,14 @@ public class SetSizeToBrickTest extends ActivityInstrumentationTestCase2<ScriptT
 		File image = UiTestUtils.saveFileToProject(projectName, "black_quad.png", imageRawId, getInstrumentation()
 				.getContext(), UiTestUtils.FileTypes.IMAGE);
 		Log.v(TAG, image.getName());
-		CostumeData costumeData = new CostumeData();
-		costumeData.setCostumeFilename(image.getName());
-		costumeData.setCostumeName("image");
-		setCostumeBrick.setCostume(costumeData);
-		sprite.getCostumeDataList().add(costumeData);
+		LookData lookData = new LookData();
+		lookData.setLookFilename(image.getName());
+		lookData.setLookName("image");
+		setLookBrick.setLook(lookData);
+		sprite.getLookDataList().add(lookData);
 		ProjectManager.getInstance().getFileChecksumContainer()
-				.addChecksum(costumeData.getChecksum(), image.getAbsolutePath());
+				.addChecksum(lookData.getChecksum(), image.getAbsolutePath());
 		ProjectManager.getInstance().saveProject();
 	}
 
-	private void createTestProject() {
-		project = new Project(null, UiTestUtils.DEFAULT_TEST_PROJECT_NAME);
-		Sprite sprite = new Sprite("cat");
-		Script script = new StartScript(sprite);
-		setSizeToBrick = new SetSizeToBrick(sprite, 0);
-		script.addBrick(setSizeToBrick);
-
-		sprite.addScript(script);
-		project.addSprite(sprite);
-
-		ProjectManager.getInstance().setProject(project);
-		ProjectManager.getInstance().setCurrentSprite(sprite);
-		ProjectManager.getInstance().setCurrentScript(script);
-	}
 }

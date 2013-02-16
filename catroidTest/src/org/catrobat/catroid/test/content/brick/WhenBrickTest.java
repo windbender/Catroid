@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ public class WhenBrickTest extends AndroidTestCase {
 
 		Thread.sleep(1000);
 
-		assertEquals("Simple broadcast failed", (float) testPosition, sprite.costume.x);
+		assertEquals("Simple broadcast failed", (float) testPosition, sprite.look.x);
 	}
 
 }

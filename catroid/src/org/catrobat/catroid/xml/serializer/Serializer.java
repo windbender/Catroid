@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -22,20 +22,20 @@
  */
 package org.catrobat.catroid.xml.serializer;
 
+import static org.catrobat.catroid.xml.parser.CatroidXMLConstants.*;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.catrobat.catroid.common.CostumeData;
+import org.catrobat.catroid.common.LookData;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Script;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.bricks.Brick;
-import org.catrobat.catroid.xml.parser.CatroidXMLConstants;
 import org.catrobat.catroid.xml.parser.ObjectCreator;
-
 
 public abstract class Serializer {
 	ObjectCreator objectCreator;
@@ -45,32 +45,31 @@ public abstract class Serializer {
 	Script serializedScript;
 	List<Brick> brickList;
 	List<String> referenceStrings;
-	List<CostumeData> costumeList;
+	List<LookData> lookList;
 	List<Sprite> spriteList;
 	List<SoundInfo> soundList;
 
 	public final String spriteElementPrefix = "<sprite reference=";
-	public final String tab = "\t";
+	public final static String TAB = "\t";
 
 	public abstract List<String> serialize(Object object) throws IllegalArgumentException, IllegalAccessException,
 			SecurityException, NoSuchFieldException, SerializeException;
 
-	public String getReference(Field fieldNeedingReference, Object objectWIthField) throws IllegalArgumentException,
+	public String getReference(Field fieldNeedingReference, Object objectWithField) throws IllegalArgumentException,
 			IllegalAccessException {
 		// TODO: reference = "tODO ...."
 		String reference = "";
-		Object referencedObject = fieldNeedingReference.get(objectWIthField);
+		Object referencedObject = fieldNeedingReference.get(objectWithField);
 		if (referencedObject != null) {
 			String referencedObjectName = referencedObject.getClass().getSimpleName();
-			if (objectWIthField.getClass().getSimpleName().endsWith(CatroidXMLConstants.BRICK_CLASS_SUFFIX)) {
-				if (referencedObjectName.endsWith(CatroidXMLConstants.BRICK_CLASS_SUFFIX)) {
+			if (objectWithField.getClass().getSimpleName().endsWith(BRICK_CLASS_SUFFIX)) {
+				if (referencedObjectName.endsWith(BRICK_CLASS_SUFFIX)) {
 					if (brickList.contains(referencedObject)) {
 						reference = "../../" + referencedObjectName;
 
 						List<Brick> sameBrickList = new ArrayList<Brick>();
 						for (int i = 0; i < brickList.size(); i++) {
 							if (brickList.get(i).getClass().getSimpleName().equals(referencedObjectName)) {
-
 								sameBrickList.add(brickList.get(i));
 							}
 						}
@@ -81,15 +80,12 @@ public abstract class Serializer {
 					} else {
 						reference = "TODO for bricks of other scripts";
 					}
-				} else if (referencedObjectName.equals(CatroidXMLConstants.COSTUME_DATA_CLASS_NAME)) {
-					reference = CatroidXMLConstants.COSTUMEREFERENCE_FROM_BRICK;
-					reference = getReferenceIndexSuffix(reference, referencedObject, costumeList);
-				} else if (referencedObjectName.equals(CatroidXMLConstants.SPRITE_ELEMENT_NAME)) {
-					reference = CatroidXMLConstants.SPRITEREFERENCE_FROM_BRICK;
-					reference = getReferenceIndexSuffix(reference, referencedObject, spriteList);
-				} else if (referencedObjectName.equals(CatroidXMLConstants.SOUND_INFO_CLASS_NAME)) {
-					reference = CatroidXMLConstants.SOUNDREFERENCE_FROM_BRICK;
-					reference = getReferenceIndexSuffix(reference, referencedObject, soundList);
+				} else if (referencedObjectName.equals(LOOK_DATA_CLASS_NAME)) {
+					reference = getReferenceIndexSuffix(LOOKREFERENCE_FROM_BRICK, referencedObject, lookList);
+				} else if (referencedObjectName.equals(SPRITE_ELEMENT_NAME)) {
+					reference = getReferenceIndexSuffix(SPRITEREFERENCE_FROM_BRICK, referencedObject, spriteList);
+				} else if (referencedObjectName.equals(SOUND_INFO_CLASS_NAME)) {
+					reference = getReferenceIndexSuffix(SOUNDREFERENCE_FROM_BRICK, referencedObject, soundList);
 				} else if (referencedObjectName.endsWith("Script")) {
 					reference = "../../../../" + referencedObjectName;
 					List<Script> sameScripts = new ArrayList<Script>();
@@ -102,12 +98,11 @@ public abstract class Serializer {
 						reference = getReferenceIndexSuffix(reference, referencedObject, sameScripts);
 					}
 				}
-			} else if (objectWIthField.getClass().getSimpleName().endsWith(CatroidXMLConstants.SCRIPTCLASS_SUFFIX)) {
+			} else if (objectWithField.getClass().getSimpleName().endsWith(SCRIPTCLASS_SUFFIX)) {
 				reference = "TODO for scripts";
 			}
 		}
 		return reference;
-
 	}
 
 	private String getReferenceIndexSuffix(String reference, Object referencedObject, List<?> sameTypeList) {

@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -55,7 +55,7 @@ public class ScriptDeleteTest extends ActivityInstrumentationTestCase2<MainMenuA
 		UiTestUtils.clearAllUtilTestProjects();
 		createTestProject(UiTestUtils.DEFAULT_TEST_PROJECT_NAME);
 		solo = new Solo(getInstrumentation(), getActivity());
-		UiTestUtils.getIntoScriptTabActivityFromMainMenu(solo);
+		UiTestUtils.getIntoScriptActivityFromMainMenu(solo);
 		super.setUp();
 	}
 
@@ -69,15 +69,18 @@ public class ScriptDeleteTest extends ActivityInstrumentationTestCase2<MainMenuA
 	}
 
 	public void testAddLooksCategoryBrick() {
-		String brickSetCostumeText = solo.getString(R.string.brick_set_costume);
-		UiTestUtils.addNewBrick(solo, R.string.brick_set_costume);
+		String brickSetLookText = solo.getString(R.string.brick_set_look);
+		UiTestUtils.addNewBrick(solo, R.string.brick_set_look);
 		solo.clickOnText(solo.getString(R.string.brick_when_started));
 
 		solo.clickOnScreen(200, 200);
-		assertTrue("Set costume brick was not added", solo.searchText(brickSetCostumeText));
+		if (solo.searchText(solo.getString(R.string.brick_context_dialog_move_brick), true)) {
+			solo.goBack();
+		}
+		assertTrue("Set look brick was not added", solo.searchText(brickSetLookText));
 
 		UiTestUtils.addNewBrick(solo, R.string.brick_set_size_to);
-		solo.clickOnText(brickSetCostumeText);
+
 		assertTrue("Set size to brick was not added", solo.searchText(solo.getString(R.string.brick_set_size_to)));
 	}
 
@@ -86,6 +89,9 @@ public class ScriptDeleteTest extends ActivityInstrumentationTestCase2<MainMenuA
 		String buttonDeleteText = solo.getString(R.string.delete);
 		UiTestUtils.addNewBrick(solo, R.string.brick_broadcast_receive);
 		solo.clickOnScreen(200, 200);
+		if (solo.searchText(solo.getString(R.string.brick_context_dialog_move_brick), true)) {
+			solo.goBack();
+		}
 		int numberOfScripts = ProjectManager.getInstance().getCurrentSprite().getNumberOfScripts();
 		assertEquals("Incorrect number of scripts in list", 2, numberOfScripts);
 
@@ -95,7 +101,7 @@ public class ScriptDeleteTest extends ActivityInstrumentationTestCase2<MainMenuA
 
 		numberOfScripts = ProjectManager.getInstance().getCurrentSprite().getNumberOfScripts();
 		assertEquals("Incorrect number of scripts in scriptList", 1, numberOfScripts);
-		assertEquals("Incorrect number of elements in listView", 3 + 1, solo.getCurrentListViews().get(0)
+		assertEquals("Incorrect number of elements in listView", 3 + 1, UiTestUtils.getScriptListView(solo)
 				.getChildCount()); // don't forget the footer
 
 		solo.clickLongOnText(solo.getString(R.string.brick_broadcast_receive));
@@ -104,7 +110,7 @@ public class ScriptDeleteTest extends ActivityInstrumentationTestCase2<MainMenuA
 
 		numberOfScripts = ProjectManager.getInstance().getCurrentSprite().getNumberOfScripts();
 		assertEquals("Incorrect number of scripts in list", 0, numberOfScripts);
-		assertEquals("Incorrect number of elements in listView", 0 + 1, solo.getCurrentListViews().get(0)
+		assertEquals("Incorrect number of elements in listView", 0 + 1, UiTestUtils.getScriptListView(solo)
 				.getChildCount()); // don't forget the footer
 
 		UiTestUtils.addNewBrick(solo, R.string.brick_hide);
@@ -112,7 +118,7 @@ public class ScriptDeleteTest extends ActivityInstrumentationTestCase2<MainMenuA
 
 		numberOfScripts = ProjectManager.getInstance().getCurrentSprite().getNumberOfScripts();
 		assertEquals("Incorrect number of scripts in scriptList", 1, numberOfScripts);
-		assertEquals("Incorrect number of elements in listView", 2 + 1, solo.getCurrentListViews().get(0)
+		assertEquals("Incorrect number of elements in listView", 2 + 1, UiTestUtils.getScriptListView(solo)
 				.getChildCount()); // don't forget the footer
 	}
 

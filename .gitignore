@@ -39,4 +39,8 @@ gen/
 local.properties
 proguard-project.txt
 lint.xml
+<<<<<<< HEAD
 >>>>>>> refs/heads/CatWall_Master
+=======
+!libraryProjects/actionbarsherlock/lint.xml
+>>>>>>> origin/CatWall_Master

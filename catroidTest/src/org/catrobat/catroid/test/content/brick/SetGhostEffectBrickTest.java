@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -33,12 +33,12 @@ public class SetGhostEffectBrickTest extends InstrumentationTestCase {
 
 	public void testGhostEffect() {
 		Sprite sprite = new Sprite("testSprite");
-		assertEquals("Unexpected initial sprite scale value", 1f, sprite.costume.getAlphaValue());
+		assertEquals("Unexpected initial sprite scale value", 1f, sprite.look.getAlphaValue());
 
 		SetGhostEffectBrick setGhostEffectBrick = new SetGhostEffectBrick(sprite, effectValue);
 		setGhostEffectBrick.execute();
 		assertEquals("Incorrect sprite scale value after SetGhostEffectBrick executed",
-				(100 - (float) effectValue) / 100, sprite.costume.getAlphaValue());
+				(100 - (float) effectValue) / 100, sprite.look.getAlphaValue());
 	}
 
 	public void testNullSprite() {

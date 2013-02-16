@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -24,8 +24,8 @@ package org.catrobat.catroid.content.bricks;
 
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.livewallpaper.R;
-import org.catrobat.catroid.livewallpaper.WallpaperCostume;
-import org.catrobat.catroid.ui.ScriptTabActivity;
+import org.catrobat.catroid.livewallpaper.WallpaperLook;
+import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.dialogs.BrickTextDialog;
 
 import android.content.Context;
@@ -62,15 +62,17 @@ public class MoveNStepsBrick implements Brick, OnClickListener {
 
 	@Override
 	public void execute() {
-		sprite.costume.aquireXYWidthHeightLock();
+		sprite.look.aquireXYWidthHeightLock();
 
-		double radians = Math.toRadians(sprite.costume.rotation);
+		double radians = Math.toRadians(sprite.look.rotation);
 
-		int newXPosition = (int) Math.round(sprite.costume.getXPosition() + steps * Math.cos(radians));
-		int newYPosition = (int) Math.round(sprite.costume.getYPosition() + steps * Math.sin(radians));
+		int newXPosition = (int) Math.round(sprite.look.getXPosition() + steps
+				* Math.cos(radians));
+		int newYPosition = (int) Math.round(sprite.look.getYPosition() + steps
+				* Math.sin(radians));
 
-		sprite.costume.setXYPosition(newXPosition, newYPosition);
-		sprite.costume.releaseXYWidthHeightLock();
+		sprite.look.setXYPosition(newXPosition, newYPosition);
+		sprite.look.releaseXYWidthHeightLock();
 
 	}
 
@@ -84,8 +86,10 @@ public class MoveNStepsBrick implements Brick, OnClickListener {
 
 		view = View.inflate(context, R.layout.brick_move_n_steps, null);
 
-		TextView text = (TextView) view.findViewById(R.id.brick_move_n_steps_text_view);
-		EditText edit = (EditText) view.findViewById(R.id.brick_move_n_steps_edit_text);
+		TextView text = (TextView) view
+				.findViewById(R.id.brick_move_n_steps_prototype_text_view);
+		EditText edit = (EditText) view
+				.findViewById(R.id.brick_move_n_steps_edit_text);
 
 		edit.setText(String.valueOf(steps));
 		text.setVisibility(View.GONE);
@@ -97,7 +101,8 @@ public class MoveNStepsBrick implements Brick, OnClickListener {
 
 	@Override
 	public View getPrototypeView(Context context) {
-		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		LayoutInflater inflater = (LayoutInflater) context
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View view = inflater.inflate(R.layout.brick_move_n_steps, null);
 		return view;
 	}
@@ -109,13 +114,14 @@ public class MoveNStepsBrick implements Brick, OnClickListener {
 
 	@Override
 	public void onClick(View view) {
-		ScriptTabActivity activity = (ScriptTabActivity) view.getContext();
+		ScriptActivity activity = (ScriptActivity) view.getContext();
 
 		BrickTextDialog editDialog = new BrickTextDialog() {
 			@Override
 			protected void initialize() {
 				input.setText(String.valueOf(steps));
-				input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL
+				input.setInputType(InputType.TYPE_CLASS_NUMBER
+						| InputType.TYPE_NUMBER_FLAG_DECIMAL
 						| InputType.TYPE_NUMBER_FLAG_SIGNED);
 				input.setSelectAllOnFocus(true);
 			}
@@ -125,30 +131,35 @@ public class MoveNStepsBrick implements Brick, OnClickListener {
 				try {
 					steps = Double.parseDouble(input.getText().toString());
 				} catch (NumberFormatException exception) {
-					Toast.makeText(getActivity(), R.string.error_no_number_entered, Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(),
+							R.string.error_no_number_entered,
+							Toast.LENGTH_SHORT).show();
 				}
 
 				return true;
 			}
 		};
 
-		editDialog.show(activity.getSupportFragmentManager(), "dialog_move_n_steps_brick");
+		editDialog.show(activity.getSupportFragmentManager(),
+				"dialog_move_n_steps_brick");
 	}
 
 	@Override
 	public void executeLiveWallpaper() {
-		WallpaperCostume wallpaperCostume = sprite.getWallpaperCostume();
+		WallpaperLook wallpaperLook = sprite.getWallpaperLook();
 
-		if (wallpaperCostume == null) {
-			wallpaperCostume = new WallpaperCostume(sprite, null);
+		if (wallpaperLook == null) {
+			wallpaperLook = new WallpaperLook(sprite, null);
 		}
 
-		double radians = -Math.toRadians(wallpaperCostume.getRotation());
-		int newXPosition = (int) Math.round(wallpaperCostume.getX() + steps * Math.cos(radians));
-		int newYPosition = (int) Math.round(wallpaperCostume.getY() + steps * Math.sin(radians));
+		double radians = -Math.toRadians(wallpaperLook.getRotation());
+		int newXPosition = (int) Math.round(wallpaperLook.getX() + steps
+				* Math.cos(radians));
+		int newYPosition = (int) Math.round(wallpaperLook.getY() + steps
+				* Math.sin(radians));
 
-		wallpaperCostume.setX(newXPosition);
-		wallpaperCostume.setY(newYPosition);
+		wallpaperLook.setX(newXPosition);
+		wallpaperLook.setY(newYPosition);
 
 	}
 }

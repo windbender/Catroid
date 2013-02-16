@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -32,15 +32,15 @@ public class ClearGraphicEffectBrickTest extends AndroidTestCase {
 	public void testClearGraphicEffect() {
 		float value = 0.8f;
 		Sprite sprite = new Sprite("new sprite");
-		sprite.costume.setAlphaValue(value);
-		assertEquals("Costume hasn't ghost effect.", value, sprite.costume.getAlphaValue());
-		sprite.costume.setBrightnessValue(value);
-		assertEquals("Costume hasn't brightness effect.", value, sprite.costume.getBrightnessValue());
+		sprite.look.setAlphaValue(value);
+		assertEquals("Look hasn't ghost effect.", value, sprite.look.getAlphaValue());
+		sprite.look.setBrightnessValue(value);
+		assertEquals("Look hasn't brightness effect.", value, sprite.look.getBrightnessValue());
 
 		ClearGraphicEffectBrick clearGraphicEffectBrick = new ClearGraphicEffectBrick(sprite);
 		clearGraphicEffectBrick.execute();
-		assertEquals("Costume's ghost effect is removed.", 1f, sprite.costume.getAlphaValue());
-		assertEquals("Costume's brightness effect is removed.", 1f, sprite.costume.getBrightnessValue());
+		assertEquals("Look's ghost effect is removed.", 1f, sprite.look.getAlphaValue());
+		assertEquals("Look's brightness effect is removed.", 1f, sprite.look.getBrightnessValue());
 	}
 
 	public void testNullSprite() {

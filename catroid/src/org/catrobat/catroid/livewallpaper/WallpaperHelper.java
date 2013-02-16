@@ -87,10 +87,10 @@ public class WallpaperHelper {
 	public void destroy() {
 
 		for (Sprite sprite : project.getSpriteList()) {
-			if (sprite.getWallpaperCostume() != null) {
+			if (sprite.getWallpaperLook() != null) {
 				sprite.pause();
 				sprite.finish();
-				sprite.getWallpaperCostume().clear();
+				sprite.getWallpaperLook().clear();
 
 			}
 		}

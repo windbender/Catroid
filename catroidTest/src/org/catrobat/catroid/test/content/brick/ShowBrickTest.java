@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -31,12 +31,12 @@ public class ShowBrickTest extends AndroidTestCase {
 
 	public void testShow() {
 		Sprite sprite = new Sprite("new sprite");
-		sprite.costume.show = false;
-		assertFalse("Sprite is still visible after calling hide", sprite.costume.show);
+		sprite.look.show = false;
+		assertFalse("Sprite is still visible after calling hide", sprite.look.show);
 
 		ShowBrick showBrick = new ShowBrick(sprite);
 		showBrick.execute();
-		assertTrue("Sprite is not visible after ShowBrick executed", sprite.costume.show);
+		assertTrue("Sprite is not visible after ShowBrick executed", sprite.look.show);
 	}
 
 	public void testNullSprite() {

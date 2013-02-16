@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -40,7 +40,8 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-public class MyProjectsActivity extends SherlockFragmentActivity implements ErrorListenerInterface {
+public class MyProjectsActivity extends SherlockFragmentActivity implements
+		ErrorListenerInterface {
 
 	private ActionBar actionBar;
 
@@ -49,6 +50,9 @@ public class MyProjectsActivity extends SherlockFragmentActivity implements Erro
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_my_projects);
 		setUpActionBar();
+
+		findViewById(R.id.bottom_bar_separator).setVisibility(View.GONE);
+		findViewById(R.id.button_play).setVisibility(View.GONE);
 	}
 
 	// Code from Stackoverflow to reduce memory problems
@@ -83,17 +87,12 @@ public class MyProjectsActivity extends SherlockFragmentActivity implements Erro
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case android.R.id.home: {
-				Intent intent = new Intent(this, MainMenuActivity.class);
-				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				startActivity(intent);
-				return true;
-			}
-			case R.id.menu_add: {
-				NewProjectDialog dialog = new NewProjectDialog();
-				dialog.show(getSupportFragmentManager(), NewProjectDialog.DIALOG_FRAGMENT_TAG);
-				return true;
-			}
+		case android.R.id.home: {
+			Intent intent = new Intent(this, MainMenuActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
+			return true;
+		}
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -103,18 +102,26 @@ public class MyProjectsActivity extends SherlockFragmentActivity implements Erro
 		Project currentProject = ProjectManager.INSTANCE.getCurrentProject();
 
 		if (currentProject != null) {
-			title = getResources().getString(R.string.project_name) + " " + currentProject.getName();
+			title = getResources().getString(R.string.project_name) + " "
+					+ currentProject.getName();
 		} else {
 			title = getResources().getString(android.R.string.unknownName);
 		}
 
 		actionBar = getSupportActionBar();
 		actionBar.setTitle(title);
-		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setHomeButtonEnabled(true);
 	}
 
 	@Override
 	public void showErrorDialog(String errorMessage) {
-		Utils.displayErrorMessageFragment(getSupportFragmentManager(), errorMessage);
+		Utils.displayErrorMessageFragment(getSupportFragmentManager(),
+				errorMessage);
+	}
+
+	public void handleAddButton(View view) {
+		NewProjectDialog dialog = new NewProjectDialog();
+		dialog.show(getSupportFragmentManager(),
+				NewProjectDialog.DIALOG_FRAGMENT_TAG);
 	}
 }

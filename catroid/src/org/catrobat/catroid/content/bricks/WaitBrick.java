@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ package org.catrobat.catroid.content.bricks;
 
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.livewallpaper.R;
-import org.catrobat.catroid.ui.ScriptTabActivity;
+import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.dialogs.BrickTextDialog;
 
 import android.content.Context;
@@ -66,7 +66,8 @@ public class WaitBrick implements Brick, OnClickListener {
 				break;
 			}
 			if (sprite.isPaused) {
-				timeToWait = timeToWait - (int) (System.currentTimeMillis() - startTime);
+				timeToWait = timeToWait
+						- (int) (System.currentTimeMillis() - startTime);
 				while (sprite.isPaused) {
 					if (sprite.isFinished) {
 						return;
@@ -88,7 +89,8 @@ public class WaitBrick implements Brick, OnClickListener {
 	public View getView(Context context, int brickId, BaseAdapter adapter) {
 		view = View.inflate(context, R.layout.brick_wait, null);
 
-		TextView text = (TextView) view.findViewById(R.id.brick_wait_text_view);
+		TextView text = (TextView) view
+				.findViewById(R.id.brick_wait_prototype_text_view);
 		EditText edit = (EditText) view.findViewById(R.id.brick_wait_edit_text);
 		edit.setText((timeToWaitInMilliSeconds / 1000.0) + "");
 
@@ -111,29 +113,34 @@ public class WaitBrick implements Brick, OnClickListener {
 
 	@Override
 	public void onClick(View view) {
-		ScriptTabActivity activity = (ScriptTabActivity) view.getContext();
+		ScriptActivity activity = (ScriptActivity) view.getContext();
 
 		BrickTextDialog editDialog = new BrickTextDialog() {
 			@Override
 			protected void initialize() {
 				input.setText(String.valueOf(timeToWaitInMilliSeconds / 1000.0));
-				input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+				input.setInputType(InputType.TYPE_CLASS_NUMBER
+						| InputType.TYPE_NUMBER_FLAG_DECIMAL);
 				input.setSelectAllOnFocus(true);
 			}
 
 			@Override
 			protected boolean handleOkButton() {
 				try {
-					timeToWaitInMilliSeconds = (int) (Double.parseDouble(input.getText().toString()) * 1000);
+					timeToWaitInMilliSeconds = (int) (Double.parseDouble(input
+							.getText().toString()) * 1000);
 				} catch (NumberFormatException exception) {
-					Toast.makeText(getActivity(), R.string.error_no_number_entered, Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(),
+							R.string.error_no_number_entered,
+							Toast.LENGTH_SHORT).show();
 				}
 
 				return true;
 			}
 		};
 
-		editDialog.show(activity.getSupportFragmentManager(), "dialog_wait_brick");
+		editDialog.show(activity.getSupportFragmentManager(),
+				"dialog_wait_brick");
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ import org.catrobat.catroid.content.bricks.LegoNxtMotorStopBrick;
 import org.catrobat.catroid.content.bricks.LegoNxtMotorTurnAngleBrick;
 import org.catrobat.catroid.content.bricks.LegoNxtPlayToneBrick;
 import org.catrobat.catroid.content.bricks.MoveNStepsBrick;
-import org.catrobat.catroid.content.bricks.NextCostumeBrick;
+import org.catrobat.catroid.content.bricks.NextLookBrick;
 import org.catrobat.catroid.content.bricks.NoteBrick;
 import org.catrobat.catroid.content.bricks.PlaceAtBrick;
 import org.catrobat.catroid.content.bricks.PlaySoundBrick;
@@ -62,8 +62,8 @@ import org.catrobat.catroid.content.bricks.PointToBrick;
 import org.catrobat.catroid.content.bricks.RepeatBrick;
 import org.catrobat.catroid.content.bricks.ScriptBrick;
 import org.catrobat.catroid.content.bricks.SetBrightnessBrick;
-import org.catrobat.catroid.content.bricks.SetCostumeBrick;
 import org.catrobat.catroid.content.bricks.SetGhostEffectBrick;
+import org.catrobat.catroid.content.bricks.SetLookBrick;
 import org.catrobat.catroid.content.bricks.SetSizeToBrick;
 import org.catrobat.catroid.content.bricks.SetVolumeToBrick;
 import org.catrobat.catroid.content.bricks.SetXBrick;
@@ -77,7 +77,7 @@ import org.catrobat.catroid.content.bricks.WaitBrick;
 import org.catrobat.catroid.content.bricks.WhenBrick;
 import org.catrobat.catroid.content.bricks.WhenStartedBrick;
 import org.catrobat.catroid.livewallpaper.R;
-import org.catrobat.catroid.ui.ScriptTabActivity;
+import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.adapter.PrototypeBrickAdapter;
 import org.catrobat.catroid.ui.fragment.ScriptFragment;
 
@@ -108,11 +108,13 @@ public class AddBrickDialog extends DialogFragment {
 	private String selectedCategory;
 	private ScriptFragment scriptFragment;
 
-	public static AddBrickDialog newInstance(String selectedCategory, ScriptFragment scriptFragment) {
+	public static AddBrickDialog newInstance(String selectedCategory,
+			ScriptFragment scriptFragment) {
 		AddBrickDialog dialog = new AddBrickDialog();
 
 		Bundle arguments = new Bundle();
-		arguments.putString(BUNDLE_ARGUMENTS_SELECTED_CATEGORY, selectedCategory);
+		arguments.putString(BUNDLE_ARGUMENTS_SELECTED_CATEGORY,
+				selectedCategory);
 		dialog.setArguments(arguments);
 		dialog.scriptFragment = scriptFragment;
 
@@ -124,17 +126,22 @@ public class AddBrickDialog extends DialogFragment {
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
 
-		selectedCategory = getArguments().getString(BUNDLE_ARGUMENTS_SELECTED_CATEGORY);
+		selectedCategory = getArguments().getString(
+				BUNDLE_ARGUMENTS_SELECTED_CATEGORY);
 		getScriptFragment().setCreateNewBrick(true);
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.dialog_add_brick, null);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.dialog_brick_add, null);
 
-		ImageButton closeButton = (ImageButton) rootView.findViewById(R.id.btn_close_dialog);
-		TextView textView = (TextView) rootView.findViewById(R.id.tv_dialog_title);
-		listView = (ListView) rootView.findViewById(R.id.addBrickDialogListView);
+		ImageButton closeButton = (ImageButton) rootView
+				.findViewById(R.id.dialog_brick_title_button_close);
+		TextView textView = (TextView) rootView
+				.findViewById(R.id.dialog_brick_title_text_view_title);
+		listView = (ListView) rootView
+				.findViewById(R.id.dialog_brick_add_list_view);
 
 		closeButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -148,9 +155,11 @@ public class AddBrickDialog extends DialogFragment {
 
 		Window window = getDialog().getWindow();
 		window.requestFeature(Window.FEATURE_NO_TITLE);
-		window.setGravity(Gravity.CENTER | Gravity.FILL_HORIZONTAL | Gravity.FILL_VERTICAL);
+		window.setGravity(Gravity.CENTER | Gravity.FILL_HORIZONTAL
+				| Gravity.FILL_VERTICAL);
 		window.setLayout(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		return rootView;
 	}
@@ -161,27 +170,31 @@ public class AddBrickDialog extends DialogFragment {
 
 		Context context = getActivity();
 
-		brickMap = setupBrickMap(ProjectManager.getInstance().getCurrentSprite(), context);
-		adapter = new PrototypeBrickAdapter(context, brickMap.get(selectedCategory));
+		brickMap = setupBrickMap(ProjectManager.getInstance()
+				.getCurrentSprite(), context);
+		adapter = new PrototypeBrickAdapter(context,
+				brickMap.get(selectedCategory));
 		listView.setAdapter(adapter);
-
 		listView.setOnItemClickListener(new ListView.OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
 				scriptFragment.setCreateNewBrick(true);
 				Brick brickToBeAdded = getBrickClone(adapter.getItem(position));
 				scriptFragment.updateAdapterAfterAddNewBrick(brickToBeAdded);
 
 				if (brickToBeAdded instanceof ScriptBrick) {
-					Script script = ((ScriptBrick) brickToBeAdded).initScript(ProjectManager.getInstance()
-							.getCurrentSprite());
+					Script script = ((ScriptBrick) brickToBeAdded)
+							.initScript(ProjectManager.getInstance()
+									.getCurrentSprite());
 					ProjectManager.getInstance().setCurrentScript(script);
 				}
 
 				dismiss();
 
-				BrickCategoryDialog brickCategoryDialog = (BrickCategoryDialog) getFragmentManager().findFragmentByTag(
-						"dialog_brick_category");
+				BrickCategoryDialog brickCategoryDialog = (BrickCategoryDialog) getFragmentManager()
+						.findFragmentByTag(
+								BrickCategoryDialog.DIALOG_FRAGMENT_TAG);
 				brickCategoryDialog.dismiss();
 			}
 
@@ -205,18 +218,21 @@ public class AddBrickDialog extends DialogFragment {
 	}
 
 	private ScriptFragment getScriptFragment() {
-		ScriptTabActivity activity = ((ScriptTabActivity) getActivity());
-		return (ScriptFragment) activity.getTabFragment(ScriptTabActivity.INDEX_TAB_SCRIPTS);
+		ScriptActivity scriptActivity = ((ScriptActivity) getActivity());
+		return (ScriptFragment) scriptActivity
+				.getFragment(ScriptActivity.FRAGMENT_SCRIPTS);
 	}
 
 	private static boolean isBackground(Sprite sprite) {
-		if (ProjectManager.getInstance().getCurrentProject().getSpriteList().indexOf(sprite) == 0) {
+		if (ProjectManager.getInstance().getCurrentProject().getSpriteList()
+				.indexOf(sprite) == 0) {
 			return true;
 		}
 		return false;
 	}
 
-	private static HashMap<String, List<Brick>> setupBrickMap(Sprite sprite, Context context) {
+	private static HashMap<String, List<Brick>> setupBrickMap(Sprite sprite,
+			Context context) {
 		HashMap<String, List<Brick>> brickMap = new HashMap<String, List<Brick>>();
 
 		List<Brick> motionBrickList = new ArrayList<Brick>();
@@ -229,18 +245,20 @@ public class AddBrickDialog extends DialogFragment {
 		motionBrickList.add(new MoveNStepsBrick(sprite, 10));
 		motionBrickList.add(new TurnLeftBrick(sprite, 15));
 		motionBrickList.add(new TurnRightBrick(sprite, 15));
-		motionBrickList.add(new PointInDirectionBrick(sprite, Direction.DIRECTION_RIGHT));
+		motionBrickList.add(new PointInDirectionBrick(sprite,
+				Direction.DIRECTION_RIGHT));
 		motionBrickList.add(new PointToBrick(sprite, null));
 		motionBrickList.add(new GlideToBrick(sprite, 800, 0, 1000));
 		if (!isBackground(sprite)) {
 			motionBrickList.add(new GoNStepsBackBrick(sprite, 1));
 			motionBrickList.add(new ComeToFrontBrick(sprite));
 		}
-		brickMap.put(context.getString(R.string.category_motion), motionBrickList);
+		brickMap.put(context.getString(R.string.category_motion),
+				motionBrickList);
 
 		List<Brick> looksBrickList = new ArrayList<Brick>();
-		looksBrickList.add(new SetCostumeBrick(sprite));
-		looksBrickList.add(new NextCostumeBrick(sprite));
+		looksBrickList.add(new SetLookBrick(sprite));
+		looksBrickList.add(new NextLookBrick(sprite));
 		looksBrickList.add(new SetSizeToBrick(sprite, 100));
 		looksBrickList.add(new ChangeSizeByNBrick(sprite, 20));
 		looksBrickList.add(new HideBrick(sprite));
@@ -265,20 +283,26 @@ public class AddBrickDialog extends DialogFragment {
 		controlBrickList.add(new WhenStartedBrick(sprite, null));
 		controlBrickList.add(new WhenBrick(sprite, null));
 		controlBrickList.add(new WaitBrick(sprite, 1000));
-		controlBrickList.add(new BroadcastReceiverBrick(sprite, new BroadcastScript(sprite)));
+		controlBrickList.add(new BroadcastReceiverBrick(sprite,
+				new BroadcastScript(sprite)));
 		controlBrickList.add(new BroadcastBrick(sprite));
 		controlBrickList.add(new BroadcastWaitBrick(sprite));
 		controlBrickList.add(new NoteBrick(sprite));
 		controlBrickList.add(new ForeverBrick(sprite));
 		controlBrickList.add(new RepeatBrick(sprite, 3));
-		brickMap.put(context.getString(R.string.category_control), controlBrickList);
+		brickMap.put(context.getString(R.string.category_control),
+				controlBrickList);
 
 		List<Brick> legoNXTBrickList = new ArrayList<Brick>();
-		legoNXTBrickList.add(new LegoNxtMotorTurnAngleBrick(sprite, LegoNxtMotorTurnAngleBrick.Motor.MOTOR_A, 180));
-		legoNXTBrickList.add(new LegoNxtMotorStopBrick(sprite, LegoNxtMotorStopBrick.Motor.MOTOR_A));
-		legoNXTBrickList.add(new LegoNxtMotorActionBrick(sprite, LegoNxtMotorActionBrick.Motor.MOTOR_A, 100));
+		legoNXTBrickList.add(new LegoNxtMotorTurnAngleBrick(sprite,
+				LegoNxtMotorTurnAngleBrick.Motor.MOTOR_A, 180));
+		legoNXTBrickList.add(new LegoNxtMotorStopBrick(sprite,
+				LegoNxtMotorStopBrick.Motor.MOTOR_A));
+		legoNXTBrickList.add(new LegoNxtMotorActionBrick(sprite,
+				LegoNxtMotorActionBrick.Motor.MOTOR_A, 100));
 		legoNXTBrickList.add(new LegoNxtPlayToneBrick(sprite, 200, 1000));
-		brickMap.put(context.getString(R.string.category_lego_nxt), legoNXTBrickList);
+		brickMap.put(context.getString(R.string.category_lego_nxt),
+				legoNXTBrickList);
 
 		return brickMap;
 	}

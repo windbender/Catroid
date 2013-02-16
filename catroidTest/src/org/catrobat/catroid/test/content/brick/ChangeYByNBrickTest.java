@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -33,17 +33,17 @@ public class ChangeYByNBrickTest extends AndroidTestCase {
 
 	public void testNormalBehavior() {
 		Sprite sprite = new Sprite("testSprite");
-		assertEquals("Unexpected initial sprite x position", 0f, sprite.costume.getXPosition());
-		assertEquals("Unexpected initial sprite y position", 0f, sprite.costume.getYPosition());
+		assertEquals("Unexpected initial sprite x position", 0f, sprite.look.getXPosition());
+		assertEquals("Unexpected initial sprite y position", 0f, sprite.look.getYPosition());
 
-		int yPosition = (int) sprite.costume.getYPosition();
+		int yPosition = (int) sprite.look.getYPosition();
 
 		ChangeYByNBrick changeYByNBrick = new ChangeYByNBrick(sprite, yMovement);
 		changeYByNBrick.execute();
 
 		yPosition += yMovement;
 		assertEquals("Incorrect sprite y position after ChangeYByNBrick executed", (float) yPosition,
-				sprite.costume.getYPosition());
+				sprite.look.getYPosition());
 	}
 
 	public void testNullSprite() {
@@ -61,20 +61,20 @@ public class ChangeYByNBrickTest extends AndroidTestCase {
 		Sprite sprite = new Sprite("testSprite");
 
 		int yPosition = 10;
-		sprite.costume.setXYPosition(sprite.costume.getXPosition(), yPosition);
+		sprite.look.setXYPosition(sprite.look.getXPosition(), yPosition);
 		ChangeYByNBrick changeYByNBrick = new ChangeYByNBrick(sprite, Integer.MAX_VALUE);
 		changeYByNBrick.execute();
 
 		assertEquals("ChangeYByNBrick failed to place Sprite at maximum y integer value", Integer.MAX_VALUE,
-				(int) sprite.costume.getYPosition());
+				(int) sprite.look.getYPosition());
 
 		yPosition = -10;
-		sprite.costume.setXYPosition(sprite.costume.getXPosition(), yPosition);
+		sprite.look.setXYPosition(sprite.look.getXPosition(), yPosition);
 		changeYByNBrick = new ChangeYByNBrick(sprite, Integer.MIN_VALUE);
 		changeYByNBrick.execute();
 
 		assertEquals("ChangeYByNBrick failed to place Sprite at minimum y integer value", Integer.MIN_VALUE,
-				(int) sprite.costume.getYPosition());
+				(int) sprite.look.getYPosition());
 
 	}
 }

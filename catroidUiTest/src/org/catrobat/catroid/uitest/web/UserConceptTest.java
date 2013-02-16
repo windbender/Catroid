@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.livewallpaper.R;
 import org.catrobat.catroid.ui.MainMenuActivity;
+import org.catrobat.catroid.uitest.util.Reflection;
 import org.catrobat.catroid.uitest.util.UiTestUtils;
 import org.catrobat.catroid.web.ServerCalls;
 
@@ -65,7 +66,7 @@ public class UserConceptTest extends ActivityInstrumentationTestCase2<MainMenuAc
 	public void tearDown() throws Exception {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 		prefs.edit().putString(Constants.TOKEN, saveToken).commit();
-		UiTestUtils.setPrivateField("emailForUiTests", ServerCalls.getInstance(), null, false);
+		Reflection.setPrivateField(ServerCalls.getInstance(), "emailForUiTests", null);
 		UiTestUtils.goBackToHome(getInstrumentation());
 		solo.finishOpenedActivities();
 		UiTestUtils.clearAllUtilTestProjects();
@@ -170,7 +171,7 @@ public class UserConceptTest extends ActivityInstrumentationTestCase2<MainMenuAc
 
 		// set the email to use. we need a random email because the server does not allow same email with different users 
 		String testEmail = testUser + "@gmail.com";
-		UiTestUtils.setPrivateField("emailForUiTests", ServerCalls.getInstance(), testEmail, false);
+		Reflection.setPrivateField(ServerCalls.getInstance(), "emailForUiTests", testEmail);
 		assertTrue("EditTextField got cleared after changing orientation", solo.searchText(testPassword));
 		solo.sleep(1000);
 		assertTrue("EditTextField got cleared after changing orientation", solo.searchText(testUser));
@@ -190,7 +191,7 @@ public class UserConceptTest extends ActivityInstrumentationTestCase2<MainMenuAc
 		String username = "MAXmustermann"; //real username is MaxMustermann
 		String password = "password";
 		String testEmail = "maxmustermann@gmail.com";
-		UiTestUtils.setPrivateField("emailForUiTests", ServerCalls.getInstance(), testEmail, false);
+		Reflection.setPrivateField(ServerCalls.getInstance(), "emailForUiTests", testEmail);
 		EditText usernameEditText = (EditText) solo.getView(R.id.username);
 		EditText passwordEditText = (EditText) solo.getView(R.id.password);
 		solo.enterText(usernameEditText, username);

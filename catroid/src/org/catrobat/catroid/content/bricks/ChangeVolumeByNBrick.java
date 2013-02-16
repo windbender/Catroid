@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ package org.catrobat.catroid.content.bricks;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.io.SoundManager;
 import org.catrobat.catroid.livewallpaper.R;
-import org.catrobat.catroid.ui.ScriptTabActivity;
+import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.dialogs.BrickTextDialog;
 
 import android.content.Context;
@@ -84,8 +84,10 @@ public class ChangeVolumeByNBrick implements Brick, OnClickListener {
 	public View getView(Context context, int brickId, BaseAdapter adapter) {
 		view = View.inflate(context, R.layout.brick_change_volume_by, null);
 
-		TextView text = (TextView) view.findViewById(R.id.brick_change_volume_by_text_view);
-		EditText edit = (EditText) view.findViewById(R.id.brick_change_volume_by_edit_text);
+		TextView text = (TextView) view
+				.findViewById(R.id.brick_change_volume_by_prototype_text_view);
+		EditText edit = (EditText) view
+				.findViewById(R.id.brick_change_volume_by_edit_text);
 		edit.setText(String.valueOf(volume));
 
 		text.setVisibility(View.GONE);
@@ -98,7 +100,8 @@ public class ChangeVolumeByNBrick implements Brick, OnClickListener {
 
 	@Override
 	public View getPrototypeView(Context context) {
-		View view = View.inflate(context, R.layout.brick_change_volume_by, null);
+		View view = View
+				.inflate(context, R.layout.brick_change_volume_by, null);
 		return view;
 	}
 
@@ -109,13 +112,14 @@ public class ChangeVolumeByNBrick implements Brick, OnClickListener {
 
 	@Override
 	public void onClick(View view) {
-		ScriptTabActivity activity = (ScriptTabActivity) view.getContext();
+		ScriptActivity activity = (ScriptActivity) view.getContext();
 
 		BrickTextDialog editDialog = new BrickTextDialog() {
 			@Override
 			protected void initialize() {
 				input.setText(String.valueOf(volume));
-				input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL
+				input.setInputType(InputType.TYPE_CLASS_NUMBER
+						| InputType.TYPE_NUMBER_FLAG_DECIMAL
 						| InputType.TYPE_NUMBER_FLAG_SIGNED);
 				input.setSelectAllOnFocus(true);
 			}
@@ -125,14 +129,17 @@ public class ChangeVolumeByNBrick implements Brick, OnClickListener {
 				try {
 					volume = Float.parseFloat(input.getText().toString());
 				} catch (NumberFormatException exception) {
-					Toast.makeText(getActivity(), R.string.error_no_number_entered, Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(),
+							R.string.error_no_number_entered,
+							Toast.LENGTH_SHORT).show();
 				}
 
 				return true;
 			}
 		};
 
-		editDialog.show(activity.getSupportFragmentManager(), "dialog_change_volume_by_brick");
+		editDialog.show(activity.getSupportFragmentManager(),
+				"dialog_change_volume_by_brick");
 	}
 
 	@Override

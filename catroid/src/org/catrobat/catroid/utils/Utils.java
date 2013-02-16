@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@ import java.util.concurrent.Semaphore;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.CostumeData;
+import org.catrobat.catroid.common.LookData;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.common.Values;
 import org.catrobat.catroid.content.Project;
@@ -49,6 +49,7 @@ import org.catrobat.catroid.livewallpaper.R;
 import org.catrobat.catroid.stage.NativeAppActivity;
 import org.catrobat.catroid.ui.dialogs.ErrorDialogFragment;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -69,9 +70,11 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.utils.GdxNativesLoader;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
 public class Utils {
@@ -83,30 +86,22 @@ public class Utils {
 	public static final int FILE_INTENT = 2;
 	private static boolean isUnderTest;
 
-	public static boolean hasSdCard() {
-		return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+	public static boolean externalStorageAvailable() {
+		String externalStorageState = Environment.getExternalStorageState();
+		return externalStorageState.equals(Environment.MEDIA_MOUNTED)
+				&& !externalStorageState.equals(Environment.MEDIA_MOUNTED_READ_ONLY);
 	}
 
-	/**
-	 * Checks whether the current device has an SD card. If it has none an error
-	 * message is displayed and the calling activity is finished. A
-	 * RuntimeException is thrown after the call to Activity.finish; find out
-	 * why!
-	 * 
-	 * @param context
-	 */
-	public static boolean checkForSdCard(final Context context) {
-		if (!hasSdCard()) {
+	public static boolean checkForExternalStorageAvailableAndDisplayErrorIfNot(final Context context) {
+		if (!externalStorageAvailable()) {
 			Builder builder = new AlertDialog.Builder(context);
 
 			builder.setTitle(context.getString(R.string.error));
-			builder.setMessage(context.getString(R.string.error_no_sd_card));
+			builder.setMessage(context.getString(R.string.error_no_writiable_external_storage_available));
 			builder.setNeutralButton(context.getString(R.string.close), new OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					// finish parent activity
-					// parentActivity.finish();
-					System.exit(0);
+					((Activity) context).moveTaskToBack(true);
 				}
 			});
 			builder.show();
@@ -155,7 +150,7 @@ public class Utils {
 	}
 
 	static public String buildProjectPath(String projectName) {
-		return Constants.DEFAULT_ROOT + "/" + deleteSpecialCharactersInString(projectName);
+		return buildPath(Constants.DEFAULT_ROOT, deleteSpecialCharactersInString(projectName));
 	}
 
 	/**
@@ -275,16 +270,16 @@ public class Utils {
 	}
 
 	public static void saveToPreferences(Context context, String key, String message) {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		Editor edit = prefs.edit();
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		Editor edit = sharedPreferences.edit();
 		edit.putString(key, message);
 		edit.commit();
 	}
 
 	public static void loadProjectIfNeeded(Context context, ErrorListenerInterface errorListener) {
 		if (ProjectManager.getInstance().getCurrentProject() == null) {
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-			String projectName = prefs.getString(Constants.PREF_PROJECTNAME_KEY, null);
+			SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+			String projectName = sharedPreferences.getString(Constants.PREF_PROJECTNAME_KEY, null);
 
 			if (projectName != null) {
 				ProjectManager.getInstance().loadProject(projectName, context, errorListener, false);
@@ -301,21 +296,21 @@ public class Utils {
 		return stringToAdapt.replaceAll("[\"*/:<>?\\\\|]", "");
 	}
 
-	public static String getUniqueCostumeName(String name) {
-		return searchForNonExistingCostumeName(name, 0);
+	public static String getUniqueLookName(String name) {
+		return searchForNonExistingLookName(name, 0);
 	}
 
-	private static String searchForNonExistingCostumeName(String name, int nextNumber) {
+	private static String searchForNonExistingLookName(String name, int nextNumber) {
 		String newName;
-		ArrayList<CostumeData> costumeDataList = ProjectManager.getInstance().getCurrentSprite().getCostumeDataList();
+		ArrayList<LookData> lookDataList = ProjectManager.getInstance().getCurrentSprite().getLookDataList();
 		if (nextNumber == 0) {
 			newName = name;
 		} else {
 			newName = name + nextNumber;
 		}
-		for (CostumeData costumeData : costumeDataList) {
-			if (costumeData.getCostumeName().equals(newName)) {
-				return searchForNonExistingCostumeName(name, ++nextNumber);
+		for (LookData lookData : lookDataList) {
+			if (lookData.getLookName().equals(newName)) {
+				return searchForNonExistingLookName(name, ++nextNumber);
 			}
 		}
 		return newName;
@@ -366,6 +361,7 @@ public class Utils {
 	public static Pixmap getPixmapFromFile(File imageFile) {
 		Pixmap pixmap = null;
 		try {
+			GdxNativesLoader.load();
 			pixmap = new Pixmap(new FileHandle(imageFile));
 		} catch (GdxRuntimeException e) {
 			return null;
@@ -383,4 +379,12 @@ public class Utils {
 		return false;
 	}
 
+	public static void setBottomBarActivated(Activity activity, boolean isActive) {
+		LinearLayout bottomBarLayout = (LinearLayout) activity.findViewById(R.id.bottom_bar);
+
+		if (bottomBarLayout != null) {
+			bottomBarLayout.findViewById(R.id.button_add).setClickable(isActive);
+			bottomBarLayout.findViewById(R.id.button_play).setClickable(isActive);
+		}
+	}
 }

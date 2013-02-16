@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.catrobat.catroid.common.CostumeData;
+import org.catrobat.catroid.common.LookData;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Sprite;
@@ -37,64 +37,38 @@ import org.catrobat.catroid.content.bricks.LoopBeginBrick;
 import org.catrobat.catroid.content.bricks.LoopEndBrick;
 import org.catrobat.catroid.content.bricks.PlaySoundBrick;
 import org.catrobat.catroid.content.bricks.PointInDirectionBrick;
+import org.catrobat.catroid.content.bricks.PointInDirectionBrick.Direction;
 import org.catrobat.catroid.content.bricks.PointToBrick;
 import org.catrobat.catroid.content.bricks.RepeatBrick;
-import org.catrobat.catroid.content.bricks.SetCostumeBrick;
+import org.catrobat.catroid.content.bricks.SetLookBrick;
 import org.catrobat.catroid.content.bricks.SetSizeToBrick;
 import org.catrobat.catroid.content.bricks.ShowBrick;
-import org.catrobat.catroid.content.bricks.PointInDirectionBrick.Direction;
-import org.catrobat.catroid.stage.NativeAppActivity;
-import org.catrobat.catroid.test.utils.TestUtils;
+import org.catrobat.catroid.test.utils.Reflection;
 import org.catrobat.catroid.xml.parser.FullParser;
 import org.catrobat.catroid.xml.parser.ParseException;
 
-import android.content.Context;
 import android.test.InstrumentationTestCase;
 
 public class FullParserTest extends InstrumentationTestCase {
 
-	Context androidContext;
-
-	@Override
-	protected void setUp() throws Exception {
-		androidContext = getInstrumentation().getContext();
-		NativeAppActivity.setContext(androidContext);
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		androidContext = null;
-		NativeAppActivity.setContext(androidContext);
-		super.tearDown();
-	}
-
 	public void testSpriteListParsing() {
-		FullParser parser = new FullParser();
-
 		InputStream xmlFileStream = null;
 
 		try {
-			xmlFileStream = androidContext.getAssets().open("test_project.xml");
+			xmlFileStream = getInstrumentation().getContext().getAssets().open("test_project.xml");
 		} catch (IOException e) {
-
 			e.printStackTrace();
 			fail("Exception caught at getting filestream");
 		}
 
 		List<Sprite> values = null;
 		try {
-			Project testProject = parser.parseSpritesWithProject(xmlFileStream);
+			Project testProject = FullParser.parseSpritesWithProject(xmlFileStream);
 			values = testProject.getSpriteList();
 		} catch (ParseException e) {
 			e.printStackTrace();
 			fail("Exception when parsing the headers");
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			fail("Exception when parsing the headers");
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
-			fail("Exception when parsing the headers");
-		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 			fail("Exception when parsing the headers");
 		}
@@ -106,28 +80,26 @@ public class FullParserTest extends InstrumentationTestCase {
 		assertNotNull("Script is null", testScript);
 		assertEquals("Script number of brick incorrect", 6, testScript.getBrickList().size());
 		SetSizeToBrick testBrick = (SetSizeToBrick) testScript.getBrick(2);
-		double sizeFormBrick = (Double) TestUtils.getPrivateField("size", testBrick, false);
-		assertEquals("SETSizetoBrick size incorrect", 0.8, sizeFormBrick);
+		double sizeFormBrick = (Double) Reflection.getPrivateField(testBrick, "size");
+		assertEquals("SetSizetoBrick size incorrect", 0.8, sizeFormBrick);
 
-		WhenScript testWhnScript = (WhenScript) values.get(1).getScript(1);
-		assertEquals("WhenScript action incorrect", "Tapped", testWhnScript.getAction());
+		WhenScript testWhenScript = (WhenScript) values.get(1).getScript(1);
+		assertEquals("WhenScript action incorrect", "Tapped", testWhenScript.getAction());
 
 		StartScript testScript2 = (StartScript) values.get(2).getScript(0);
 		GlideToBrick testBrick2 = (GlideToBrick) testScript2.getBrick(5);
-		int xpos = (Integer) TestUtils.getPrivateField("xDestination", testBrick2, false);
-		int ypos = (Integer) TestUtils.getPrivateField("xDestination", testBrick2, false);
-		int dur = (Integer) TestUtils.getPrivateField("durationInMilliSeconds", testBrick2, false);
-		assertEquals("place at position x wrong", 500, xpos);
-		assertEquals("place at position y wrong", 500, ypos);
-		assertEquals("place at position y wrong", 3000, dur);
-
+		int xPosition = (Integer) Reflection.getPrivateField(testBrick2, "xDestination");
+		int yPosition = (Integer) Reflection.getPrivateField(testBrick2, "yDestination");
+		int duration = (Integer) Reflection.getPrivateField(testBrick2, "durationInMilliSeconds");
+		assertEquals("Wrong GlideToBrick x position", 500, xPosition);
+		assertEquals("Wrong GlideToBrick y position", 500, yPosition);
+		assertEquals("Wrong GlideToBrick duration", 3000, duration);
 	}
 
 	public void testParsingFullProject() {
-		FullParser parser = new FullParser();
 		Project testProject = null;
 		try {
-			testProject = parser.fullParser("test_project.xml");
+			testProject = XmlTestUtils.loadProjectFromAssets("test_project.xml", getInstrumentation().getContext());
 		} catch (ParseException e) {
 			e.printStackTrace();
 			fail("Unexpected parse Exception");
@@ -146,18 +118,16 @@ public class FullParserTest extends InstrumentationTestCase {
 		PointInDirectionBrick pointBrick = (PointInDirectionBrick) testProject.getSpriteList().get(1).getScript(0)
 				.getBrick(5);
 		assertNotNull("pointTowards null", pointBrick);
-		double directionDegrees = (Double) TestUtils.getPrivateField("degrees", pointBrick, false);
+		double directionDegrees = (Double) Reflection.getPrivateField(pointBrick, "degrees");
 		assertEquals("direction wrong", -90.0, directionDegrees);
-		Direction dir = (Direction) TestUtils.getPrivateField("direction", pointBrick, false);
-		assertNotNull("direction is null, read resolve not run", dir);
+		Direction direction = (Direction) Reflection.getPrivateField(pointBrick, "direction");
+		assertNotNull("direction is null, read resolve not run", direction);
 	}
 
-	public void testCostumeListParsing() {
-		FullParser parser = new FullParser();
-
+	public void testLookListParsing() {
 		Project testProject = null;
 		try {
-			testProject = parser.fullParser("standardProject.xml");
+			testProject = XmlTestUtils.loadProjectFromAssets("standardProject.xml", getInstrumentation().getContext());
 		} catch (ParseException e) {
 			e.printStackTrace();
 			fail("Unexpected parser Exception");
@@ -168,40 +138,37 @@ public class FullParserTest extends InstrumentationTestCase {
 		assertEquals("all sprites not given", 2, sprites.size());
 		Sprite testSprite = sprites.get(1);
 		@SuppressWarnings("unchecked")
-		List<CostumeData> givenCostumes = (List<CostumeData>) TestUtils.getPrivateField("costumeList", testSprite,
-				false);
+		List<LookData> givenLooks = (List<LookData>) Reflection.getPrivateField(testSprite, "lookList");
 
-		assertEquals("costumes number wrong", 3, givenCostumes.size());
-		CostumeData testData = givenCostumes.get(1);
-		String testfileName = (String) TestUtils.getPrivateField("fileName", testData, false);
-		assertEquals("Costume file name wrong", "FE5DF421A5746EC7FC916AC1B94ECC17_banzaiCat", testfileName);
+		assertEquals("looks number wrong", 3, givenLooks.size());
+		LookData testData = givenLooks.get(1);
+		String testFileName = (String) Reflection.getPrivateField(testData, "fileName");
+		assertEquals("Look file name wrong", "FE5DF421A5746EC7FC916AC1B94ECC17_banzaiCat", testFileName);
 		WhenScript script = (WhenScript) testSprite.getScript(1);
-		SetCostumeBrick costumeBrick = (SetCostumeBrick) script.getBrick(0);
-		assertNotNull("brick sprite is null", costumeBrick.getSprite());
-		testData = (CostumeData) TestUtils.getPrivateField("costume", costumeBrick, false);
-		testfileName = (String) TestUtils.getPrivateField("fileName", testData, false);
-		assertEquals("costume data wrong", "FE5DF421A5746EC7FC916AC1B94ECC17_banzaiCat", testfileName);
+		SetLookBrick lookBrick = (SetLookBrick) script.getBrick(0);
+		assertNotNull("brick sprite is null", lookBrick.getSprite());
+		testData = (LookData) Reflection.getPrivateField(lookBrick, "look");
+		testFileName = (String) Reflection.getPrivateField(testData, "fileName");
+		assertEquals("look data wrong", "FE5DF421A5746EC7FC916AC1B94ECC17_banzaiCat", testFileName);
 		StartScript startScript = (StartScript) testSprite.getScript(0);
 		RepeatBrick repeatBrick = (RepeatBrick) startScript.getBrick(1);
 
 		assertNotNull("repeat brick is null", repeatBrick);
-		int timestoRepeat = (Integer) TestUtils.getPrivateField("timesToRepeat", repeatBrick, false);
-		assertEquals("repeat brick times to repeat incorrect", 3, timestoRepeat);
+		int timesToRepeat = (Integer) Reflection.getPrivateField(repeatBrick, "timesToRepeat");
+		assertEquals("repeat brick times to repeat incorrect", 3, timesToRepeat);
 		LoopEndBrick loopEndBrick = repeatBrick.getLoopEndBrick();
-		assertNotNull("Costume data null", loopEndBrick);
+		assertNotNull("Look data null", loopEndBrick);
 		LoopEndBrick lebFromXML = (LoopEndBrick) startScript.getBrick(3);
 		assertNotNull("The LoopEndBrick is null", lebFromXML);
 		LoopBeginBrick repeatBrickFromLoopEnd = lebFromXML.getLoopBeginBrick();
 		assertNotNull("The LoopBeginBrick is null", repeatBrickFromLoopEnd);
-
 	}
 
 	public void testSoundListParsing() {
-		FullParser parser = new FullParser();
 		Project testProject = null;
-
 		try {
-			testProject = parser.fullParser("test_sound_project.xml");
+			testProject = XmlTestUtils.loadProjectFromAssets("test_sound_project.xml", getInstrumentation()
+					.getContext());
 		} catch (ParseException e) {
 			e.printStackTrace();
 			fail("Unexpected parse exception");
@@ -212,7 +179,7 @@ public class FullParserTest extends InstrumentationTestCase {
 		assertEquals("all sprites not given", 6, sprites.size());
 		Sprite testSprite = sprites.get(1);
 		@SuppressWarnings("unchecked")
-		List<SoundInfo> soundList = (List<SoundInfo>) TestUtils.getPrivateField("soundList", testSprite, false);
+		List<SoundInfo> soundList = (List<SoundInfo>) Reflection.getPrivateField(testSprite, "soundList");
 		assertNotNull("Sound List is null", soundList);
 		assertEquals("All soundInfo items not created", 2, soundList.size());
 		SoundInfo soundListSoundinfo = soundList.get(0);
@@ -224,19 +191,16 @@ public class FullParserTest extends InstrumentationTestCase {
 		PlaySoundBrick playSoundBrick = (PlaySoundBrick) testScript.getBrick(4);
 
 		assertNotNull("The PlaySoundBrick is null", playSoundBrick);
-		SoundInfo brickSoundInfo = (SoundInfo) TestUtils.getPrivateField("sound", playSoundBrick, false);
+		SoundInfo brickSoundInfo = (SoundInfo) Reflection.getPrivateField(playSoundBrick, "sound");
 		assertEquals("SoundInfo name is not correct", "Geige", brickSoundInfo.getTitle());
 		assertEquals("Sound infos don't match", soundListSoundinfo, brickSoundInfo);
 	}
 
 	public void testPerformanceTest() {
-		FullParser parser = new FullParser();
-
 		Project testProject = null;
 		try {
-
-			testProject = parser.fullParser("test_pointto_project.xml");
-
+			testProject = XmlTestUtils.loadProjectFromAssets("test_pointto_project.xml", getInstrumentation()
+					.getContext());
 		} catch (ParseException e) {
 			e.printStackTrace();
 			fail("Unexpected parser exception");
@@ -250,15 +214,14 @@ public class FullParserTest extends InstrumentationTestCase {
 		StartScript testScript = (StartScript) sprites.get(7).getScript(0);
 		PointToBrick pointtoBrick = (PointToBrick) testScript.getBrick(6);
 		assertNotNull("Point to brick is null", pointtoBrick);
-		Sprite pointedSprite = (Sprite) TestUtils.getPrivateField("pointedSprite", pointtoBrick, false);
+		Sprite pointedSprite = (Sprite) Reflection.getPrivateField(pointtoBrick, "pointedSprite");
 		assertNotNull("Pointed Sprite is null", pointedSprite);
 		assertEquals("Poined sprite wrong", pointedSprite.getName(), sprites.get(1).getName());
 	}
 
 	public void testParseMalformedProject() {
-		FullParser parser = new FullParser();
 		try {
-			parser.fullParser("test_malformed_project.xml");
+			XmlTestUtils.loadProjectFromAssets("test_malformed_project.xml", getInstrumentation().getContext());
 			fail("parse exception expected");
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -266,17 +229,16 @@ public class FullParserTest extends InstrumentationTestCase {
 	}
 
 	public void testLoadProjectTwoTimes() {
-		FullParser parser = new FullParser();
 		Project loadedProject = null;
 		Project loadedProject2 = null;
 		try {
-			InputStream firstFileStream = androidContext.getAssets().open("standardProject.xml");
-			loadedProject = parser.parseSpritesWithProject(firstFileStream);
+			InputStream firstFileStream = getInstrumentation().getContext().getAssets().open("standardProject.xml");
+			loadedProject = FullParser.parseSpritesWithProject(firstFileStream);
 			assertNotNull("loadedProject null", loadedProject);
 			assertEquals("sprites not right", 2, loadedProject.getSpriteList().size());
 
-			InputStream secondFileStream = androidContext.getAssets().open("standardProject.xml");
-			loadedProject2 = parser.parseSpritesWithProject(secondFileStream);
+			InputStream secondFileStream = getInstrumentation().getContext().getAssets().open("standardProject.xml");
+			loadedProject2 = FullParser.parseSpritesWithProject(secondFileStream);
 			assertNotNull("loadedProject null", loadedProject2);
 			assertEquals("sprites not right", 2, loadedProject2.getSpriteList().size());
 		} catch (IOException e) {
@@ -286,12 +248,6 @@ public class FullParserTest extends InstrumentationTestCase {
 			fail("Unexpected parse exception");
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			fail("Exception when parsing the headers");
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
-			fail("Exception when parsing the headers");
-		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 			fail("Exception when parsing the headers");
 		}

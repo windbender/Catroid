@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ import org.catrobat.catroid.content.StartScript;
 import org.catrobat.catroid.content.bricks.ComeToFrontBrick;
 import org.catrobat.catroid.content.bricks.HideBrick;
 import org.catrobat.catroid.content.bricks.PlaceAtBrick;
-import org.catrobat.catroid.content.bricks.SetCostumeBrick;
+import org.catrobat.catroid.content.bricks.SetLookBrick;
 import org.catrobat.catroid.content.bricks.SetSizeToBrick;
 import org.catrobat.catroid.content.bricks.ShowBrick;
 import org.catrobat.catroid.io.StorageHandler;
@@ -43,6 +43,7 @@ import org.catrobat.catroid.livewallpaper.R;
 import org.catrobat.catroid.ui.MainMenuActivity;
 import org.catrobat.catroid.ui.MyProjectsActivity;
 import org.catrobat.catroid.ui.ProjectActivity;
+import org.catrobat.catroid.uitest.util.Reflection;
 import org.catrobat.catroid.uitest.util.UiTestUtils;
 import org.catrobat.catroid.utils.UtilFile;
 import org.catrobat.catroid.utils.Utils;
@@ -219,7 +220,7 @@ public class MainMenuActivityTest extends ActivityInstrumentationTestCase2<MainM
 		solo.clickOnButton(solo.getString(R.string.main_menu_programs));
 		solo.waitForActivity(MyProjectsActivity.class.getSimpleName());
 		solo.clickOnText(testProject2);
-		solo.waitForFragmentById(R.id.fr_sprites_list);
+		solo.waitForFragmentById(R.id.fragment_sprites_list);
 		ListView spritesList = (ListView) solo.getCurrentActivity().findViewById(android.R.id.list);
 		Sprite first = (Sprite) spritesList.getItemAtPosition(1);
 		assertEquals("Sprite at index 1 is not \"cat\"!", "cat", first.getName());
@@ -262,7 +263,7 @@ public class MainMenuActivityTest extends ActivityInstrumentationTestCase2<MainM
 	public void testShouldDisplayDialogIfVersionNumberTooHigh() throws Throwable {
 		solo.waitForActivity(MainMenuActivity.class.getSimpleName());
 		// Prevent Utils from returning true in isApplicationDebuggable
-		UiTestUtils.setPrivateField2(Utils.class, null, "isUnderTest", true);
+		Reflection.setPrivateField(Utils.class, "isUnderTest", true);
 
 		boolean result = UiTestUtils
 				.createTestProjectOnLocalStorageWithCatrobatLanguageVersion(CATROBAT_LANGUAGE_VERSION_NOT_SUPPORTED);
@@ -347,9 +348,9 @@ public class MainMenuActivityTest extends ActivityInstrumentationTestCase2<MainM
 		Sprite backgroundSprite = standardProject.getSpriteList().get(0);
 		Script startingScript = backgroundSprite.getScript(0);
 		assertEquals("Number of bricks in background sprite was wrong", 1, backgroundSprite.getNumberOfBricks());
-		startingScript.addBrick(new SetCostumeBrick(backgroundSprite));
-		startingScript.addBrick(new SetCostumeBrick(backgroundSprite));
-		startingScript.addBrick(new SetCostumeBrick(backgroundSprite));
+		startingScript.addBrick(new SetLookBrick(backgroundSprite));
+		startingScript.addBrick(new SetLookBrick(backgroundSprite));
+		startingScript.addBrick(new SetLookBrick(backgroundSprite));
 		assertEquals("Number of bricks in background sprite was wrong", 4, backgroundSprite.getNumberOfBricks());
 		ProjectManager.INSTANCE.setCurrentSprite(backgroundSprite);
 		ProjectManager.INSTANCE.setCurrentScript(startingScript);

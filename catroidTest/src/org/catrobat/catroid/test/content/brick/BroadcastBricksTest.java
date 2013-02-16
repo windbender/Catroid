@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ public class BroadcastBricksTest extends AndroidTestCase {
 		} catch (InterruptedException ignored) {
 		}
 
-		assertEquals("Simple broadcast failed", testPosition, (int) sprite.costume.getXPosition());
+		assertEquals("Simple broadcast failed", testPosition, (int) sprite.look.getXPosition());
 	}
 
 	public void testBroadcastWait() {
@@ -88,6 +88,6 @@ public class BroadcastBricksTest extends AndroidTestCase {
 		} catch (InterruptedException ignored) {
 		}
 
-		assertEquals("Broadcast and wait failed", testPosition, (int) sprite.costume.getXPosition());
+		assertEquals("Broadcast and wait failed", testPosition, (int) sprite.look.getXPosition());
 	}
 }

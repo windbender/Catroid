@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -34,7 +34,7 @@ import org.catrobat.catroid.content.bricks.HideBrick;
 import org.catrobat.catroid.content.bricks.SetSizeToBrick;
 import org.catrobat.catroid.content.bricks.ShowBrick;
 import org.catrobat.catroid.livewallpaper.R;
-import org.catrobat.catroid.ui.ScriptTabActivity;
+import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.uitest.util.UiTestUtils;
 
 import android.test.ActivityInstrumentationTestCase2;
@@ -43,7 +43,7 @@ import android.widget.ListView;
 
 import com.jayway.android.robotium.solo.Solo;
 
-public class ScriptChangeTest extends ActivityInstrumentationTestCase2<ScriptTabActivity> {
+public class ScriptChangeTest extends ActivityInstrumentationTestCase2<ScriptActivity> {
 
 	private Solo solo;
 	private ArrayList<Brick> brickListToCheck;
@@ -52,7 +52,7 @@ public class ScriptChangeTest extends ActivityInstrumentationTestCase2<ScriptTab
 	private Script testScript3;
 
 	public ScriptChangeTest() {
-		super(ScriptTabActivity.class);
+		super(ScriptActivity.class);
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public class ScriptChangeTest extends ActivityInstrumentationTestCase2<ScriptTab
 	}
 
 	public void testChangeScript() {
-		ListView parent = solo.getCurrentListViews().get(0);
+		ListView parent = UiTestUtils.getScriptListView(solo);
 		View testScriptBrick = parent.getChildAt(0);
 
 		solo.clickOnView(testScriptBrick);

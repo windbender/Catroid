@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -78,14 +78,14 @@ public class PointToBrick implements Brick {
 		int pointedSpriteXPosition = 0, pointedSpriteYPosition = 0;
 		double base = 0.0, height = 0.0, value = 0.0;
 
-		sprite.costume.aquireXYWidthHeightLock();
-		spriteXPosition = (int) sprite.costume.getXPosition();
-		spriteYPosition = (int) sprite.costume.getYPosition();
-		sprite.costume.releaseXYWidthHeightLock();
-		pointedSprite.costume.aquireXYWidthHeightLock();
-		pointedSpriteXPosition = (int) pointedSprite.costume.getXPosition();
-		pointedSpriteYPosition = (int) pointedSprite.costume.getYPosition();
-		pointedSprite.costume.releaseXYWidthHeightLock();
+		sprite.look.aquireXYWidthHeightLock();
+		spriteXPosition = (int) sprite.look.getXPosition();
+		spriteYPosition = (int) sprite.look.getYPosition();
+		sprite.look.releaseXYWidthHeightLock();
+		pointedSprite.look.aquireXYWidthHeightLock();
+		pointedSpriteXPosition = (int) pointedSprite.look.getXPosition();
+		pointedSpriteYPosition = (int) pointedSprite.look.getYPosition();
+		pointedSprite.look.releaseXYWidthHeightLock();
 
 		double rotationDegrees;
 		if (spriteXPosition == pointedSpriteXPosition && spriteYPosition == pointedSpriteYPosition) {
@@ -124,7 +124,7 @@ public class PointToBrick implements Brick {
 				}
 			}
 		}
-		sprite.costume.rotation = (-(float) rotationDegrees) + 90f;
+		sprite.look.rotation = (-(float) rotationDegrees) + 90f;
 	}
 
 	@Override
@@ -133,7 +133,7 @@ public class PointToBrick implements Brick {
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View brickView = inflater.inflate(R.layout.brick_point_to, null);
 
-		final Spinner spinner = (Spinner) brickView.findViewById(R.id.point_to_spinner);
+		final Spinner spinner = (Spinner) brickView.findViewById(R.id.brick_point_to_spinner);
 		spinner.setFocusableInTouchMode(false);
 		spinner.setFocusable(false);
 		spinner.setClickable(true);

@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -29,6 +29,7 @@ import org.catrobat.catroid.ui.dialogs.StageDialog;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 
@@ -46,6 +47,7 @@ public class StageActivity extends AndroidApplication {
 		super.onCreate(savedInstanceState);
 
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		stageListener = new StageListener();
 		stageDialog = new StageDialog(this, stageListener, R.style.stage_dialog);
 		this.calculateScreenSizes();
@@ -98,9 +100,12 @@ public class StageActivity extends AndroidApplication {
 
 	private void calculateScreenSizes() {
 		ifLandscapeSwitchWidthAndHeight();
-		int virtualScreenWidth = ProjectManager.getInstance().getCurrentProject().virtualScreenWidth;
-		int virtualScreenHeight = ProjectManager.getInstance().getCurrentProject().virtualScreenHeight;
-		if (virtualScreenWidth == Values.SCREEN_WIDTH && virtualScreenHeight == Values.SCREEN_HEIGHT) {
+		int virtualScreenWidth = ProjectManager.getInstance()
+				.getCurrentProject().virtualScreenWidth;
+		int virtualScreenHeight = ProjectManager.getInstance()
+				.getCurrentProject().virtualScreenHeight;
+		if (virtualScreenWidth == Values.SCREEN_WIDTH
+				&& virtualScreenHeight == Values.SCREEN_HEIGHT) {
 			resizePossible = false;
 			return;
 		}

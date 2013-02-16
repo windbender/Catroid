@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -24,8 +24,8 @@ package org.catrobat.catroid.content.bricks;
 
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.livewallpaper.R;
-import org.catrobat.catroid.livewallpaper.WallpaperCostume;
-import org.catrobat.catroid.ui.ScriptTabActivity;
+import org.catrobat.catroid.livewallpaper.WallpaperLook;
+import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.dialogs.BrickTextDialog;
 
 import android.content.Context;
@@ -60,7 +60,8 @@ public class ChangeBrightnessByNBrick implements Brick, OnClickListener {
 
 	@Override
 	public void execute() {
-		sprite.costume.changeBrightnessValueBy((float) (this.changeBrightness / 100));
+		sprite.look
+				.changeBrightnessValueBy((float) (this.changeBrightness / 100));
 	}
 
 	@Override
@@ -77,8 +78,10 @@ public class ChangeBrightnessByNBrick implements Brick, OnClickListener {
 
 		view = View.inflate(context, R.layout.brick_change_brightness, null);
 
-		TextView textX = (TextView) view.findViewById(R.id.brick_change_brightness_text_view);
-		EditText editX = (EditText) view.findViewById(R.id.brick_change_brightness_edit_text);
+		TextView textX = (TextView) view
+				.findViewById(R.id.brick_change_brightness_prototype_text_view);
+		EditText editX = (EditText) view
+				.findViewById(R.id.brick_change_brightness_edit_text);
 		editX.setText(String.valueOf(changeBrightness));
 
 		textX.setVisibility(View.GONE);
@@ -101,13 +104,14 @@ public class ChangeBrightnessByNBrick implements Brick, OnClickListener {
 
 	@Override
 	public void onClick(View view) {
-		ScriptTabActivity activity = (ScriptTabActivity) view.getContext();
+		ScriptActivity activity = (ScriptActivity) view.getContext();
 
 		BrickTextDialog editDialog = new BrickTextDialog() {
 			@Override
 			protected void initialize() {
 				input.setText(String.valueOf(changeBrightness));
-				input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL
+				input.setInputType(InputType.TYPE_CLASS_NUMBER
+						| InputType.TYPE_NUMBER_FLAG_DECIMAL
 						| InputType.TYPE_NUMBER_FLAG_SIGNED);
 				input.setSelectAllOnFocus(true);
 			}
@@ -115,28 +119,33 @@ public class ChangeBrightnessByNBrick implements Brick, OnClickListener {
 			@Override
 			protected boolean handleOkButton() {
 				try {
-					changeBrightness = Double.parseDouble(input.getText().toString());
+					changeBrightness = Double.parseDouble(input.getText()
+							.toString());
 				} catch (NumberFormatException exception) {
-					Toast.makeText(getActivity(), R.string.error_no_number_entered, Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(),
+							R.string.error_no_number_entered,
+							Toast.LENGTH_SHORT).show();
 				}
 
 				return true;
 			}
 		};
 
-		editDialog.show(activity.getSupportFragmentManager(), "dialog_change_brightness_brick");
+		editDialog.show(activity.getSupportFragmentManager(),
+				"dialog_change_brightness_brick");
 	}
 
 	@Override
 	public void executeLiveWallpaper() {
 
-		WallpaperCostume wallpaperCostume = sprite.getWallpaperCostume();
-		if (wallpaperCostume == null) {
-			wallpaperCostume = new WallpaperCostume(sprite, null);
+		WallpaperLook wallpaperLook = sprite.getWallpaperLook();
+		if (wallpaperLook == null) {
+			wallpaperLook = new WallpaperLook(sprite, null);
 		}
 
-		float brightness = wallpaperCostume.getBrightness() + (float) (255 * (this.changeBrightness / 100));
-		wallpaperCostume.setBrightness(brightness);
+		float brightness = wallpaperLook.getBrightness()
+				+ (float) (255 * (this.changeBrightness / 100));
+		wallpaperLook.setBrightness(brightness);
 
 	}
 

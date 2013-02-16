@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -50,11 +50,11 @@ public class WaitBrickTest extends AndroidTestCase {
 
 		Thread.sleep(200);
 
-		assertFalse("Unexpected visibility of testSprite", testSprite.costume.show);
+		assertFalse("Unexpected visibility of testSprite", testSprite.look.show);
 
 		Thread.sleep(1000);
 
-		assertTrue("Unexpected visibility of testSprite", testSprite.costume.show);
+		assertTrue("Unexpected visibility of testSprite", testSprite.look.show);
 	}
 
 	public void testPauseResume() throws InterruptedException {
@@ -80,23 +80,23 @@ public class WaitBrickTest extends AndroidTestCase {
 
 			Thread.sleep(1000);
 
-			assertFalse("Unexpected visibility of testSprite. Run: " + i, testSprite.costume.show);
+			assertFalse("Unexpected visibility of testSprite. Run: " + i, testSprite.look.show);
 
 			testSprite.pause();
 
 			Thread.sleep(200);
 
-			assertFalse("Unexpected visibility of testSprite. Run: " + i, testSprite.costume.show);
+			assertFalse("Unexpected visibility of testSprite. Run: " + i, testSprite.look.show);
 
 			testSprite.resume();
 
 			Thread.sleep(1000);
 
-			assertFalse("Unexpected visibility of testSprite. Run: " + i, testSprite.costume.show);
+			assertFalse("Unexpected visibility of testSprite. Run: " + i, testSprite.look.show);
 
 			Thread.sleep(1200);
 
-			assertTrue("Unexpected visibility of testSprite. Run: " + i, testSprite.costume.show);
+			assertTrue("Unexpected visibility of testSprite. Run: " + i, testSprite.look.show);
 		}
 	}
 }

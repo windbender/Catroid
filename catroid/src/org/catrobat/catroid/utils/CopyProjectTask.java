@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -88,7 +88,7 @@ public class CopyProjectTask extends AsyncTask<String, Long, Boolean> {
 				parentActivity.getActivity(),
 				parentActivity.getString(R.string.project_name) + " " + newName + " "
 						+ parentActivity.getString(R.string.copy_project_finished), Toast.LENGTH_SHORT).show();
-		parentActivity.onCopyProject(false);
+		parentActivity.onCopyProject();
 	}
 
 	private void copyDirectory(File destinationFile, File sourceFile) throws IOException {

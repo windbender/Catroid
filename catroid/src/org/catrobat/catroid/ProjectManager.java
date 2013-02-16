@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -107,7 +107,7 @@ public class ProjectManager {
 			// Set generic localized name on background sprite and move it to the back.
 			if (project.getSpriteList().size() > 0) {
 				project.getSpriteList().get(0).setName(context.getString(R.string.background));
-				project.getSpriteList().get(0).costume.zPosition = Integer.MIN_VALUE;
+				project.getSpriteList().get(0).look.zPosition = Integer.MIN_VALUE;
 			}
 			currentSprite = null;
 			currentScript = null;

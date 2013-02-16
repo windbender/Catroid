@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.CostumeData;
+import org.catrobat.catroid.common.LookData;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Script;
@@ -37,10 +37,10 @@ import org.catrobat.catroid.content.bricks.BroadcastBrick;
 import org.catrobat.catroid.content.bricks.BroadcastWaitBrick;
 import org.catrobat.catroid.content.bricks.PlaySoundBrick;
 import org.catrobat.catroid.content.bricks.PointToBrick;
-import org.catrobat.catroid.content.bricks.SetCostumeBrick;
+import org.catrobat.catroid.content.bricks.SetLookBrick;
 import org.catrobat.catroid.livewallpaper.R;
 import org.catrobat.catroid.ui.ProjectActivity;
-import org.catrobat.catroid.ui.ScriptTabActivity;
+import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.uitest.util.UiTestUtils;
 import org.catrobat.catroid.uitest.util.XMLValidationUtil;
 import org.catrobat.catroid.utils.Utils;
@@ -50,17 +50,17 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import com.jayway.android.robotium.solo.Solo;
 
-public class EmptyBrickSpinnersTest extends ActivityInstrumentationTestCase2<ScriptTabActivity> {
+public class EmptyBrickSpinnersTest extends ActivityInstrumentationTestCase2<ScriptActivity> {
 	private Solo solo;
 	private String testProjectName = UiTestUtils.PROJECTNAME1;
-	private String costumeDataName = "blubb";
+	private String lookDataName = "blubb";
 	private String pointToSpriteName = "pointSprite";
 	private String testSoundTitle = "soundTitle";
 	private String testBroadcastMessage = "broadcastMessage";
 	private String testBroadcastWaitMessage = "broadcastWaitMessage";
 
 	public EmptyBrickSpinnersTest() {
-		super(ScriptTabActivity.class);
+		super(ScriptActivity.class);
 	}
 
 	@Override
@@ -85,8 +85,8 @@ public class EmptyBrickSpinnersTest extends ActivityInstrumentationTestCase2<Scr
 
 		String spinnerNothingSelectedText = solo.getString(R.string.broadcast_nothing_selected);
 
-		assertTrue("costume " + costumeDataName + " is not selected", solo.searchText(costumeDataName));
-		solo.clickOnText(costumeDataName);
+		assertTrue("look " + lookDataName + " is not selected", solo.searchText(lookDataName));
+		solo.clickOnText(lookDataName);
 		solo.clickOnText(spinnerNothingSelectedText);
 
 		assertTrue(pointToSpriteName + " Sprite is not selected", solo.searchText(pointToSpriteName));
@@ -101,7 +101,7 @@ public class EmptyBrickSpinnersTest extends ActivityInstrumentationTestCase2<Scr
 		solo.clickOnText(testBroadcastWaitMessage);
 		solo.clickOnText(spinnerNothingSelectedText);
 
-		assertTrue(testBroadcastMessage + " Mesage is not selected", solo.searchText(testBroadcastMessage));
+		assertTrue(testBroadcastMessage + " Message is not selected", solo.searchText(testBroadcastMessage));
 		solo.clickOnText(testBroadcastMessage);
 		solo.clickOnText(spinnerNothingSelectedText);
 
@@ -123,7 +123,7 @@ public class EmptyBrickSpinnersTest extends ActivityInstrumentationTestCase2<Scr
 		Script startScript = new StartScript(sprite);
 		sprite.addScript(startScript);
 
-		addSetCostumeBrick(sprite, startScript);
+		addSetLookBrick(sprite, startScript);
 		addPointToBrick(sprite, pointToSprite, startScript);
 		addPlaySoundBrick(sprite, startScript);
 		addBroadcastWaitBrick(sprite, startScript);
@@ -163,13 +163,13 @@ public class EmptyBrickSpinnersTest extends ActivityInstrumentationTestCase2<Scr
 		startScript.addBrick(pointToBrick);
 	}
 
-	private void addSetCostumeBrick(Sprite sprite, Script startScript) {
-		CostumeData dummyCostumeData = new CostumeData();
-		dummyCostumeData.setCostumeName(costumeDataName);
-		sprite.getCostumeDataList().add(dummyCostumeData);
+	private void addSetLookBrick(Sprite sprite, Script startScript) {
+		LookData dummyLookData = new LookData();
+		dummyLookData.setLookName(lookDataName);
+		sprite.getLookDataList().add(dummyLookData);
 
-		SetCostumeBrick setCostumeBrick = new SetCostumeBrick(sprite);
-		setCostumeBrick.setCostume(dummyCostumeData);
-		startScript.addBrick(setCostumeBrick);
+		SetLookBrick setLookBrick = new SetLookBrick(sprite);
+		setLookBrick.setLook(dummyLookData);
+		startScript.addBrick(setLookBrick);
 	}
 }

@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -33,14 +33,14 @@ public class SetXBrickTest extends AndroidTestCase {
 
 	public void testNormalBehavior() {
 		Sprite sprite = new Sprite("testSprite");
-		assertEquals("Unexpected initial sprite x position", 0f, sprite.costume.getXPosition());
-		assertEquals("Unexpected initial sprite y position", 0f, sprite.costume.getYPosition());
+		assertEquals("Unexpected initial sprite x position", 0f, sprite.look.getXPosition());
+		assertEquals("Unexpected initial sprite y position", 0f, sprite.look.getYPosition());
 
 		SetXBrick setXBrick = new SetXBrick(sprite, xPosition);
 		setXBrick.execute();
 
 		assertEquals("Incorrect sprite x position after SetXBrick executed", (float) xPosition,
-				sprite.costume.getXPosition());
+				sprite.look.getXPosition());
 	}
 
 	public void testNullSprite() {
@@ -61,12 +61,12 @@ public class SetXBrickTest extends AndroidTestCase {
 		setXBrick.execute();
 
 		assertEquals("SetXBrick failed to place Sprite at maximum x integer value", Integer.MAX_VALUE,
-				(int) sprite.costume.getXPosition());
+				(int) sprite.look.getXPosition());
 
 		setXBrick = new SetXBrick(sprite, Integer.MIN_VALUE);
 		setXBrick.execute();
 
 		assertEquals("SetXBrick failed to place Sprite at minimum x integer value", Integer.MIN_VALUE,
-				(int) sprite.costume.getXPosition());
+				(int) sprite.look.getXPosition());
 	}
 }

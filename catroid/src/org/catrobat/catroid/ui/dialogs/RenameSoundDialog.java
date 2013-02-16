@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 package org.catrobat.catroid.ui.dialogs;
 
 import org.catrobat.catroid.livewallpaper.R;
-import org.catrobat.catroid.ui.ScriptTabActivity;
+import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.utils.Utils;
 
 import android.content.Intent;
@@ -53,7 +53,8 @@ public class RenameSoundDialog extends TextDialog {
 
 	@Override
 	protected void initialize() {
-		oldSoundTitle = getArguments().getString(BUNDLE_ARGUMENTS_OLD_SOUND_NAME);
+		oldSoundTitle = getArguments().getString(
+				BUNDLE_ARGUMENTS_OLD_SOUND_NAME);
 		input.setText(oldSoundTitle);
 	}
 
@@ -68,10 +69,11 @@ public class RenameSoundDialog extends TextDialog {
 		if (newSoundTitle != null && !newSoundTitle.equalsIgnoreCase("")) {
 			newSoundTitle = Utils.getUniqueSoundName(newSoundTitle);
 		} else {
-			Utils.displayErrorMessageFragment(getFragmentManager(), getString(R.string.soundname_invalid));
+			Utils.displayErrorMessageFragment(getFragmentManager(),
+					getString(R.string.soundname_invalid));
 		}
 
-		Intent intent = new Intent(ScriptTabActivity.ACTION_SOUND_RENAMED);
+		Intent intent = new Intent(ScriptActivity.ACTION_SOUND_RENAMED);
 		intent.putExtra(EXTRA_NEW_SOUND_TITLE, newSoundTitle);
 		getActivity().sendBroadcast(intent);
 
@@ -89,13 +91,16 @@ public class RenameSoundDialog extends TextDialog {
 	}
 
 	@Override
-	protected TextWatcher getInputTextChangedListener(final Button buttonPositive) {
+	protected TextWatcher getInputTextChangedListener(
+			final Button buttonPositive) {
 		return new TextWatcher() {
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
 				if (s.length() == 0 || (s.length() == 1 && s.charAt(0) == '.')) {
-					Toast.makeText(getActivity(), R.string.notification_invalid_text_entered, Toast.LENGTH_SHORT)
-							.show();
+					Toast.makeText(getActivity(),
+							R.string.notification_invalid_text_entered,
+							Toast.LENGTH_SHORT).show();
 					buttonPositive.setEnabled(false);
 				} else {
 					buttonPositive.setEnabled(true);
@@ -103,7 +108,8 @@ public class RenameSoundDialog extends TextDialog {
 			}
 
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
 			}
 
 			@Override

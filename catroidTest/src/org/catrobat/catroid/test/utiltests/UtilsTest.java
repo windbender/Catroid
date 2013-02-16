@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -29,17 +29,14 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.test.utils.TestUtils;
+import org.catrobat.catroid.test.utils.Reflection;
 import org.catrobat.catroid.utils.UtilFile;
 import org.catrobat.catroid.utils.Utils;
 
 import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.Smoke;
-import android.util.Log;
 
 public class UtilsTest extends AndroidTestCase {
-
-	private static final String TAG = UtilsTest.class.getSimpleName();
 	private final String testFileContent = "Hello, this is a Test-String";
 	private final String MD5_EMPTY = "D41D8CD98F00B204E9800998ECF8427E";
 	private final String MD5_CATROID = "4F982D927F4784F69AD6D6AF38FD96AD";
@@ -117,35 +114,6 @@ public class UtilsTest extends AndroidTestCase {
 		assertEquals("MD5 sums do not match!", MD5_HELLO_WORLD, Utils.md5Checksum("Hello World!"));
 	}
 
-	public void testGetPrivateField() {
-
-		class Super {
-			@SuppressWarnings("unused")
-			private float SECRET_PRIMITIVE_FLOAT = 3.1415f;
-		}
-		class Sub extends Super {
-			@SuppressWarnings("unused")
-			private final String SECRET_STRING = "This is a secret string!";
-			@SuppressWarnings("unused")
-			private final Integer SECRET_INTEGER = 42;
-		}
-
-		String secretString = (String) TestUtils.getPrivateField("SECRET_STRING", new Sub(), false);
-		Log.v(TAG, secretString);
-		assertEquals("Getting private String failed!", "This is a secret string!", secretString);
-
-		Integer secretInteger = (Integer) TestUtils.getPrivateField("SECRET_INTEGER", new Sub(), false);
-		Log.v(TAG, secretInteger.toString());
-		assertEquals("Getting private Integer failed!", Integer.valueOf(42), secretInteger);
-
-		Float secretFloat = (Float) TestUtils.getPrivateField("SECRET_PRIMITIVE_FLOAT", new Sub(), false);
-		assertNull("Getting private float succeeded!", secretFloat);
-
-		secretFloat = (Float) TestUtils.getPrivateField("SECRET_PRIMITIVE_FLOAT", new Sub(), true);
-		Log.v(TAG, secretFloat.toString());
-		assertEquals("Getting private float failed!", Float.valueOf(3.1415f), secretFloat);
-	}
-
 	public void testBuildPath() {
 		String first = "/abc/abc";
 		String second = "/def/def/";
@@ -177,31 +145,6 @@ public class UtilsTest extends AndroidTestCase {
 		assertFalse("Same unique name!", second.equals(third));
 	}
 
-	public void testInvokeMethod() {
-		class Test {
-			@SuppressWarnings("unused")
-			private String testMethod1() {
-				return "Called testMethod1!";
-			};
-
-			@SuppressWarnings("unused")
-			private String testMethod2(String param1, String param2) {
-				return param1 + " " + param2;
-			};
-		}
-
-		String testString1 = (String) TestUtils.invokeMethod(new Test(), "testMethod1", null, null);
-		assertEquals("Calling private method without arguments failed!", "Called testMethod1!", testString1);
-
-		String test1 = "Calling method";
-		String test2 = "with parameters!";
-		Class<?> methodParams[] = new Class[] { String.class, String.class };
-		Object methodArgs[] = new Object[] { test1, test2 };
-
-		String testString2 = (String) TestUtils.invokeMethod(new Test(), "testMethod2", methodParams, methodArgs);
-		assertEquals("Calling private method with arguments failed!", test1 + " " + test2, testString2);
-	}
-
 	public void testDeleteSpecialCharactersFromString() {
 		String testString = "This:IsA-\" */ :<Very>?|Very\\\\Long_Test_String";
 		String newString = Utils.deleteSpecialCharactersInString(testString);
@@ -209,15 +152,18 @@ public class UtilsTest extends AndroidTestCase {
 	}
 
 	public void testBuildProjectPath() {
-		String projectName1 = "test?Projekt\"1";
-		String result1 = "/mnt/sdcard/catroid/testProjekt1";
-		assertEquals("Paths are different!", result1, Utils.buildProjectPath(projectName1));
+		if (!Utils.externalStorageAvailable()) {
+			fail("No SD card present");
+		}
+		String projectName = "test?Projekt\"1";
+		String expectedPath = Constants.DEFAULT_ROOT + "/testProjekt1";
+		assertEquals("Paths are different!", expectedPath, Utils.buildProjectPath(projectName));
 	}
 
 	@Smoke
 	public void testDebuggableFlagShouldBeSet() throws Exception {
 		// Ensure Utils  returns true in isApplicationDebuggable
-		TestUtils.setPrivateField(Utils.class, null, "isUnderTest", false);
+		Reflection.setPrivateField(Utils.class, "isUnderTest", false);
 		assertTrue("Debug flag not set!", Utils.isApplicationDebuggable(getContext()));
 	}
 }

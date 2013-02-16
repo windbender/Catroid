@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -69,7 +69,7 @@ public class SetDescriptionDialogTest extends ActivityInstrumentationTestCase2<M
 		solo.sleep(300);
 		solo.clickOnButton(solo.getString(R.string.main_menu_programs));
 		solo.waitForActivity(MyProjectsActivity.class.getSimpleName());
-		solo.waitForFragmentById(R.id.fr_projects_list);
+		solo.waitForFragmentById(R.id.fragment_projects_list);
 		solo.clickLongOnText(testProject);
 		solo.clickInList(2);
 		EditText description = (EditText) solo.getView(R.id.dialog_text_EditMultiLineText);

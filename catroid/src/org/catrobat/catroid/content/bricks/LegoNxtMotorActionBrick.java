@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ package org.catrobat.catroid.content.bricks;
 import org.catrobat.catroid.LegoNXT.LegoNXT;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.livewallpaper.R;
-import org.catrobat.catroid.ui.ScriptTabActivity;
+import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.dialogs.BrickTextDialog;
 
 import android.content.Context;
@@ -44,7 +44,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class LegoNxtMotorActionBrick implements Brick, OnSeekBarChangeListener, OnClickListener {
+public class LegoNxtMotorActionBrick implements Brick, OnSeekBarChangeListener,
+		OnClickListener {
 	private static final long serialVersionUID = 1L;
 
 	public static enum Motor {
@@ -90,12 +91,14 @@ public class LegoNxtMotorActionBrick implements Brick, OnSeekBarChangeListener, 
 	public void execute() {
 
 		if (motorEnum.equals(Motor.MOTOR_A_C)) {
-			LegoNXT.sendBTCMotorMessage(NO_DELAY, Motor.MOTOR_A.ordinal(), speed, 0);
-			LegoNXT.sendBTCMotorMessage(NO_DELAY, Motor.MOTOR_C.ordinal(), speed, 0);
+			LegoNXT.sendBTCMotorMessage(NO_DELAY, Motor.MOTOR_A.ordinal(),
+					speed, 0);
+			LegoNXT.sendBTCMotorMessage(NO_DELAY, Motor.MOTOR_C.ordinal(),
+					speed, 0);
 		} else {
 			LegoNXT.sendBTCMotorMessage(NO_DELAY, motorEnum.ordinal(), speed, 0);
 		}
-		//LegoNXT.sendBTCMotorMessage((int) (duration * 1000), motor, 0, 0);
+		// LegoNXT.sendBTCMotorMessage((int) (duration * 1000), motor, 0, 0);
 	}
 
 	@Override
@@ -105,8 +108,10 @@ public class LegoNxtMotorActionBrick implements Brick, OnSeekBarChangeListener, 
 
 	@Override
 	public View getPrototypeView(Context context) {
-		View view = View.inflate(context, R.layout.brick_nxt_motor_action, null);
-		SeekBar noClick = (SeekBar) view.findViewById(R.id.seekBarSpeedMotorAction);
+		View view = View
+				.inflate(context, R.layout.brick_nxt_motor_action, null);
+		SeekBar noClick = (SeekBar) view
+				.findViewById(R.id.seekBarSpeedMotorAction);
 		noClick.setEnabled(false);
 		return view;
 	}
@@ -119,10 +124,13 @@ public class LegoNxtMotorActionBrick implements Brick, OnSeekBarChangeListener, 
 	@Override
 	public View getView(Context context, int brickId, BaseAdapter adapter) {
 
-		View brickView = View.inflate(context, R.layout.brick_nxt_motor_action, null);
+		View brickView = View.inflate(context, R.layout.brick_nxt_motor_action,
+				null);
 
-		TextView textSpeed = (TextView) brickView.findViewById(R.id.motor_action_speed_text_view);
-		editSpeed = (EditText) brickView.findViewById(R.id.motor_action_speed_edit_text);
+		TextView textSpeed = (TextView) brickView
+				.findViewById(R.id.motor_action_speed_text_view);
+		editSpeed = (EditText) brickView
+				.findViewById(R.id.motor_action_speed_edit_text);
 		editSpeed.setText(String.valueOf(speed));
 
 		textSpeed.setVisibility(View.GONE);
@@ -130,17 +138,21 @@ public class LegoNxtMotorActionBrick implements Brick, OnSeekBarChangeListener, 
 
 		editSpeed.setOnClickListener(this);
 
-		ArrayAdapter<CharSequence> motorAdapter = ArrayAdapter.createFromResource(context, R.array.nxt_motor_chooser,
-				android.R.layout.simple_spinner_item);
-		motorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		Spinner motorSpinner = (Spinner) brickView.findViewById(R.id.motor_spinner);
+		ArrayAdapter<CharSequence> motorAdapter = ArrayAdapter
+				.createFromResource(context, R.array.nxt_motor_chooser,
+						android.R.layout.simple_spinner_item);
+		motorAdapter
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		Spinner motorSpinner = (Spinner) brickView
+				.findViewById(R.id.motor_spinner);
 		motorSpinner.setClickable(true);
 		motorSpinner.setEnabled(true);
 		motorSpinner.setAdapter(motorAdapter);
 		motorSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
+			public void onItemSelected(AdapterView<?> arg0, View arg1,
+					int position, long arg3) {
 				motorEnum = Motor.values()[position];
 				motor = motorEnum.name();
 			}
@@ -153,7 +165,8 @@ public class LegoNxtMotorActionBrick implements Brick, OnSeekBarChangeListener, 
 
 		motorSpinner.setSelection(motorEnum.ordinal());
 
-		speedBar = (SeekBar) brickView.findViewById(R.id.seekBarSpeedMotorAction);
+		speedBar = (SeekBar) brickView
+				.findViewById(R.id.seekBarSpeedMotorAction);
 		speedBar.setOnSeekBarChangeListener(this);
 		speedBar.setMax(MAX_SPEED * 2);
 		speedBar.setEnabled(true);
@@ -193,9 +206,10 @@ public class LegoNxtMotorActionBrick implements Brick, OnSeekBarChangeListener, 
 	}
 
 	@Override
-	public void onProgressChanged(SeekBar speedBar, int progress, boolean fromUser) {
+	public void onProgressChanged(SeekBar speedBar, int progress,
+			boolean fromUser) {
 		if (!fromUser) {
-			if (progress == 0) {//Robotium fromUser=false
+			if (progress == 0) {// Robotium fromUser=false
 				return;
 			}
 		}
@@ -227,13 +241,14 @@ public class LegoNxtMotorActionBrick implements Brick, OnSeekBarChangeListener, 
 
 	@Override
 	public void onClick(View view) {
-		ScriptTabActivity activity = (ScriptTabActivity) view.getContext();
+		ScriptActivity activity = (ScriptActivity) view.getContext();
 
 		BrickTextDialog editDialog = new BrickTextDialog() {
 			@Override
 			protected void initialize() {
 				input.setText(String.valueOf(speed));
-				input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+				input.setInputType(InputType.TYPE_CLASS_NUMBER
+						| InputType.TYPE_NUMBER_FLAG_SIGNED);
 				input.setSelectAllOnFocus(true);
 			}
 
@@ -243,22 +258,27 @@ public class LegoNxtMotorActionBrick implements Brick, OnSeekBarChangeListener, 
 					int newSpeed = Integer.parseInt(input.getText().toString());
 					if (newSpeed > MAX_SPEED) {
 						newSpeed = MAX_SPEED;
-						Toast.makeText(getActivity(), R.string.number_to_big, Toast.LENGTH_SHORT).show();
+						Toast.makeText(getActivity(), R.string.number_to_big,
+								Toast.LENGTH_SHORT).show();
 					} else if (newSpeed < MIN_SPEED) {
 						newSpeed = MIN_SPEED;
-						Toast.makeText(getActivity(), R.string.number_to_small, Toast.LENGTH_SHORT).show();
+						Toast.makeText(getActivity(), R.string.number_to_small,
+								Toast.LENGTH_SHORT).show();
 					}
 					speed = newSpeed;
 					speedToSeekBarVal();
 				} catch (NumberFormatException exception) {
-					Toast.makeText(getActivity(), R.string.error_no_number_entered, Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(),
+							R.string.error_no_number_entered,
+							Toast.LENGTH_SHORT).show();
 				}
 
 				return true;
 			}
 		};
 
-		editDialog.show(activity.getSupportFragmentManager(), "dialog_nxt_moto_action_brick");
+		editDialog.show(activity.getSupportFragmentManager(),
+				"dialog_nxt_moto_action_brick");
 	}
 
 	/*

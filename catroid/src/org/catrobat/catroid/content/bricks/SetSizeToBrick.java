@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -24,8 +24,8 @@ package org.catrobat.catroid.content.bricks;
 
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.livewallpaper.R;
-import org.catrobat.catroid.livewallpaper.WallpaperCostume;
-import org.catrobat.catroid.ui.ScriptTabActivity;
+import org.catrobat.catroid.livewallpaper.WallpaperLook;
+import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.dialogs.BrickTextDialog;
 
 import android.content.Context;
@@ -60,7 +60,7 @@ public class SetSizeToBrick implements Brick, OnClickListener {
 
 	@Override
 	public void execute() {
-		sprite.costume.setSize((float) size / 100);
+		sprite.look.setSize((float) size / 100);
 	}
 
 	@Override
@@ -73,8 +73,10 @@ public class SetSizeToBrick implements Brick, OnClickListener {
 
 		view = View.inflate(context, R.layout.brick_set_size_to, null);
 
-		TextView text = (TextView) view.findViewById(R.id.brick_set_size_to_text_view);
-		EditText edit = (EditText) view.findViewById(R.id.brick_set_size_to_edit_text);
+		TextView text = (TextView) view
+				.findViewById(R.id.brick_set_size_to_prototype_text_view);
+		EditText edit = (EditText) view
+				.findViewById(R.id.brick_set_size_to_edit_text);
 		edit.setText(String.valueOf(size));
 
 		text.setVisibility(View.GONE);
@@ -96,13 +98,14 @@ public class SetSizeToBrick implements Brick, OnClickListener {
 
 	@Override
 	public void onClick(View view) {
-		ScriptTabActivity activity = (ScriptTabActivity) view.getContext();
+		ScriptActivity activity = (ScriptActivity) view.getContext();
 
 		BrickTextDialog editDialog = new BrickTextDialog() {
 			@Override
 			protected void initialize() {
 				input.setText(String.valueOf(size));
-				input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+				input.setInputType(InputType.TYPE_CLASS_NUMBER
+						| InputType.TYPE_NUMBER_FLAG_DECIMAL);
 				input.setSelectAllOnFocus(true);
 			}
 
@@ -111,25 +114,28 @@ public class SetSizeToBrick implements Brick, OnClickListener {
 				try {
 					size = Double.parseDouble(input.getText().toString());
 				} catch (NumberFormatException exception) {
-					Toast.makeText(getActivity(), R.string.error_no_number_entered, Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(),
+							R.string.error_no_number_entered,
+							Toast.LENGTH_SHORT).show();
 				}
 
 				return true;
 			}
 		};
 
-		editDialog.show(activity.getSupportFragmentManager(), "dialog_set_size_to_brick");
+		editDialog.show(activity.getSupportFragmentManager(),
+				"dialog_set_size_to_brick");
 	}
 
 	@Override
 	public void executeLiveWallpaper() {
-		WallpaperCostume wallpaperCostume = sprite.getWallpaperCostume();
+		WallpaperLook wallpaperLook = sprite.getWallpaperLook();
 
-		if (wallpaperCostume == null) {
-			wallpaperCostume = new WallpaperCostume(sprite, null);
+		if (wallpaperLook == null) {
+			wallpaperLook = new WallpaperLook(sprite, null);
 		}
 
-		wallpaperCostume.setCostumeSize(size);
+		wallpaperLook.setLookSize(size);
 
 	}
 }

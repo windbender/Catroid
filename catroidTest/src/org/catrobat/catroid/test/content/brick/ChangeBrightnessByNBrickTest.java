@@ -1,6 +1,6 @@
 /**
  *  Catroid: An on-device visual programming system for Android devices
- *  Copyright (C) 2010-2012 The Catrobat Team
+ *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
  *  
  *  This program is free software: you can redistribute it and/or modify
@@ -35,23 +35,23 @@ public class ChangeBrightnessByNBrickTest extends AndroidTestCase {
 
 	public void testNormalBehavior() {
 		Sprite sprite = new Sprite("testSprite");
-		assertEquals("Unexpected initial sprite brightness value", 1f, sprite.costume.getBrightnessValue());
+		assertEquals("Unexpected initial sprite brightness value", 1f, sprite.look.getBrightnessValue());
 
-		float brightness = sprite.costume.getBrightnessValue();
+		float brightness = sprite.look.getBrightnessValue();
 		brightness += brighter / 100f;
 
 		ChangeBrightnessByNBrick brick1 = new ChangeBrightnessByNBrick(sprite, brighter);
 		brick1.execute();
 		assertEquals("Incorrect sprite brightness value after ChangeBrightnessByNBrick executed", brightness,
-				sprite.costume.getBrightnessValue());
+				sprite.look.getBrightnessValue());
 
-		brightness = sprite.costume.getBrightnessValue();
+		brightness = sprite.look.getBrightnessValue();
 		brightness += dimmer / 100f;
 
 		ChangeBrightnessByNBrick brick2 = new ChangeBrightnessByNBrick(sprite, dimmer);
 		brick2.execute();
 		assertEquals("Incorrect sprite brightness value after ChangeBrightnessByNBrick executed", brightness,
-				sprite.costume.getBrightnessValue());
+				sprite.look.getBrightnessValue());
 	}
 
 	public void testNullSprite() {
