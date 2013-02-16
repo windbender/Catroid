@@ -32,7 +32,7 @@ import java.util.List;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.CostumeData;
+import org.catrobat.catroid.common.LookData;
 import org.catrobat.catroid.common.FileChecksumContainer;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.Project;
@@ -56,10 +56,8 @@ public class StorageHandler {
 	private static final int JPG_COMPRESSION_SETTING = 95;
 	private static final String TAG = StorageHandler.class.getSimpleName();
 	private static StorageHandler instance;
-	private XmlSerializer serializer;
 
 	private StorageHandler() throws IOException {
-		serializer = new XmlSerializer();
 		if (!Utils.externalStorageAvailable()) {
 			throw new IOException("Could not read external storage");
 		}
@@ -146,7 +144,7 @@ public class StorageHandler {
 				noMediaFile.createNewFile();
 			}
 
-			serializer.toXml(project, Utils.buildPath(projectDirectoryName, Constants.PROJECTCODE_NAME));
+			XmlSerializer.toXml(project, Utils.buildPath(projectDirectoryName, Constants.PROJECTCODE_NAME));
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -313,8 +311,8 @@ public class StorageHandler {
 				container.addChecksum(soundInfo.getChecksum(), soundInfo.getAbsolutePath());
 			}
 
-			for (CostumeData costumeData : currentSprite.getCostumeDataList()) {
-				container.addChecksum(costumeData.getChecksum(), costumeData.getAbsolutePath());
+			for (LookData lookData : currentSprite.getLookDataList()) {
+				container.addChecksum(lookData.getChecksum(), lookData.getAbsolutePath());
 			}
 		}
 	}

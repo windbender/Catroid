@@ -25,7 +25,7 @@ package org.catrobat.catroid.content.bricks;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.content.Sprite;
-import org.catrobat.catroid.livewallpaper.WallpaperCostume;
+import org.catrobat.catroid.livewallpaper.WallpaperLook;
 
 import android.content.Context;
 import android.view.View;
@@ -37,7 +37,7 @@ public class IfOnEdgeBounceBrick implements Brick {
 	private Sprite sprite;
 
 	private transient View view;
-	private WallpaperCostume wallpaperCostume;
+	private WallpaperLook wallpaperLook;
 	private boolean isLiveWallpaper = false;
 
 	public IfOnEdgeBounceBrick(Sprite sprite) {
@@ -55,24 +55,26 @@ public class IfOnEdgeBounceBrick implements Brick {
 
 	@Override
 	public void execute() {
-		float size = sprite.costume.getSize();
+		float size = sprite.look.getSize();
 
-		sprite.costume.aquireXYWidthHeightLock();
-		float width = sprite.costume.getWidth() * size;
-		float height = sprite.costume.getHeight() * size;
-		int xPosition = (int) sprite.costume.getXPosition();
-		int yPosition = (int) sprite.costume.getYPosition();
-		sprite.costume.releaseXYWidthHeightLock();
+		sprite.look.aquireXYWidthHeightLock();
+		float width = sprite.look.getWidth() * size;
+		float height = sprite.look.getHeight() * size;
+		int xPosition = (int) sprite.look.getXPosition();
+		int yPosition = (int) sprite.look.getYPosition();
+		sprite.look.releaseXYWidthHeightLock();
 
-		int virtualScreenWidth = ProjectManager.getInstance().getCurrentProject().virtualScreenWidth / 2;
-		int virtualScreenHeight = ProjectManager.getInstance().getCurrentProject().virtualScreenHeight / 2;
+		int virtualScreenWidth = ProjectManager.getInstance()
+				.getCurrentProject().virtualScreenWidth / 2;
+		int virtualScreenHeight = ProjectManager.getInstance()
+				.getCurrentProject().virtualScreenHeight / 2;
 
-		float rotationResult = -sprite.costume.rotation + 90f;
+		float rotationResult = -sprite.look.rotation + 90f;
 
 		if (isLiveWallpaper) {
-			xPosition = wallpaperCostume.getX();
-			yPosition = wallpaperCostume.getY();
-			rotationResult = (float) (-wallpaperCostume.getRotation() + 90f);
+			xPosition = wallpaperLook.getX();
+			yPosition = wallpaperLook.getY();
+			rotationResult = (float) (-wallpaperLook.getRotation() + 90f);
 		}
 
 		if (xPosition < -virtualScreenWidth + width / 2) {
@@ -113,16 +115,17 @@ public class IfOnEdgeBounceBrick implements Brick {
 		}
 
 		if (isLiveWallpaper) {
-			wallpaperCostume.setRotation(-rotationResult + 90f);
-			wallpaperCostume.setX(xPosition - xPosition / 3);
-			wallpaperCostume.setY(yPosition);
+			wallpaperLook.setRotation(-rotationResult + 90f);
+			wallpaperLook.setX(xPosition - xPosition / 3);
+			wallpaperLook.setY(yPosition);
 		} else {
-			sprite.costume.rotation = -rotationResult + 90f;
+			sprite.look.rotation = -rotationResult + 90f;
 
-			sprite.costume.aquireXYWidthHeightLock();
-			sprite.costume.setXYPosition(xPosition, yPosition);
-			sprite.costume.releaseXYWidthHeightLock();
+			sprite.look.aquireXYWidthHeightLock();
+			sprite.look.setXYPosition(xPosition, yPosition);
+			sprite.look.releaseXYWidthHeightLock();
 		}
+
 	}
 
 	@Override
@@ -133,7 +136,8 @@ public class IfOnEdgeBounceBrick implements Brick {
 	@Override
 	public View getView(Context context, int brickId, BaseAdapter adapter) {
 		if (view == null) {
-			view = View.inflate(context, R.layout.brick_if_on_edge_bounce, null);
+			view = View
+					.inflate(context, R.layout.brick_if_on_edge_bounce, null);
 		}
 
 		return view;
@@ -151,11 +155,11 @@ public class IfOnEdgeBounceBrick implements Brick {
 
 	@Override
 	public void executeLiveWallpaper() {
-		WallpaperCostume wallpaperCostume = sprite.getWallpaperCostume();
-		if (wallpaperCostume == null) {
-			wallpaperCostume = new WallpaperCostume(sprite, null);
+		WallpaperLook wallpaperLook = sprite.getWallpaperLook();
+		if (wallpaperLook == null) {
+			wallpaperLook = new WallpaperLook(sprite, null);
 		}
-		this.wallpaperCostume = wallpaperCostume;
+		this.wallpaperLook = wallpaperLook;
 		this.isLiveWallpaper = true;
 		execute();
 		this.isLiveWallpaper = false;

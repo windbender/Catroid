@@ -24,7 +24,7 @@ package org.catrobat.catroid.content.bricks;
 
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.content.Sprite;
-import org.catrobat.catroid.livewallpaper.WallpaperCostume;
+import org.catrobat.catroid.livewallpaper.WallpaperLook;
 import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.dialogs.BrickTextDialog;
 
@@ -62,9 +62,9 @@ public class PlaceAtBrick implements Brick, OnClickListener {
 
 	@Override
 	public void execute() {
-		sprite.costume.aquireXYWidthHeightLock();
-		sprite.costume.setXYPosition(xPosition, yPosition);
-		sprite.costume.releaseXYWidthHeightLock();
+		sprite.look.aquireXYWidthHeightLock();
+		sprite.look.setXYPosition(xPosition, yPosition);
+		sprite.look.releaseXYWidthHeightLock();
 	}
 
 	@Override
@@ -76,16 +76,20 @@ public class PlaceAtBrick implements Brick, OnClickListener {
 	public View getView(Context context, int brickId, BaseAdapter adapter) {
 
 		view = View.inflate(context, R.layout.brick_place_at, null);
-		TextView textX = (TextView) view.findViewById(R.id.brick_place_at_prototype_text_view_x);
-		EditText editX = (EditText) view.findViewById(R.id.brick_place_at_edit_text_x);
+		TextView textX = (TextView) view
+				.findViewById(R.id.brick_place_at_prototype_text_view_x);
+		EditText editX = (EditText) view
+				.findViewById(R.id.brick_place_at_edit_text_x);
 		editX.setText(String.valueOf(xPosition));
 
 		textX.setVisibility(View.GONE);
 		editX.setVisibility(View.VISIBLE);
 		editX.setOnClickListener(this);
 
-		TextView textY = (TextView) view.findViewById(R.id.brick_place_at_prototype_text_view_y);
-		EditText editY = (EditText) view.findViewById(R.id.brick_place_at_edit_text_y);
+		TextView textY = (TextView) view
+				.findViewById(R.id.brick_place_at_prototype_text_view_y);
+		EditText editY = (EditText) view
+				.findViewById(R.id.brick_place_at_edit_text_y);
 		editY.setText(String.valueOf(yPosition));
 
 		textY.setVisibility(View.GONE);
@@ -117,7 +121,8 @@ public class PlaceAtBrick implements Brick, OnClickListener {
 				} else if (view.getId() == R.id.brick_place_at_edit_text_y) {
 					input.setText(String.valueOf(yPosition));
 				}
-				input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+				input.setInputType(InputType.TYPE_CLASS_NUMBER
+						| InputType.TYPE_NUMBER_FLAG_SIGNED);
 				input.setSelectAllOnFocus(true);
 			}
 
@@ -125,31 +130,36 @@ public class PlaceAtBrick implements Brick, OnClickListener {
 			protected boolean handleOkButton() {
 				try {
 					if (view.getId() == R.id.brick_place_at_edit_text_x) {
-						xPosition = Integer.parseInt(input.getText().toString());
+						xPosition = Integer
+								.parseInt(input.getText().toString());
 					} else if (view.getId() == R.id.brick_place_at_edit_text_y) {
-						yPosition = Integer.parseInt(input.getText().toString());
+						yPosition = Integer
+								.parseInt(input.getText().toString());
 					}
 				} catch (NumberFormatException exception) {
-					Toast.makeText(getActivity(), R.string.error_no_number_entered, Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(),
+							R.string.error_no_number_entered,
+							Toast.LENGTH_SHORT).show();
 				}
 
 				return true;
 			}
 		};
 
-		editDialog.show(activity.getSupportFragmentManager(), "dialog_place_at_brick");
+		editDialog.show(activity.getSupportFragmentManager(),
+				"dialog_place_at_brick");
 	}
 
 	@Override
 	public void executeLiveWallpaper() {
 
-		WallpaperCostume wallpaperCostume = sprite.getWallpaperCostume();
-		if (wallpaperCostume == null) {
-			wallpaperCostume = new WallpaperCostume(sprite, null);
+		WallpaperLook wallpaperLook = sprite.getWallpaperLook();
+		if (wallpaperLook == null) {
+			wallpaperLook = new WallpaperLook(sprite, null);
 		}
 
-		wallpaperCostume.setX(xPosition);
-		wallpaperCostume.setY(yPosition);
+		wallpaperLook.setX(xPosition);
+		wallpaperLook.setY(yPosition);
 
 	}
 }

@@ -26,7 +26,7 @@ import java.util.ArrayList;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.common.CostumeData;
+import org.catrobat.catroid.common.LookData;
 import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.ui.ScriptActivity;
 
@@ -38,13 +38,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
-public class DeleteCostumeDialog extends DialogFragment {
+public class DeleteLookDialog extends DialogFragment {
 
 	private static final String BUNDLE_ARGUMENTS_SELECTED_POSITION = "selected_position";
-	public static final String DIALOG_FRAGMENT_TAG = "dialog_delete_costume";
+	public static final String DIALOG_FRAGMENT_TAG = "dialog_delete_look";
 
-	public static DeleteCostumeDialog newInstance(int selectedPosition) {
-		DeleteCostumeDialog dialog = new DeleteCostumeDialog();
+	public static DeleteLookDialog newInstance(int selectedPosition) {
+		DeleteLookDialog dialog = new DeleteLookDialog();
 
 		Bundle arguments = new Bundle();
 		arguments.putInt(BUNDLE_ARGUMENTS_SELECTED_POSITION, selectedPosition);
@@ -55,31 +55,42 @@ public class DeleteCostumeDialog extends DialogFragment {
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		final int selectedPosition = getArguments().getInt(BUNDLE_ARGUMENTS_SELECTED_POSITION);
+		final int selectedPosition = getArguments().getInt(
+				BUNDLE_ARGUMENTS_SELECTED_POSITION);
 
-		Dialog dialog = new AlertDialog.Builder(getActivity()).setTitle(R.string.delete_costume_dialog)
-				.setNegativeButton(R.string.cancel_button, new OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dismiss();
-					}
-				}).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						handleDeleteCostume(selectedPosition);
-					}
-				}).create();
+		Dialog dialog = new AlertDialog.Builder(getActivity())
+				.setTitle(R.string.delete_look_dialog)
+				.setNegativeButton(R.string.cancel_button,
+						new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								dismiss();
+							}
+						})
+				.setPositiveButton(R.string.ok,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								handleDeleteLook(selectedPosition);
+							}
+						}).create();
 
 		dialog.setCanceledOnTouchOutside(true);
 
 		return dialog;
 	}
 
-	private void handleDeleteCostume(int position) {
-		ArrayList<CostumeData> costumeDataList = ProjectManager.getInstance().getCurrentSprite().getCostumeDataList();
-		StorageHandler.getInstance().deleteFile(costumeDataList.get(position).getAbsolutePath());
-		costumeDataList.remove(position);
+	private void handleDeleteLook(int position) {
+		ArrayList<LookData> lookDataList = ProjectManager.getInstance()
+				.getCurrentSprite().getLookDataList();
 
-		getActivity().sendBroadcast(new Intent(ScriptActivity.ACTION_COSTUME_DELETED));
+		StorageHandler.getInstance().deleteFile(
+				lookDataList.get(position).getAbsolutePath());
+		lookDataList.remove(position);
+
+		getActivity().sendBroadcast(
+				new Intent(ScriptActivity.ACTION_LOOK_DELETED));
 	}
 }

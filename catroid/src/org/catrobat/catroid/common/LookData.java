@@ -37,7 +37,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public class CostumeData implements Serializable {
+public class LookData implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -52,8 +52,8 @@ public class CostumeData implements Serializable {
 	private transient Pixmap originalPixmap = null;
 	private transient TextureRegion region = null;
 
-	private Bitmap costumeBitmap;
-	private Bitmap landscapeCostumeBitmap;
+	private Bitmap lookBitmap;
+	private Bitmap landscapeLookBitmap;
 
 	public TextureRegion getTextureRegion() {
 		if (region == null) {
@@ -93,7 +93,7 @@ public class CostumeData implements Serializable {
 
 	}
 
-	public CostumeData() {
+	public LookData() {
 	}
 
 	public String getAbsolutePath() {
@@ -110,19 +110,19 @@ public class CostumeData implements Serializable {
 		return path;
 	}
 
-	public String getCostumeName() {
+	public String getLookName() {
 		return name;
 	}
 
-	public void setCostumeName(String name) {
+	public void setLookName(String name) {
 		this.name = name;
 	}
 
-	public void setCostumeFilename(String fileName) {
+	public void setLookFilename(String fileName) {
 		this.fileName = fileName;
 	}
 
-	public String getCostumeFileName() {
+	public String getLookFileName() {
 		return fileName;
 	}
 
@@ -156,16 +156,16 @@ public class CostumeData implements Serializable {
 		thumbnailBitmap = null;
 	}
 
-	public Bitmap getCostumeBitmap() {
-		if (costumeBitmap == null) {
+	public Bitmap getLookBitmap() {
+		if (lookBitmap == null) {
 			//CODE FOR LOADING FROM SD CARD
-			costumeBitmap = BitmapFactory.decodeFile(getAbsolutePath());
+			lookBitmap = BitmapFactory.decodeFile(getAbsolutePath());
 			//____________________________________________________
 
 			//CODE FOR LOADING FROM ASSETS
 			//			try {
 			//				InputStream istr = LiveWallpaper.getContext().getAssets().open(getPath());
-			//				costumeBitmap = BitmapFactory.decodeStream(istr);
+			//				lookBitmap = BitmapFactory.decodeStream(istr);
 			//			} catch (IOException e) {
 			//				e.printStackTrace();
 			//			}
@@ -176,23 +176,23 @@ public class CostumeData implements Serializable {
 		WallpaperHelper wallpaperHelper = WallpaperHelper.getInstance();
 
 		if (wallpaperHelper.isLandscape()) {
-			if (landscapeCostumeBitmap == null) {
-				landscapeCostumeBitmap = ImageEditing.rotateBitmap(costumeBitmap,
+			if (landscapeLookBitmap == null) {
+				landscapeLookBitmap = ImageEditing.rotateBitmap(lookBitmap,
 						wallpaperHelper.getLandscapeRotationDegree());
 			}
-			return landscapeCostumeBitmap;
+			return landscapeLookBitmap;
 		} else {
-			return costumeBitmap;
+			return lookBitmap;
 		}
 	}
 
 	public void nullifyBitmaps() {
-		if (costumeBitmap != null) {
-			costumeBitmap = null;
+		if (lookBitmap != null) {
+			lookBitmap = null;
 		}
 
-		if (landscapeCostumeBitmap != null) {
-			landscapeCostumeBitmap = null;
+		if (landscapeLookBitmap != null) {
+			landscapeLookBitmap = null;
 		}
 	}
 

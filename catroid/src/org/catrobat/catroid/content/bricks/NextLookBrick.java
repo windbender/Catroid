@@ -25,9 +25,9 @@ package org.catrobat.catroid.content.bricks;
 import java.util.ArrayList;
 
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.common.CostumeData;
+import org.catrobat.catroid.common.LookData;
 import org.catrobat.catroid.content.Sprite;
-import org.catrobat.catroid.livewallpaper.WallpaperCostume;
+import org.catrobat.catroid.livewallpaper.WallpaperLook;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -35,49 +35,49 @@ import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class NextCostumeBrick implements Brick {
+public class NextLookBrick implements Brick {
 
 	private static final long serialVersionUID = 1L;
 	private Sprite sprite;
 	private transient View view;
 
-	public NextCostumeBrick(Sprite sprite) {
+	public NextLookBrick(Sprite sprite) {
 		this.sprite = sprite;
 	}
 
-	public NextCostumeBrick() {
+	public NextLookBrick() {
 
 	}
 
 	@Override
 	public void execute() {
 
-		final ArrayList<CostumeData> costumeDataList = sprite.getCostumeDataList();
-		int costumeDataListSize = costumeDataList.size();
+		final ArrayList<LookData> lookDataList = sprite.getLookDataList();
+		int lookDataListSize = lookDataList.size();
 
-		if (costumeDataListSize > 0 && sprite.costume.getCostumeData() != null) {
-			CostumeData currentCostumeData = sprite.costume.getCostumeData();
-			CostumeData finalCostumeData = costumeDataList.get(costumeDataListSize - 1);
+		if (lookDataListSize > 0 && sprite.look.getLookData() != null) {
+			LookData currentLookData = sprite.look.getLookData();
+			LookData finalLookData = lookDataList.get(lookDataListSize - 1);
 			boolean executeOnce = true;
 
-			for (CostumeData costumeData : costumeDataList) {
-				int currentIndex = costumeDataList.indexOf(costumeData);
+			for (LookData lookData : lookDataList) {
+				int currentIndex = lookDataList.indexOf(lookData);
 				int newIndex = currentIndex + 1;
 
-				if (currentCostumeData.equals(finalCostumeData) && executeOnce) {
+				if (currentLookData.equals(finalLookData) && executeOnce) {
 					executeOnce = false;
-					currentCostumeData = costumeDataList.get(0);
+					currentLookData = lookDataList.get(0);
 				}
 
-				else if (currentCostumeData.equals(costumeData) && executeOnce) {
+				else if (currentLookData.equals(lookData) && executeOnce) {
 					executeOnce = false;
-					currentCostumeData = costumeDataList.get(newIndex);
+					currentLookData = lookDataList.get(newIndex);
 				}
 
-				sprite.costume.setCostumeData(currentCostumeData);
+				sprite.look.setLookData(currentLookData);
 			}
 		} else {
-			// If there are no costumes do nothing
+			// If there are no looks do nothing
 		}
 	}
 
@@ -88,10 +88,12 @@ public class NextCostumeBrick implements Brick {
 
 	@Override
 	public View getPrototypeView(Context context) {
-		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View view = inflater.inflate(R.layout.brick_next_costume, null);
+		LayoutInflater inflater = (LayoutInflater) context
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View view = inflater.inflate(R.layout.brick_next_look, null);
 		if (sprite.getName().equals(context.getString(R.string.background))) {
-			TextView textView = (TextView) view.findViewById(R.id.brick_next_costume_text_view);
+			TextView textView = (TextView) view
+					.findViewById(R.id.brick_next_look_text_view);
 			textView.setText(R.string.brick_next_background);
 		}
 		return view;
@@ -99,7 +101,7 @@ public class NextCostumeBrick implements Brick {
 
 	@Override
 	public Brick clone() {
-		return new NextCostumeBrick(sprite);
+		return new NextLookBrick(sprite);
 	}
 
 	@Override
@@ -111,11 +113,12 @@ public class NextCostumeBrick implements Brick {
 	@Override
 	public View getView(Context context, int brickId, BaseAdapter adapter) {
 		if (view == null) {
-			view = View.inflate(context, R.layout.brick_next_costume, null);
+			view = View.inflate(context, R.layout.brick_next_look, null);
 		}
 
 		if (sprite.getName().equals(context.getString(R.string.background))) {
-			TextView textView = (TextView) view.findViewById(R.id.brick_next_costume_text_view);
+			TextView textView = (TextView) view
+					.findViewById(R.id.brick_next_look_text_view);
 			textView.setText(R.string.brick_next_background);
 		}
 
@@ -125,18 +128,18 @@ public class NextCostumeBrick implements Brick {
 	@Override
 	public void executeLiveWallpaper() {
 
-		final ArrayList<CostumeData> costumeDataList = sprite.getCostumeDataList();
+		final ArrayList<LookData> costumeDataList = sprite.getLookDataList();
 
-		WallpaperCostume wallpaperCostume = sprite.getWallpaperCostume();
+		WallpaperLook wallpaperLook = sprite.getWallpaperLook();
 
-		if (wallpaperCostume == null) {
-			new WallpaperCostume(sprite, sprite.getCostumeDataList().get(0));
+		if (wallpaperLook == null) {
+			new WallpaperLook(sprite, costumeDataList.get(0));
 			return;
 		}
 
 		int positionInList = 0;
 		int costumeDataListSize = costumeDataList.size();
-		CostumeData costumeData = wallpaperCostume.getCostumeData();
+		LookData costumeData = wallpaperLook.getLookData();
 
 		for (int index = 0; index < costumeDataListSize; index++) {
 			if (costumeDataList.get(index).equals(costumeData)) {
@@ -151,7 +154,7 @@ public class NextCostumeBrick implements Brick {
 			positionInList++;
 		}
 
-		wallpaperCostume.setCostume(costumeDataList.get(positionInList));
+		wallpaperLook.setLook(costumeDataList.get(positionInList));
 
 	}
 }

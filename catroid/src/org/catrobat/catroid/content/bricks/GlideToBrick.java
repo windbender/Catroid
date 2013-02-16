@@ -24,8 +24,8 @@ package org.catrobat.catroid.content.bricks;
 
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.content.Sprite;
-import org.catrobat.catroid.livewallpaper.WallpaperCostume;
 import org.catrobat.catroid.livewallpaper.WallpaperHelper;
+import org.catrobat.catroid.livewallpaper.WallpaperLook;
 import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.dialogs.BrickTextDialog;
 
@@ -46,7 +46,7 @@ public class GlideToBrick implements Brick, OnClickListener {
 	private Sprite sprite;
 
 	private boolean isLiveWallpaper = false;
-	private WallpaperCostume wallpaperCostume;
+	private WallpaperLook wallpaperLook;
 
 	private transient View view;
 
@@ -54,7 +54,8 @@ public class GlideToBrick implements Brick, OnClickListener {
 
 	}
 
-	public GlideToBrick(Sprite sprite, int xDestination, int yDestination, int durationInMilliSeconds) {
+	public GlideToBrick(Sprite sprite, int xDestination, int yDestination,
+			int durationInMilliSeconds) {
 		this.sprite = sprite;
 		this.xDestination = xDestination;
 		this.yDestination = yDestination;
@@ -69,18 +70,19 @@ public class GlideToBrick implements Brick, OnClickListener {
 	@Override
 	public void execute() {
 		/* That's the way how an action is made */
-		//		Action action = MoveBy.$(xDestination, yDestination, this.durationInMilliSeconds / 1000);
-		//		final CountDownLatch latch = new CountDownLatch(1);
-		//		action = action.setCompletionListener(new OnActionCompleted() {
-		//			public void completed(Action action) {
-		//				latch.countDown();
-		//			}
-		//		});
-		//		sprite.costume.action(action);
-		//		try {
-		//			latch.await();
-		//		} catch (InterruptedException e) {
-		//		}
+		// Action action = MoveBy.$(xDestination, yDestination,
+		// this.durationInMilliSeconds / 1000);
+		// final CountDownLatch latch = new CountDownLatch(1);
+		// action = action.setCompletionListener(new OnActionCompleted() {
+		// public void completed(Action action) {
+		// latch.countDown();
+		// }
+		// });
+		// sprite.look.action(action);
+		// try {
+		// latch.await();
+		// } catch (InterruptedException e) {
+		// }
 		long startTime = System.currentTimeMillis();
 		int duration = durationInMilliSeconds;
 		while (duration > 0) {
@@ -92,7 +94,8 @@ public class GlideToBrick implements Brick, OnClickListener {
 			while (System.currentTimeMillis() <= (timeBeforeSleep + sleep)) {
 
 				if (sprite.isPaused) {
-					sleep = (int) ((timeBeforeSleep + sleep) - System.currentTimeMillis());
+					sleep = (int) ((timeBeforeSleep + sleep) - System
+							.currentTimeMillis());
 					long milliSecondsBeforePause = System.currentTimeMillis();
 					while (sprite.isPaused) {
 						if (sprite.isFinished) {
@@ -101,7 +104,8 @@ public class GlideToBrick implements Brick, OnClickListener {
 						Thread.yield();
 					}
 					timeBeforeSleep = System.currentTimeMillis();
-					startTime += System.currentTimeMillis() - milliSecondsBeforePause;
+					startTime += System.currentTimeMillis()
+							- milliSecondsBeforePause;
 				}
 
 				Thread.yield();
@@ -117,33 +121,37 @@ public class GlideToBrick implements Brick, OnClickListener {
 			// -stay at last position
 		} else {
 			if (!isLiveWallpaper) {
-				sprite.costume.aquireXYWidthHeightLock();
-				sprite.costume.setXYPosition(xDestination, yDestination);
-				sprite.costume.releaseXYWidthHeightLock();
+				sprite.look.aquireXYWidthHeightLock();
+				sprite.look.setXYPosition(xDestination, yDestination);
+				sprite.look.releaseXYWidthHeightLock();
 			} else {
-				wallpaperCostume.setX(xDestination);
-				wallpaperCostume.setY(yDestination);
+				wallpaperLook.setX(xDestination);
+				wallpaperLook.setY(yDestination);
 			}
 		}
 	}
 
 	private void updatePositions(int timePassed, int duration) {
 		if (!isLiveWallpaper) {
-			sprite.costume.aquireXYWidthHeightLock();
-			float xPosition = sprite.costume.getXPosition();
-			float yPosition = sprite.costume.getYPosition();
+			sprite.look.aquireXYWidthHeightLock();
+			float xPosition = sprite.look.getXPosition();
+			float yPosition = sprite.look.getYPosition();
 
-			xPosition += ((float) timePassed / duration) * (xDestination - xPosition);
-			yPosition += ((float) timePassed / duration) * (yDestination - yPosition);
+			xPosition += ((float) timePassed / duration)
+					* (xDestination - xPosition);
+			yPosition += ((float) timePassed / duration)
+					* (yDestination - yPosition);
 
-			sprite.costume.setXYPosition(xPosition, yPosition);
-			sprite.costume.releaseXYWidthHeightLock();
+			sprite.look.setXYPosition(xPosition, yPosition);
+			sprite.look.releaseXYWidthHeightLock();
 		} else {
-			int changeXBy = (int) (((float) timePassed / duration) * (xDestination - wallpaperCostume.getX()));
-			int changeYBy = (int) (((float) timePassed / duration) * (yDestination - wallpaperCostume.getY()));
+			int changeXBy = (int) (((float) timePassed / duration) * (xDestination - wallpaperLook
+					.getX()));
+			int changeYBy = (int) (((float) timePassed / duration) * (yDestination - wallpaperLook
+					.getY()));
 
-			wallpaperCostume.changeXBy(changeXBy);
-			wallpaperCostume.changeYby(changeYBy);
+			wallpaperLook.changeXBy(changeXBy);
+			wallpaperLook.changeYby(changeYBy);
 
 		}
 	}
@@ -162,18 +170,24 @@ public class GlideToBrick implements Brick, OnClickListener {
 
 		view = View.inflate(context, R.layout.brick_glide_to, null);
 
-		TextView textX = (TextView) view.findViewById(R.id.brick_glide_to_prototype_text_view_x);
-		EditText editX = (EditText) view.findViewById(R.id.brick_glide_to_edit_text_x);
+		TextView textX = (TextView) view
+				.findViewById(R.id.brick_glide_to_prototype_text_view_x);
+		EditText editX = (EditText) view
+				.findViewById(R.id.brick_glide_to_edit_text_x);
 		editX.setText(String.valueOf(xDestination));
 		editX.setOnClickListener(this);
 
-		TextView textY = (TextView) view.findViewById(R.id.brick_glide_to_prototype_text_view_y);
-		EditText editY = (EditText) view.findViewById(R.id.brick_glide_to_edit_text_y);
+		TextView textY = (TextView) view
+				.findViewById(R.id.brick_glide_to_prototype_text_view_y);
+		EditText editY = (EditText) view
+				.findViewById(R.id.brick_glide_to_edit_text_y);
 		editY.setText(String.valueOf(yDestination));
 		editY.setOnClickListener(this);
 
-		TextView textDuration = (TextView) view.findViewById(R.id.brick_glide_to_prototype_text_view_duration);
-		EditText editDuration = (EditText) view.findViewById(R.id.brick_glide_to_edit_text_duration);
+		TextView textDuration = (TextView) view
+				.findViewById(R.id.brick_glide_to_prototype_text_view_duration);
+		EditText editDuration = (EditText) view
+				.findViewById(R.id.brick_glide_to_edit_text_duration);
 		editDuration.setText(String.valueOf(durationInMilliSeconds / 1000.0));
 
 		textDuration.setVisibility(View.GONE);
@@ -195,7 +209,8 @@ public class GlideToBrick implements Brick, OnClickListener {
 
 	@Override
 	public Brick clone() {
-		return new GlideToBrick(getSprite(), xDestination, yDestination, getDurationInMilliSeconds());
+		return new GlideToBrick(getSprite(), xDestination, yDestination,
+				getDurationInMilliSeconds());
 	}
 
 	@Override
@@ -207,13 +222,17 @@ public class GlideToBrick implements Brick, OnClickListener {
 			protected void initialize() {
 				if (view.getId() == R.id.brick_glide_to_edit_text_x) {
 					input.setText(String.valueOf(xDestination));
-					input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+					input.setInputType(InputType.TYPE_CLASS_NUMBER
+							| InputType.TYPE_NUMBER_FLAG_SIGNED);
 				} else if (view.getId() == R.id.brick_glide_to_edit_text_y) {
 					input.setText(String.valueOf(yDestination));
-					input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+					input.setInputType(InputType.TYPE_CLASS_NUMBER
+							| InputType.TYPE_NUMBER_FLAG_SIGNED);
 				} else if (view.getId() == R.id.brick_glide_to_edit_text_duration) {
-					input.setText(String.valueOf(durationInMilliSeconds / 1000.0));
-					input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL
+					input.setText(String
+							.valueOf(durationInMilliSeconds / 1000.0));
+					input.setInputType(InputType.TYPE_CLASS_NUMBER
+							| InputType.TYPE_NUMBER_FLAG_DECIMAL
 							| InputType.TYPE_NUMBER_FLAG_SIGNED);
 				}
 
@@ -224,32 +243,38 @@ public class GlideToBrick implements Brick, OnClickListener {
 			protected boolean handleOkButton() {
 				try {
 					if (view.getId() == R.id.brick_glide_to_edit_text_x) {
-						xDestination = Integer.parseInt(input.getText().toString());
+						xDestination = Integer.parseInt(input.getText()
+								.toString());
 					} else if (view.getId() == R.id.brick_glide_to_edit_text_y) {
-						yDestination = Integer.parseInt(input.getText().toString());
+						yDestination = Integer.parseInt(input.getText()
+								.toString());
 					} else if (view.getId() == R.id.brick_glide_to_edit_text_duration) {
 						durationInMilliSeconds = (int) Math
-								.round(Double.parseDouble(input.getText().toString()) * 1000);
+								.round(Double.parseDouble(input.getText()
+										.toString()) * 1000);
 					}
 				} catch (NumberFormatException exception) {
-					Toast.makeText(getActivity(), R.string.error_no_number_entered, Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(),
+							R.string.error_no_number_entered,
+							Toast.LENGTH_SHORT).show();
 				}
 
 				return true;
 			}
 		};
 
-		editDialog.show(activity.getSupportFragmentManager(), "dialog_glide_to_brick");
+		editDialog.show(activity.getSupportFragmentManager(),
+				"dialog_glide_to_brick");
 	}
 
 	@Override
 	public void executeLiveWallpaper() {
-		WallpaperCostume wallpaperCostume = sprite.getWallpaperCostume();
-		if (wallpaperCostume == null) {
-			wallpaperCostume = new WallpaperCostume(sprite, null);
+		WallpaperLook wallpaperLook = sprite.getWallpaperLook();
+		if (wallpaperLook == null) {
+			wallpaperLook = new WallpaperLook(sprite, null);
 		}
 
-		this.wallpaperCostume = wallpaperCostume;
+		this.wallpaperLook = wallpaperLook;
 		this.isLiveWallpaper = true;
 		WallpaperHelper helper = WallpaperHelper.getInstance();
 

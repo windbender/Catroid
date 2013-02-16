@@ -23,7 +23,7 @@
 
 package org.catrobat.catroid.livewallpaper;
 
-import org.catrobat.catroid.common.CostumeData;
+import org.catrobat.catroid.common.LookData;
 import org.catrobat.catroid.common.Values;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.utils.ImageEditing;
@@ -35,11 +35,11 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 
-public class WallpaperCostume {
+public class WallpaperLook {
 
-	private CostumeData costumeData;
+	private LookData lookData;
 	private Sprite sprite;
-	private Bitmap costume = null;
+	private Bitmap look = null;
 	private Matrix matrix;
 	private Paint paint;
 
@@ -49,8 +49,8 @@ public class WallpaperCostume {
 	private int centerX;
 	private int centerY;
 
-	private int costumeWidth;
-	private int costumeHeight;
+	private int lookWidth;
+	private int lookHeight;
 
 	float rotation = 0f;
 
@@ -71,11 +71,12 @@ public class WallpaperCostume {
 
 	private WallpaperHelper wallpaperHelper;
 
-	public WallpaperCostume(Sprite sprite, CostumeData costumeData) {
+	public WallpaperLook(Sprite sprite, LookData lookData) {
 
 		this.wallpaperHelper = WallpaperHelper.getInstance();
 		this.sprite = sprite;
-		this.zPosition = wallpaperHelper.getProject().getSpriteList().indexOf(sprite);
+		this.zPosition = wallpaperHelper.getProject().getSpriteList()
+				.indexOf(sprite);
 		this.matrix = new Matrix();
 
 		if (sprite.getName().equals("Background")) {
@@ -87,8 +88,8 @@ public class WallpaperCostume {
 
 		this.paint = new Paint();
 
-		if (costumeData != null) {
-			setCostume(costumeData);
+		if (lookData != null) {
+			setLook(lookData);
 		}
 
 		if (wallpaperHelper.isLandscape()) {
@@ -97,11 +98,12 @@ public class WallpaperCostume {
 			y = temp;
 
 			this.isLandscape = true;
-			this.landscapeRotation = wallpaperHelper.getLandscapeRotationDegree();
+			this.landscapeRotation = wallpaperHelper
+					.getLandscapeRotationDegree();
 
 		}
 
-		sprite.setWallpaperCostume(this);
+		sprite.setWallpaperLook(this);
 
 	}
 
@@ -111,23 +113,28 @@ public class WallpaperCostume {
 		rotation = 0f;
 		size = 1;
 		hidden = false;
-		zPosition = wallpaperHelper.getProject().getSpriteList().indexOf(sprite);
-		costume = null;
-		if (costumeData != null) {
-			costumeData.nullifyBitmaps();
+		zPosition = wallpaperHelper.getProject().getSpriteList()
+				.indexOf(sprite);
+		look = null;
+		if (lookData != null) {
+			lookData.nullifyBitmaps();
 		}
 	}
 
 	private void updateMatrix() {
-		matrix.setRotate(rotation, costumeWidth / 2, costumeHeight / 2);
+		matrix.setRotate(rotation, lookWidth / 2, lookHeight / 2);
 		matrix.postScale((float) size, (float) size);
 
 		if (isLandscape) {
-			centerX = wallpaperHelper.getCenterXCoord() - y - (int) (costumeWidth * size) / 2;
-			centerY = wallpaperHelper.getCenterYCoord() - x - (int) (costumeHeight * size) / 2;
+			centerX = wallpaperHelper.getCenterXCoord() - y
+					- (int) (lookWidth * size) / 2;
+			centerY = wallpaperHelper.getCenterYCoord() - x
+					- (int) (lookHeight * size) / 2;
 		} else {
-			centerX = wallpaperHelper.getCenterXCoord() + x - (int) (costumeWidth * size) / 2;
-			centerY = wallpaperHelper.getCenterYCoord() - y - (int) (costumeHeight * size) / 2;
+			centerX = wallpaperHelper.getCenterXCoord() + x
+					- (int) (lookWidth * size) / 2;
+			centerY = wallpaperHelper.getCenterYCoord() - y
+					- (int) (lookHeight * size) / 2;
 		}
 
 		matrix.postTranslate(centerX, centerY);
@@ -181,18 +188,19 @@ public class WallpaperCostume {
 		changeMatrix = true;
 	}
 
-	public boolean touchedInsideTheCostume(float touchX, float touchY) {
-		if (isBackground || costume == null) {
+	public boolean touchedInsideTheLook(float touchX, float touchY) {
+		if (isBackground || look == null) {
 			return false;
 		}
 
 		float right = centerX;
 		float bottom = centerY;
 
-		right += costumeWidth;
-		bottom += costumeHeight;
+		right += lookWidth;
+		bottom += lookHeight;
 
-		if (touchX > centerX && touchX < right && touchY > centerY && touchY < bottom) {
+		if (touchX > centerX && touchX < right && touchY > centerY
+				&& touchY < bottom) {
 			return true;
 		}
 
@@ -200,31 +208,32 @@ public class WallpaperCostume {
 
 	}
 
-	public Bitmap getCostume() {
-		if (isBackground && costume == null) {
-			costume = ImageEditing.createSingleColorBitmap(Values.SCREEN_WIDTH, Values.SCREEN_HEIGHT, Color.WHITE);
+	public Bitmap getLook() {
+		if (isBackground && look == null) {
+			look = ImageEditing.createSingleColorBitmap(Values.SCREEN_WIDTH,
+					Values.SCREEN_HEIGHT, Color.WHITE);
 			setX(-360);
 			setY(592);
 		}
 
-		return costume;
+		return look;
 	}
 
-	public void setCostume(CostumeData costumeData) {
-		this.costumeData = costumeData;
-		this.costume = costumeData.getCostumeBitmap();
-		this.costumeWidth = costume.getWidth();
-		this.costumeHeight = costume.getHeight();
+	public void setLook(LookData lookData) {
+		this.lookData = lookData;
+		this.look = lookData.getLookBitmap();
+		this.lookWidth = look.getWidth();
+		this.lookHeight = look.getHeight();
 		changeMatrix = true;
 
 	}
 
-	public void setCostumeSize(double size) {
+	public void setLookSize(double size) {
 		this.size = size * 0.01;
 		changeMatrix = true;
 	}
 
-	public void changeCostumeSizeBy(double changeValue) {
+	public void changeLookSizeBy(double changeValue) {
 		this.size += (changeValue * 0.01);
 		if (this.size < 0) {
 			this.size = 0;
@@ -233,16 +242,16 @@ public class WallpaperCostume {
 		changeMatrix = true;
 	}
 
-	public CostumeData getCostumeData() {
-		return costumeData;
+	public LookData getLookData() {
+		return lookData;
 	}
 
-	public boolean isCostumeHidden() {
+	public boolean isLookHidden() {
 		return hidden;
 	}
 
-	public void setCostumeHidden(boolean hideCostume) {
-		this.hidden = hideCostume;
+	public void setLookHidden(boolean hideLook) {
+		this.hidden = hideLook;
 	}
 
 	public boolean isBackground() {
@@ -269,8 +278,8 @@ public class WallpaperCostume {
 
 	void updatePaint() {
 		ColorMatrix cm = new ColorMatrix();
-		cm.set(new float[] { 1, 0, 0, 0, brightness, 0, 1, 0, 0, brightness, 0, 0, 1, 0, brightness, 0, 0, 0,
-				alphaValue, 0 });
+		cm.set(new float[] { 1, 0, 0, 0, brightness, 0, 1, 0, 0, brightness, 0,
+				0, 1, 0, brightness, 0, 0, 0, alphaValue, 0 });
 
 		paint.setColorFilter(new ColorMatrixColorFilter(cm));
 	}

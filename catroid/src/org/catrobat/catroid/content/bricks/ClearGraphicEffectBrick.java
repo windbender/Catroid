@@ -24,7 +24,7 @@ package org.catrobat.catroid.content.bricks;
 
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.content.Sprite;
-import org.catrobat.catroid.livewallpaper.WallpaperCostume;
+import org.catrobat.catroid.livewallpaper.WallpaperLook;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -52,8 +52,8 @@ public class ClearGraphicEffectBrick implements Brick {
 
 	@Override
 	public void execute() {
-		sprite.costume.setBrightnessValue(1f);
-		sprite.costume.setAlphaValue(1f);
+		sprite.look.setBrightnessValue(1f);
+		sprite.look.setAlphaValue(1f);
 	}
 
 	@Override
@@ -64,7 +64,8 @@ public class ClearGraphicEffectBrick implements Brick {
 	@Override
 	public View getView(Context context, int brickId, BaseAdapter adapter) {
 		if (view == null) {
-			view = View.inflate(context, R.layout.brick_clear_graphic_effect, null);
+			view = View.inflate(context, R.layout.brick_clear_graphic_effect,
+					null);
 		}
 
 		return view;
@@ -72,7 +73,8 @@ public class ClearGraphicEffectBrick implements Brick {
 
 	@Override
 	public View getPrototypeView(Context context) {
-		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		LayoutInflater inflater = (LayoutInflater) context
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		return inflater.inflate(R.layout.brick_clear_graphic_effect, null);
 	}
 
@@ -83,11 +85,11 @@ public class ClearGraphicEffectBrick implements Brick {
 
 	@Override
 	public void executeLiveWallpaper() {
-		WallpaperCostume wallpaperCostume = sprite.getWallpaperCostume();
-		if (wallpaperCostume == null) {
-			wallpaperCostume = new WallpaperCostume(sprite, null);
+		WallpaperLook wallpaperLook = sprite.getWallpaperLook();
+		if (wallpaperLook == null) {
+			wallpaperLook = new WallpaperLook(sprite, null);
 		}
 
-		wallpaperCostume.clearGraphicEffect();
+		wallpaperLook.clearGraphicEffect();
 	}
 }

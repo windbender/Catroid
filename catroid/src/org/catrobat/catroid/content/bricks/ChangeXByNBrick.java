@@ -24,7 +24,7 @@ package org.catrobat.catroid.content.bricks;
 
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.content.Sprite;
-import org.catrobat.catroid.livewallpaper.WallpaperCostume;
+import org.catrobat.catroid.livewallpaper.WallpaperLook;
 import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.dialogs.BrickTextDialog;
 
@@ -60,8 +60,8 @@ public class ChangeXByNBrick implements Brick, OnClickListener {
 
 	@Override
 	public void execute() {
-		sprite.costume.aquireXYWidthHeightLock();
-		int xPosition = (int) sprite.costume.getXPosition();
+		sprite.look.aquireXYWidthHeightLock();
+		int xPosition = (int) sprite.look.getXPosition();
 
 		if (xPosition > 0 && xMovement > 0 && xPosition + xMovement < 0) {
 			xPosition = Integer.MAX_VALUE;
@@ -71,8 +71,8 @@ public class ChangeXByNBrick implements Brick, OnClickListener {
 			xPosition += xMovement;
 		}
 
-		sprite.costume.setXYPosition(xPosition, sprite.costume.getYPosition());
-		sprite.costume.releaseXYWidthHeightLock();
+		sprite.look.setXYPosition(xPosition, sprite.look.getYPosition());
+		sprite.look.releaseXYWidthHeightLock();
 	}
 
 	@Override
@@ -85,8 +85,10 @@ public class ChangeXByNBrick implements Brick, OnClickListener {
 
 		view = View.inflate(context, R.layout.brick_change_x, null);
 
-		TextView textX = (TextView) view.findViewById(R.id.brick_change_x_prototype_text_view);
-		EditText editX = (EditText) view.findViewById(R.id.brick_change_x_edit_text);
+		TextView textX = (TextView) view
+				.findViewById(R.id.brick_change_x_prototype_text_view);
+		EditText editX = (EditText) view
+				.findViewById(R.id.brick_change_x_edit_text);
 		editX.setText(String.valueOf(xMovement));
 
 		textX.setVisibility(View.GONE);
@@ -114,7 +116,8 @@ public class ChangeXByNBrick implements Brick, OnClickListener {
 			@Override
 			protected void initialize() {
 				input.setText(String.valueOf(xMovement));
-				input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+				input.setInputType(InputType.TYPE_CLASS_NUMBER
+						| InputType.TYPE_NUMBER_FLAG_SIGNED);
 				input.setSelectAllOnFocus(true);
 			}
 
@@ -123,24 +126,27 @@ public class ChangeXByNBrick implements Brick, OnClickListener {
 				try {
 					xMovement = Integer.parseInt(input.getText().toString());
 				} catch (NumberFormatException exception) {
-					Toast.makeText(getActivity(), R.string.error_no_number_entered, Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(),
+							R.string.error_no_number_entered,
+							Toast.LENGTH_SHORT).show();
 				}
 
 				return true;
 			}
 		};
 
-		editDialog.show(activity.getSupportFragmentManager(), "dialog_change_x_by_brick");
+		editDialog.show(activity.getSupportFragmentManager(),
+				"dialog_change_x_by_brick");
 	}
 
 	@Override
 	public void executeLiveWallpaper() {
 
-		WallpaperCostume wallpaperCostume = sprite.getWallpaperCostume();
-		if (wallpaperCostume == null) {
-			wallpaperCostume = new WallpaperCostume(sprite, null);
+		WallpaperLook wallpaperLook = sprite.getWallpaperLook();
+		if (wallpaperLook == null) {
+			wallpaperLook = new WallpaperLook(sprite, null);
 		}
 
-		wallpaperCostume.changeXBy(xMovement);
+		wallpaperLook.changeXBy(xMovement);
 	}
 }

@@ -24,7 +24,7 @@ package org.catrobat.catroid.content.bricks;
 
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.content.Sprite;
-import org.catrobat.catroid.livewallpaper.WallpaperCostume;
+import org.catrobat.catroid.livewallpaper.WallpaperLook;
 import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.dialogs.BrickTextDialog;
 
@@ -60,8 +60,8 @@ public class ChangeYByNBrick implements Brick, OnClickListener {
 
 	@Override
 	public void execute() {
-		sprite.costume.aquireXYWidthHeightLock();
-		int yPosition = (int) sprite.costume.getYPosition();
+		sprite.look.aquireXYWidthHeightLock();
+		int yPosition = (int) sprite.look.getYPosition();
 
 		if (yPosition > 0 && yMovement > 0 && yPosition + yMovement < 0) {
 			yPosition = Integer.MAX_VALUE;
@@ -71,8 +71,8 @@ public class ChangeYByNBrick implements Brick, OnClickListener {
 			yPosition += yMovement;
 		}
 
-		sprite.costume.setXYPosition(sprite.costume.getXPosition(), yPosition);
-		sprite.costume.releaseXYWidthHeightLock();
+		sprite.look.setXYPosition(sprite.look.getXPosition(), yPosition);
+		sprite.look.releaseXYWidthHeightLock();
 	}
 
 	@Override
@@ -85,8 +85,10 @@ public class ChangeYByNBrick implements Brick, OnClickListener {
 
 		view = View.inflate(context, R.layout.brick_change_y, null);
 
-		TextView textY = (TextView) view.findViewById(R.id.brick_change_y_prototype_text_view);
-		EditText editY = (EditText) view.findViewById(R.id.brick_change_y_edit_text);
+		TextView textY = (TextView) view
+				.findViewById(R.id.brick_change_y_prototype_text_view);
+		EditText editY = (EditText) view
+				.findViewById(R.id.brick_change_y_edit_text);
 		editY.setText(String.valueOf(yMovement));
 
 		textY.setVisibility(View.GONE);
@@ -114,7 +116,8 @@ public class ChangeYByNBrick implements Brick, OnClickListener {
 			@Override
 			protected void initialize() {
 				input.setText(String.valueOf(yMovement));
-				input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+				input.setInputType(InputType.TYPE_CLASS_NUMBER
+						| InputType.TYPE_NUMBER_FLAG_SIGNED);
 				input.setSelectAllOnFocus(true);
 			}
 
@@ -123,23 +126,26 @@ public class ChangeYByNBrick implements Brick, OnClickListener {
 				try {
 					yMovement = Integer.parseInt(input.getText().toString());
 				} catch (NumberFormatException exception) {
-					Toast.makeText(getActivity(), R.string.error_no_number_entered, Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(),
+							R.string.error_no_number_entered,
+							Toast.LENGTH_SHORT).show();
 				}
 
 				return true;
 			}
 		};
 
-		editDialog.show(activity.getSupportFragmentManager(), "dialog_change_y_by_brick");
+		editDialog.show(activity.getSupportFragmentManager(),
+				"dialog_change_y_by_brick");
 	}
 
 	@Override
 	public void executeLiveWallpaper() {
-		WallpaperCostume wallpaperCostume = sprite.getWallpaperCostume();
-		if (wallpaperCostume == null) {
-			wallpaperCostume = new WallpaperCostume(sprite, null);
+		WallpaperLook wallpaperLook = sprite.getWallpaperLook();
+		if (wallpaperLook == null) {
+			wallpaperLook = new WallpaperLook(sprite, null);
 		}
-		wallpaperCostume.changeYby(yMovement);
+		wallpaperLook.changeYby(yMovement);
 
 	}
 }

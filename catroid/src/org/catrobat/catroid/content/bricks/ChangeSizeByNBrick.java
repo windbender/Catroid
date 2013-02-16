@@ -24,7 +24,7 @@ package org.catrobat.catroid.content.bricks;
 
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.content.Sprite;
-import org.catrobat.catroid.livewallpaper.WallpaperCostume;
+import org.catrobat.catroid.livewallpaper.WallpaperLook;
 import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.dialogs.BrickTextDialog;
 
@@ -60,11 +60,11 @@ public class ChangeSizeByNBrick implements Brick, OnClickListener {
 
 	@Override
 	public void execute() {
-		float newSize = sprite.costume.getSize() + ((float) size / 100f);
+		float newSize = sprite.look.getSize() + ((float) size / 100f);
 		if (newSize < 0f) {
 			newSize = 0f;
 		}
-		sprite.costume.setSize(newSize);
+		sprite.look.setSize(newSize);
 	}
 
 	@Override
@@ -77,8 +77,10 @@ public class ChangeSizeByNBrick implements Brick, OnClickListener {
 
 		view = View.inflate(context, R.layout.brick_change_size_by_n, null);
 
-		TextView text = (TextView) view.findViewById(R.id.brick_change_size_by_prototype_text_view);
-		EditText edit = (EditText) view.findViewById(R.id.brick_change_size_by_edit_text);
+		TextView text = (TextView) view
+				.findViewById(R.id.brick_change_size_by_prototype_text_view);
+		EditText edit = (EditText) view
+				.findViewById(R.id.brick_change_size_by_edit_text);
 		edit.setText(String.valueOf(size));
 
 		text.setVisibility(View.GONE);
@@ -107,7 +109,8 @@ public class ChangeSizeByNBrick implements Brick, OnClickListener {
 			@Override
 			protected void initialize() {
 				input.setText(String.valueOf(size));
-				input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL
+				input.setInputType(InputType.TYPE_CLASS_NUMBER
+						| InputType.TYPE_NUMBER_FLAG_DECIMAL
 						| InputType.TYPE_NUMBER_FLAG_SIGNED);
 				input.setSelectAllOnFocus(true);
 			}
@@ -117,25 +120,28 @@ public class ChangeSizeByNBrick implements Brick, OnClickListener {
 				try {
 					size = Double.parseDouble(input.getText().toString());
 				} catch (NumberFormatException exception) {
-					Toast.makeText(getActivity(), R.string.error_no_number_entered, Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(),
+							R.string.error_no_number_entered,
+							Toast.LENGTH_SHORT).show();
 				}
 
 				return true;
 			}
 		};
 
-		editDialog.show(activity.getSupportFragmentManager(), "dialog_change_size_by_n_brick");
+		editDialog.show(activity.getSupportFragmentManager(),
+				"dialog_change_size_by_n_brick");
 	}
 
 	@Override
 	public void executeLiveWallpaper() {
-		WallpaperCostume wallpaperCostume = sprite.getWallpaperCostume();
+		WallpaperLook wallpaperLook = sprite.getWallpaperLook();
 
-		if (wallpaperCostume == null) {
-			wallpaperCostume = new WallpaperCostume(sprite, null);
+		if (wallpaperLook == null) {
+			wallpaperLook = new WallpaperLook(sprite, null);
 		}
 
-		wallpaperCostume.changeCostumeSizeBy(size);
+		wallpaperLook.changeLookSizeBy(size);
 
 	}
 }

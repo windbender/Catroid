@@ -24,7 +24,7 @@ package org.catrobat.catroid.content.bricks;
 
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.content.Sprite;
-import org.catrobat.catroid.livewallpaper.WallpaperCostume;
+import org.catrobat.catroid.livewallpaper.WallpaperLook;
 import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.dialogs.BrickTextDialog;
 
@@ -58,13 +58,13 @@ public class GoNStepsBackBrick implements Brick, OnClickListener {
 
 	@Override
 	public void execute() {
-		int zPosition = sprite.costume.zPosition;
+		int zPosition = sprite.look.zPosition;
 		if (steps > 0 && (zPosition - steps) > zPosition) {
-			sprite.costume.zPosition = Integer.MIN_VALUE;
+			sprite.look.zPosition = Integer.MIN_VALUE;
 		} else if (steps < 0 && (zPosition - steps) < zPosition) {
-			sprite.costume.zPosition = Integer.MAX_VALUE;
+			sprite.look.zPosition = Integer.MAX_VALUE;
 		} else {
-			sprite.costume.zPosition -= steps;
+			sprite.look.zPosition -= steps;
 		}
 	}
 
@@ -77,8 +77,10 @@ public class GoNStepsBackBrick implements Brick, OnClickListener {
 	public View getView(Context context, int brickId, BaseAdapter adapter) {
 		View view = View.inflate(context, R.layout.brick_go_back, null);
 
-		TextView text = (TextView) view.findViewById(R.id.brick_go_back_prototype_text_view);
-		EditText edit = (EditText) view.findViewById(R.id.brick_go_back_edit_text);
+		TextView text = (TextView) view
+				.findViewById(R.id.brick_go_back_prototype_text_view);
+		EditText edit = (EditText) view
+				.findViewById(R.id.brick_go_back_edit_text);
 
 		edit.setText(String.valueOf(steps));
 		text.setVisibility(View.GONE);
@@ -106,7 +108,8 @@ public class GoNStepsBackBrick implements Brick, OnClickListener {
 			@Override
 			protected void initialize() {
 				input.setText(String.valueOf(steps));
-				input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+				input.setInputType(InputType.TYPE_CLASS_NUMBER
+						| InputType.TYPE_NUMBER_FLAG_SIGNED);
 				input.setSelectAllOnFocus(true);
 			}
 
@@ -115,31 +118,34 @@ public class GoNStepsBackBrick implements Brick, OnClickListener {
 				try {
 					steps = Integer.parseInt(input.getText().toString());
 				} catch (NumberFormatException exception) {
-					Toast.makeText(getActivity(), R.string.error_no_number_entered, Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(),
+							R.string.error_no_number_entered,
+							Toast.LENGTH_SHORT).show();
 				}
 
 				return true;
 			}
 		};
 
-		editDialog.show(activity.getSupportFragmentManager(), "dialog_go_n_steps_brick");
+		editDialog.show(activity.getSupportFragmentManager(),
+				"dialog_go_n_steps_brick");
 	}
 
 	@Override
 	public void executeLiveWallpaper() {
-		WallpaperCostume wallpaperCostume = sprite.getWallpaperCostume();
-		if (wallpaperCostume == null) {
-			wallpaperCostume = new WallpaperCostume(sprite, null);
+		WallpaperLook wallpaperLook = sprite.getWallpaperLook();
+		if (wallpaperLook == null) {
+			wallpaperLook = new WallpaperLook(sprite, null);
 		}
 
-		int zPosition = wallpaperCostume.getzPosition();
+		int zPosition = wallpaperLook.getzPosition();
 
 		if (steps > 0 && (zPosition - steps) > zPosition) {
-			wallpaperCostume.setzPosition(Integer.MIN_VALUE);
+			wallpaperLook.setzPosition(Integer.MIN_VALUE);
 		} else if (steps < 0 && (zPosition - steps) < zPosition) {
-			wallpaperCostume.setzPosition(Integer.MAX_VALUE);
+			wallpaperLook.setzPosition(Integer.MAX_VALUE);
 		} else {
-			wallpaperCostume.setzPosition(wallpaperCostume.getzPosition() - steps);
+			wallpaperLook.setzPosition(wallpaperLook.getzPosition() - steps);
 		}
 	}
 }
