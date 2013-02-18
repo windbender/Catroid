@@ -36,16 +36,16 @@ import org.catrobat.catroid.content.bricks.ChangeXByNBrick;
 import org.catrobat.catroid.content.bricks.ChangeYByNBrick;
 import org.catrobat.catroid.content.bricks.ComeToFrontBrick;
 import org.catrobat.catroid.content.bricks.HideBrick;
-import org.catrobat.catroid.content.bricks.NextCostumeBrick;
+import org.catrobat.catroid.content.bricks.NextLookBrick;
 import org.catrobat.catroid.content.bricks.PlaceAtBrick;
-import org.catrobat.catroid.content.bricks.SetCostumeBrick;
 import org.catrobat.catroid.content.bricks.SetGhostEffectBrick;
+import org.catrobat.catroid.content.bricks.SetLookBrick;
 import org.catrobat.catroid.content.bricks.SetSizeToBrick;
 import org.catrobat.catroid.content.bricks.SetXBrick;
 import org.catrobat.catroid.content.bricks.SetYBrick;
 import org.catrobat.catroid.content.bricks.ShowBrick;
-import org.catrobat.catroid.livewallpaper.WallpaperCostume;
 import org.catrobat.catroid.livewallpaper.WallpaperHelper;
+import org.catrobat.catroid.livewallpaper.WallpaperLook;
 
 import android.graphics.Bitmap;
 import android.graphics.ColorMatrix;
@@ -100,10 +100,10 @@ public class LiveWallpaperTest extends AndroidTestCase {
 		this.catroidSprite = defaultProject.getSpriteList().get(1);
 		this.backgroundSprite = defaultProject.getSpriteList().get(0);
 
-		this.backgroundBitmap = backgroundSprite.getCostumeDataList().get(0).getCostumeBitmap();
-		this.normalCatBitmap = catroidSprite.getCostumeDataList().get(0).getCostumeBitmap();
-		this.banzaiCatBitmap = catroidSprite.getCostumeDataList().get(1).getCostumeBitmap();
-		this.chasireCatBitmap = catroidSprite.getCostumeDataList().get(2).getCostumeBitmap();
+		this.backgroundBitmap = backgroundSprite.getLookDataList().get(0).getLookBitmap();
+		this.normalCatBitmap = catroidSprite.getLookDataList().get(0).getLookBitmap();
+		this.banzaiCatBitmap = catroidSprite.getLookDataList().get(1).getLookBitmap();
+		this.chasireCatBitmap = catroidSprite.getLookDataList().get(2).getLookBitmap();
 
 		this.wallpaperHelper = WallpaperHelper.getInstance();
 		wallpaperHelper.setProject(defaultProject);
@@ -166,78 +166,77 @@ public class LiveWallpaperTest extends AndroidTestCase {
 		return paint;
 	}
 
-	public void testSetCostumeBrick() {
+	public void testSetLookBrick() {
 
 		Brick brick = backgroundSprite.getScript(0).getBrick(0);
-		assertTrue("This brick should be an instance of SetCostumeBrick but it's not", brick instanceof SetCostumeBrick);
+		assertTrue("This brick should be an instance of SetLookBrick but it's not", brick instanceof SetLookBrick);
 		brick.executeLiveWallpaper();
-		WallpaperCostume wallpaperCostume = backgroundSprite.getWallpaperCostume();
+		WallpaperLook wallpaperLook = backgroundSprite.getWallpaperLook();
 
-		assertTrue("The isBackground flag was not set", wallpaperCostume.isBackground());
+		assertTrue("The isBackground flag was not set", wallpaperLook.isBackground());
 		assertTrue("The background in the wallpaper is not the same as the default project background",
-				sameBitmaps(backgroundBitmap, wallpaperCostume.getCostume()));
+				sameBitmaps(backgroundBitmap, wallpaperLook.getLook()));
 
 		brick = catroidSprite.getScript(0).getBrick(0);
-		assertTrue("This brick should be an instance of SetCostumeBrick but it's not", brick instanceof SetCostumeBrick);
+		assertTrue("This brick should be an instance of SetLookBrick but it's not", brick instanceof SetLookBrick);
 		brick.executeLiveWallpaper();
-		wallpaperCostume = catroidSprite.getWallpaperCostume();
-		assertTrue("Expected normalCat but was " + wallpaperCostume.getCostumeData().getCostumeName(),
-				sameBitmaps(normalCatBitmap, wallpaperCostume.getCostume()));
+		wallpaperLook = catroidSprite.getWallpaperLook();
+		assertTrue("Expected normalCat but was " + wallpaperLook.getLookData().getLookName(),
+				sameBitmaps(normalCatBitmap, wallpaperLook.getLook()));
 
 	}
 
-	public void testNextCostumeBrick() {
-		Brick brick = new NextCostumeBrick(catroidSprite);
+	public void testNextLookBrick() {
+		Brick brick = new NextLookBrick(catroidSprite);
 
 		brick.executeLiveWallpaper();
-		WallpaperCostume wallpaperCostume = catroidSprite.getWallpaperCostume();
-		assertTrue("Expected normalCat but was " + wallpaperCostume.getCostumeData().getCostumeName(),
-				sameBitmaps(normalCatBitmap, wallpaperCostume.getCostume()));
+		WallpaperLook wallpaperLook = catroidSprite.getWallpaperLook();
+		assertTrue("Expected normalCat but was " + wallpaperLook.getLookData().getLookName(),
+				sameBitmaps(normalCatBitmap, wallpaperLook.getLook()));
 
 		brick.executeLiveWallpaper();
-		assertTrue("Expected banzaiCat but was " + wallpaperCostume.getCostumeData().getCostumeName(),
-				sameBitmaps(banzaiCatBitmap, wallpaperCostume.getCostume()));
+		assertTrue("Expected banzaiCat but was " + wallpaperLook.getLookData().getLookName(),
+				sameBitmaps(banzaiCatBitmap, wallpaperLook.getLook()));
 
 		brick.executeLiveWallpaper();
-		assertTrue("Expected chasireCat but was " + wallpaperCostume.getCostumeData().getCostumeName(),
-				sameBitmaps(chasireCatBitmap, wallpaperCostume.getCostume()));
+		assertTrue("Expected chasireCat but was " + wallpaperLook.getLookData().getLookName(),
+				sameBitmaps(chasireCatBitmap, wallpaperLook.getLook()));
 
 		brick.executeLiveWallpaper();
-		assertTrue("Expected normalCat but was " + wallpaperCostume.getCostumeData().getCostumeName(),
-				sameBitmaps(normalCatBitmap, wallpaperCostume.getCostume()));
+		assertTrue("Expected normalCat but was " + wallpaperLook.getLookData().getLookName(),
+				sameBitmaps(normalCatBitmap, wallpaperLook.getLook()));
 
 	}
 
 	public void testHideAndShowBricks() {
 		Brick brick = new HideBrick(catroidSprite);
 		brick.executeLiveWallpaper();
-		WallpaperCostume wallpaperCostume = catroidSprite.getWallpaperCostume();
-		assertTrue("The costume was not hidden!", wallpaperCostume.isCostumeHidden());
+		WallpaperLook wallpaperLook = catroidSprite.getWallpaperLook();
+		assertTrue("The costume was not hidden!", wallpaperLook.isLookHidden());
 
 		brick = new ShowBrick(catroidSprite);
 		brick.executeLiveWallpaper();
-		assertFalse("The costume was not shown!", wallpaperCostume.isCostumeHidden());
+		assertFalse("The costume was not shown!", wallpaperLook.isLookHidden());
 	}
 
 	public void testSetXBrick() {
 		int xPosition = 60;
 		WallpaperHelper.getInstance().setLandscape(false);
-		WallpaperCostume costume = new WallpaperCostume(catroidSprite, catroidSprite.getCostumeDataList().get(0));
+		WallpaperLook costume = new WallpaperLook(catroidSprite, catroidSprite.getLookDataList().get(0));
 
 		Brick brick = new SetXBrick(catroidSprite, xPosition);
 		brick.executeLiveWallpaper();
 
-		Matrix matrix = coordinatesMatrix(xPosition, 0, costume.getCostume().getWidth(), costume.getCostume()
-				.getHeight(), false);
+		Matrix matrix = coordinatesMatrix(xPosition, 0, costume.getLook().getWidth(), costume.getLook().getHeight(),
+				false);
 		assertEquals("The X coordinate has not been set properly", matrix, costume.getMatrix());
 
 		WallpaperHelper.getInstance().setLandscape(true);
-		WallpaperCostume costumeLandscape = new WallpaperCostume(catroidSprite, catroidSprite.getCostumeDataList().get(
-				0));
+		WallpaperLook costumeLandscape = new WallpaperLook(catroidSprite, catroidSprite.getLookDataList().get(0));
 		brick = new SetXBrick(catroidSprite, xPosition);
 		brick.executeLiveWallpaper();
-		matrix = coordinatesMatrix(xPosition, 0, costumeLandscape.getCostume().getWidth(), costumeLandscape
-				.getCostume().getHeight(), true);
+		matrix = coordinatesMatrix(xPosition, 0, costumeLandscape.getLook().getWidth(), costumeLandscape.getLook()
+				.getHeight(), true);
 		assertEquals("The X coordinate has not been set properly in lanscape", matrix, costumeLandscape.getMatrix());
 
 	}
@@ -247,21 +246,20 @@ public class LiveWallpaperTest extends AndroidTestCase {
 		WallpaperHelper.getInstance().setLandscape(false);
 		Brick brick = new SetYBrick(catroidSprite, yPosition);
 
-		WallpaperCostume costume = new WallpaperCostume(catroidSprite, catroidSprite.getCostumeDataList().get(0));
+		WallpaperLook costume = new WallpaperLook(catroidSprite, catroidSprite.getLookDataList().get(0));
 		brick.executeLiveWallpaper();
 
-		Matrix matrix = coordinatesMatrix(0, yPosition, costume.getCostume().getWidth(), costume.getCostume()
-				.getHeight(), false);
+		Matrix matrix = coordinatesMatrix(0, yPosition, costume.getLook().getWidth(), costume.getLook().getHeight(),
+				false);
 		assertEquals("The Y coordinate has not been set properly", matrix, costume.getMatrix());
 
 		WallpaperHelper.getInstance().setLandscape(true);
-		WallpaperCostume costumeLandscape = new WallpaperCostume(catroidSprite, catroidSprite.getCostumeDataList().get(
-				0));
+		WallpaperLook costumeLandscape = new WallpaperLook(catroidSprite, catroidSprite.getLookDataList().get(0));
 		brick = new SetYBrick(catroidSprite, yPosition);
 		brick.executeLiveWallpaper();
 
-		matrix = coordinatesMatrix(0, yPosition, costumeLandscape.getCostume().getWidth(), costumeLandscape
-				.getCostume().getHeight(), true);
+		matrix = coordinatesMatrix(0, yPosition, costumeLandscape.getLook().getWidth(), costumeLandscape.getLook()
+				.getHeight(), true);
 		assertEquals("The Y coordinate has not been set properly in lanscape", matrix, costumeLandscape.getMatrix());
 
 	}
@@ -272,21 +270,20 @@ public class LiveWallpaperTest extends AndroidTestCase {
 		WallpaperHelper.getInstance().setLandscape(false);
 		Brick brick = new PlaceAtBrick(catroidSprite, xPosition, yPosition);
 
-		WallpaperCostume costume = new WallpaperCostume(catroidSprite, catroidSprite.getCostumeDataList().get(0));
+		WallpaperLook costume = new WallpaperLook(catroidSprite, catroidSprite.getLookDataList().get(0));
 		brick.executeLiveWallpaper();
 
-		Matrix matrix = coordinatesMatrix(xPosition, yPosition, costume.getCostume().getWidth(), costume.getCostume()
+		Matrix matrix = coordinatesMatrix(xPosition, yPosition, costume.getLook().getWidth(), costume.getLook()
 				.getHeight(), false);
 		assertEquals("The coordinates have not been set properly", matrix, costume.getMatrix());
 
 		WallpaperHelper.getInstance().setLandscape(true);
-		WallpaperCostume costumeLandscape = new WallpaperCostume(catroidSprite, catroidSprite.getCostumeDataList().get(
-				0));
+		WallpaperLook costumeLandscape = new WallpaperLook(catroidSprite, catroidSprite.getLookDataList().get(0));
 		brick = new PlaceAtBrick(catroidSprite, xPosition, yPosition);
 		brick.executeLiveWallpaper();
 
-		matrix = coordinatesMatrix(xPosition, yPosition, costumeLandscape.getCostume().getWidth(), costumeLandscape
-				.getCostume().getHeight(), true);
+		matrix = coordinatesMatrix(xPosition, yPosition, costumeLandscape.getLook().getWidth(), costumeLandscape
+				.getLook().getHeight(), true);
 		assertEquals("The Y coordinate has not been set properly in lanscape", matrix, costumeLandscape.getMatrix());
 
 	}
@@ -296,25 +293,24 @@ public class LiveWallpaperTest extends AndroidTestCase {
 		int movingX = -85;
 
 		WallpaperHelper.getInstance().setLandscape(false);
-		WallpaperCostume costume = new WallpaperCostume(catroidSprite, catroidSprite.getCostumeDataList().get(0));
+		WallpaperLook costume = new WallpaperLook(catroidSprite, catroidSprite.getLookDataList().get(0));
 		costume.setX(startingX);
 
 		Brick brick = new ChangeXByNBrick(catroidSprite, movingX);
 		brick.executeLiveWallpaper();
 
-		Matrix matrix = coordinatesMatrix(startingX + movingX, 0, costume.getCostume().getWidth(), costume.getCostume()
+		Matrix matrix = coordinatesMatrix(startingX + movingX, 0, costume.getLook().getWidth(), costume.getLook()
 				.getHeight(), false);
 		assertEquals("The x coordinate has not been changed properly", matrix, costume.getMatrix());
 
 		WallpaperHelper.getInstance().setLandscape(true);
-		WallpaperCostume costumeLandscape = new WallpaperCostume(catroidSprite, catroidSprite.getCostumeDataList().get(
-				0));
+		WallpaperLook costumeLandscape = new WallpaperLook(catroidSprite, catroidSprite.getLookDataList().get(0));
 		costumeLandscape.setX(startingX);
 		brick = new ChangeXByNBrick(catroidSprite, movingX);
 		brick.executeLiveWallpaper();
 
-		matrix = coordinatesMatrix(startingX + movingX, 0, costumeLandscape.getCostume().getWidth(), costumeLandscape
-				.getCostume().getHeight(), true);
+		matrix = coordinatesMatrix(startingX + movingX, 0, costumeLandscape.getLook().getWidth(), costumeLandscape
+				.getLook().getHeight(), true);
 		assertEquals("The X coordinate has not been changed properly in lanscape", matrix, costumeLandscape.getMatrix());
 
 	}
@@ -324,61 +320,59 @@ public class LiveWallpaperTest extends AndroidTestCase {
 		int movingY = -85;
 
 		WallpaperHelper.getInstance().setLandscape(false);
-		WallpaperCostume costume = new WallpaperCostume(catroidSprite, catroidSprite.getCostumeDataList().get(0));
+		WallpaperLook costume = new WallpaperLook(catroidSprite, catroidSprite.getLookDataList().get(0));
 		costume.setY(startingY);
 
 		Brick brick = new ChangeYByNBrick(catroidSprite, movingY);
 		brick.executeLiveWallpaper();
 
-		Matrix matrix = coordinatesMatrix(0, startingY + movingY, costume.getCostume().getWidth(), costume.getCostume()
+		Matrix matrix = coordinatesMatrix(0, startingY + movingY, costume.getLook().getWidth(), costume.getLook()
 				.getHeight(), false);
 		assertEquals("The Y coordinate has not been changed properly", matrix, costume.getMatrix());
 
 		WallpaperHelper.getInstance().setLandscape(true);
-		WallpaperCostume costumeLandscape = new WallpaperCostume(catroidSprite, catroidSprite.getCostumeDataList().get(
-				0));
+		WallpaperLook costumeLandscape = new WallpaperLook(catroidSprite, catroidSprite.getLookDataList().get(0));
 		costumeLandscape.setY(startingY);
 		brick = new ChangeYByNBrick(catroidSprite, movingY);
 		brick.executeLiveWallpaper();
 
-		matrix = coordinatesMatrix(0, startingY + movingY, costumeLandscape.getCostume().getWidth(), costumeLandscape
-				.getCostume().getHeight(), true);
+		matrix = coordinatesMatrix(0, startingY + movingY, costumeLandscape.getLook().getWidth(), costumeLandscape
+				.getLook().getHeight(), true);
 		assertEquals("The Y coordinate has not been changed properly in lanscape", matrix, costumeLandscape.getMatrix());
 	}
 
 	public void testSetSizeToBrick() {
-		WallpaperCostume costume = new WallpaperCostume(catroidSprite, catroidSprite.getCostumeDataList().get(0));
+		WallpaperLook costume = new WallpaperLook(catroidSprite, catroidSprite.getLookDataList().get(0));
 		double size = 50.0;
 
 		Brick brick = new SetSizeToBrick(catroidSprite, size);
 		brick.executeLiveWallpaper();
 
 		size = size * 0.01;
-		Matrix matrix = this.scaleMatrix((float) size, costume.getCostume().getWidth(), costume.getCostume()
-				.getHeight());
+		Matrix matrix = this.scaleMatrix((float) size, costume.getLook().getWidth(), costume.getLook().getHeight());
 		assertEquals("The size has not been changed properly", matrix, costume.getMatrix());
 
 	}
 
 	public void changeSetSizeByBrick() {
-		WallpaperCostume costume = new WallpaperCostume(catroidSprite, catroidSprite.getCostumeDataList().get(0));
+		WallpaperLook costume = new WallpaperLook(catroidSprite, catroidSprite.getLookDataList().get(0));
 		double startSize = 150.0;
 		double changeSize = 20.0;
 
-		costume.setCostumeSize(startSize);
+		costume.setLookSize(startSize);
 		Brick brick = new ChangeSizeByNBrick(catroidSprite, changeSize);
 		brick.executeLiveWallpaper();
 
 		startSize = startSize * 0.01;
 		changeSize = changeSize * 0.01;
 		float size = (float) startSize + (float) changeSize;
-		Matrix matrix = this.scaleMatrix(size, costume.getCostume().getWidth(), costume.getCostume().getHeight());
+		Matrix matrix = this.scaleMatrix(size, costume.getLook().getWidth(), costume.getLook().getHeight());
 		assertEquals("The size has not been changed properly", matrix, costume.getMatrix());
 
 	}
 
 	//	public void testSetBrightnessBrick() {
-	//		WallpaperCostume costume = new WallpaperCostume(catroidSprite, catroidSprite.getCostumeDataList().get(0));
+	//		WallpaperLook costume = new WallpaperLook(catroidSprite, catroidSprite.getLookDataList().get(0));
 	//		double brightness = 50.0d;
 	//
 	//		Brick brick = new SetBrightnessBrick(catroidSprite, brightness);
@@ -395,7 +389,7 @@ public class LiveWallpaperTest extends AndroidTestCase {
 
 	//
 	//	public void testChangeBrightnessBrick() {
-	//		WallpaperCostume wallpaperCostume = new WallpaperCostume(catroidSprite, catroidSprite.getCostumeDataList().get(
+	//		WallpaperLook wallpaperLook = new WallpaperLook(catroidSprite, catroidSprite.getLookDataList().get(
 	//				0));
 	//		float initialBrightness1 = 30;
 	//		float initialBrightness2 = 20;
@@ -404,7 +398,7 @@ public class LiveWallpaperTest extends AndroidTestCase {
 	//		brick1.executeLiveWallpaper();
 	//		brick2.executeLiveWallpaper();
 	//
-	//		float brightness = -(100 - (wallpaperCostume.getBrightness() * 100));
+	//		float brightness = -(100 - (wallpaperLook.getBrightness() * 100));
 	//
 	//		assertEquals("The brightness was not set properly", brightness, initialBrightness1 + initialBrightness2);
 	//	}
@@ -412,7 +406,7 @@ public class LiveWallpaperTest extends AndroidTestCase {
 
 	public void testSetGhostEffectBrick() {
 
-		WallpaperCostume costume = new WallpaperCostume(catroidSprite, catroidSprite.getCostumeDataList().get(0));
+		WallpaperLook costume = new WallpaperLook(catroidSprite, catroidSprite.getLookDataList().get(0));
 		double alpha = 50.0d;
 		Brick brick = new SetGhostEffectBrick(catroidSprite, alpha);
 		brick.executeLiveWallpaper();
@@ -424,7 +418,7 @@ public class LiveWallpaperTest extends AndroidTestCase {
 	}
 
 	public void testChangeGhostEffectBrick() {
-		WallpaperCostume costume = new WallpaperCostume(catroidSprite, catroidSprite.getCostumeDataList().get(0));
+		WallpaperLook costume = new WallpaperLook(catroidSprite, catroidSprite.getLookDataList().get(0));
 
 		float initialAlpha = 50;
 		float changeAlpha = -20;
@@ -440,12 +434,11 @@ public class LiveWallpaperTest extends AndroidTestCase {
 	}
 
 	public void testComeToFrontBrick() {
-		WallpaperCostume backgroundCostume = new WallpaperCostume(backgroundSprite, backgroundSprite
-				.getCostumeDataList().get(0));
-		WallpaperCostume catroidCostume = new WallpaperCostume(catroidSprite, catroidSprite.getCostumeDataList().get(0));
+		WallpaperLook backgroundLook = new WallpaperLook(backgroundSprite, backgroundSprite.getLookDataList().get(0));
+		WallpaperLook catroidLook = new WallpaperLook(catroidSprite, catroidSprite.getLookDataList().get(0));
 
-		int backgroundPosition = backgroundCostume.getzPosition();
-		int catroidPosition = catroidCostume.getzPosition();
+		int backgroundPosition = backgroundLook.getzPosition();
+		int catroidPosition = catroidLook.getzPosition();
 
 		assertTrue("The position parameter has not been initialized properly", backgroundPosition == 0
 				&& catroidPosition == 1);
@@ -453,8 +446,8 @@ public class LiveWallpaperTest extends AndroidTestCase {
 		Brick brick = new ComeToFrontBrick(backgroundSprite);
 		brick.executeLiveWallpaper();
 
-		backgroundPosition = backgroundCostume.getzPosition();
-		catroidPosition = catroidCostume.getzPosition();
+		backgroundPosition = backgroundLook.getzPosition();
+		catroidPosition = catroidLook.getzPosition();
 
 		assertTrue("The position parameter has not been set properly", backgroundPosition == 1 && catroidPosition == 0);
 
