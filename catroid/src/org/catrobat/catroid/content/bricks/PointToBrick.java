@@ -277,6 +277,9 @@ public class PointToBrick implements Brick {
 		public long getItemId(int paramInt) {
 			if (this.dataSetObserverToggle) {
 				this.currentSpriteName = spinnerAdapter.getItem(paramInt).toString();
+				if (!this.currentSpriteName.equals(context.getString(R.string.new_broadcast_message))) {
+					oldSelectedSprite = this.currentSpriteName;
+				}
 			}
 
 			return spinnerAdapter.getItemId(paramInt);
@@ -312,7 +315,7 @@ public class PointToBrick implements Brick {
 			return spinnerAdapter.getDropDownView(paramInt, paramView, paramViewGroup);
 		}
 
-		private void showNewSpriteDialog() {
+		protected void showNewSpriteDialog() {
 			NewSpriteDialog dialog = new NewSpriteDialog() {
 
 				@Override
