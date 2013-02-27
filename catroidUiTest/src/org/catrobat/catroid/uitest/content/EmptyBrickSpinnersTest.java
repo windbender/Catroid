@@ -89,6 +89,7 @@ public class EmptyBrickSpinnersTest extends ActivityInstrumentationTestCase2<Scr
 		assertTrue(POINT_TO_SPRITE_NAME + " Sprite is not selected", solo.searchText(POINT_TO_SPRITE_NAME));
 		solo.clickOnText(POINT_TO_SPRITE_NAME);
 		solo.clickOnText(spinnerNewText);
+		solo.sleep(300);
 		solo.clickOnButton(solo.getString(R.string.cancel_button));
 
 		assertTrue(TEST_SOUND_TITLE + " Sound is not selected", solo.searchText(TEST_SOUND_TITLE));
