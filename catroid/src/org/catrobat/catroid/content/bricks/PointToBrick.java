@@ -33,7 +33,9 @@ import org.catrobat.catroid.ui.dialogs.NewSpriteDialog;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -234,6 +236,7 @@ public class PointToBrick implements Brick {
 
 		private String currentSpriteName;
 		private boolean dataSetObserverToggle;
+		private boolean isTouchInDropDownView;
 
 		public SpinnerAdapterWrapper(Context context, Spinner spinner, ArrayAdapter<String> spinnerAdapter) {
 			this.context = context;
@@ -242,6 +245,7 @@ public class PointToBrick implements Brick {
 
 			this.currentSpriteName = "";
 			this.dataSetObserverToggle = false;
+			this.isTouchInDropDownView = false;
 		}
 
 		@Override
@@ -254,8 +258,11 @@ public class PointToBrick implements Brick {
 		public void unregisterDataSetObserver(DataSetObserver paramDataSetObserver) {
 			this.dataSetObserverToggle = false;
 
-			if (this.currentSpriteName.equals(context.getString(R.string.new_broadcast_message))) {
-				showNewSpriteDialog();
+			if (this.isTouchInDropDownView) {
+				this.isTouchInDropDownView = false;
+				if (this.currentSpriteName.equals(context.getString(R.string.new_broadcast_message))) {
+					showNewSpriteDialog();
+				}
 			}
 
 			spinnerAdapter.unregisterDataSetObserver(paramDataSetObserver);
@@ -312,7 +319,17 @@ public class PointToBrick implements Brick {
 
 		@Override
 		public View getDropDownView(int paramInt, View paramView, ViewGroup paramViewGroup) {
-			return spinnerAdapter.getDropDownView(paramInt, paramView, paramViewGroup);
+			View dropDownView = spinnerAdapter.getDropDownView(paramInt, paramView, paramViewGroup);
+
+			dropDownView.setOnTouchListener(new OnTouchListener() {
+				@Override
+				public boolean onTouch(View paramView, MotionEvent paramMotionEvent) {
+					isTouchInDropDownView = true;
+					return false;
+				}
+			});
+
+			return dropDownView;
 		}
 
 		protected void showNewSpriteDialog() {
