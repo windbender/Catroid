@@ -94,14 +94,14 @@ public class PointToBrickTest extends ActivityInstrumentationTestCase2<ScriptAct
 		solo.sendKey(Solo.ENTER);
 		solo.sleep(300);
 
-		assertEquals("Wrong selection", newSpriteName, solo.getCurrentSpinners().get(1).getSelectedItem().toString());
+		assertEquals("Wrong selection", newSpriteName, solo.getCurrentSpinners().get(0).getSelectedItem().toString());
 
 		solo.clickOnView(solo.getCurrentActivity().findViewById(R.id.brick_point_to_spinner));
 		solo.waitForText(spinnerNewText);
 		solo.clickInList(0);
 		solo.waitForView(EditText.class);
 		solo.clickOnButton(solo.getString(R.string.cancel_button));
-		assertEquals("Wrong selection", newSpriteName, solo.getCurrentSpinners().get(1).getSelectedItem());
+		assertEquals("Wrong selection", newSpriteName, solo.getCurrentSpinners().get(0).getSelectedItem());
 	}
 
 	private void createProject() {
