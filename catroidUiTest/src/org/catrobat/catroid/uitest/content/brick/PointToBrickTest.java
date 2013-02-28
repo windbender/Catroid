@@ -41,7 +41,6 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.Smoke;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Spinner;
 
 import com.jayway.android.robotium.solo.Solo;
 
@@ -94,15 +93,7 @@ public class PointToBrickTest extends ActivityInstrumentationTestCase2<ScriptAct
 		solo.sendKey(Solo.ENTER);
 		solo.sleep(300);
 
-		boolean spinnerFound = false;
-		for (Spinner spinner : solo.getCurrentSpinners()) {
-			if (spinner.getId() == R.id.brick_point_to_spinner) {
-				assertEquals("Wrong selection", newSpriteName, spinner.getSelectedItem().toString());
-				spinnerFound = true;
-			}
-		}
-
-		assertEquals("Spinner does not exist", spinnerFound, true);
+		assertEquals("Wrong selection", newSpriteName, solo.getCurrentSpinners().get(0).getSelectedItem().toString());
 
 		solo.clickOnView(solo.getCurrentActivity().findViewById(R.id.brick_point_to_spinner));
 		solo.waitForText(spinnerNewText);
