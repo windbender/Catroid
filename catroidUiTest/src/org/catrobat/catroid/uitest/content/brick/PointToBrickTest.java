@@ -81,19 +81,20 @@ public class PointToBrickTest extends ActivityInstrumentationTestCase2<ScriptAct
 		assertEquals("Incorrect number of bricks.", 1, projectBrickList.size());
 
 		assertNotNull("TextView does not exist", solo.getText(solo.getString(R.string.brick_point_to)));
-		solo.clickOnView(solo.getCurrentActivity().findViewById(R.id.brick_point_to_spinner));
 
 		String spinnerNewText = solo.getString(R.string.new_broadcast_message);
 		String newSpriteName = "newSprite";
 
+		solo.clickOnView(solo.getCurrentActivity().findViewById(R.id.brick_point_to_spinner));
 		solo.waitForText(spinnerNewText);
 		solo.clickInList(0);
 		solo.waitForView(EditText.class);
 		solo.enterText(0, newSpriteName);
 		solo.sendKey(Solo.ENTER);
+		solo.sendKey(Solo.ENTER);
 		solo.sleep(300);
 
-		assertEquals("Wrong selection", newSpriteName, solo.getCurrentSpinners().get(0).getSelectedItem().toString());
+		assertEquals("Wrong selection", newSpriteName, solo.getCurrentSpinners().get(1).getSelectedItem().toString());
 
 		solo.clickOnView(solo.getCurrentActivity().findViewById(R.id.brick_point_to_spinner));
 		solo.waitForText(spinnerNewText);
