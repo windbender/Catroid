@@ -49,7 +49,7 @@ public class NativeAppActivity extends StageActivity {
 
 		context = this;
 
-		if (!manager.loadProject(Constants.PROJECTCODE_NAME, this, null, false)) {
+		if (!manager.loadProject(Constants.PROJECTCODE_NAME, this, false)) {
 
 			Builder builder = new AlertDialog.Builder(context);
 

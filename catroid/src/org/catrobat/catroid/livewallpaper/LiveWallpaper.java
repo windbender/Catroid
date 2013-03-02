@@ -53,8 +53,7 @@ public class LiveWallpaper extends WallpaperService {
 
 		ProjectManager projectManager = ProjectManager.getInstance();
 		DisplayMetrics displayMetrics = new DisplayMetrics();
-		((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay()
-				.getMetrics(displayMetrics);
+		((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay().getMetrics(displayMetrics);
 		Values.SCREEN_WIDTH = displayMetrics.widthPixels;
 		Values.SCREEN_HEIGHT = displayMetrics.heightPixels;
 
@@ -66,7 +65,7 @@ public class LiveWallpaper extends WallpaperService {
 
 		// CODE FOR LOADING FROM SD CARD
 		projectManager.setProject(null);
-		Utils.loadProjectIfNeeded(getApplicationContext(), null);
+		Utils.loadProjectIfNeeded(getApplicationContext());
 		// ___________________________________________________________
 
 		Project project = projectManager.getCurrentProject();
@@ -104,8 +103,7 @@ public class LiveWallpaper extends WallpaperService {
 		public void onCreate(SurfaceHolder surfaceHolder) {
 			super.onCreate(surfaceHolder);
 
-			display = ((WindowManager) getSystemService(WINDOW_SERVICE))
-					.getDefaultDisplay();
+			display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
 
 		}
 
@@ -133,10 +131,8 @@ public class LiveWallpaper extends WallpaperService {
 				for (int position = 0; position < sprites.size(); position++) {
 					Sprites: for (Sprite sprite : sprites) {
 						wallpaperLook = sprite.getWallpaperLook();
-						if (wallpaperLook != null
-								&& wallpaperLook.getzPosition() == position) {
-							if (wallpaperLook.getLook() != null
-									&& !wallpaperLook.isLookHidden()) {
+						if (wallpaperLook != null && wallpaperLook.getzPosition() == position) {
+							if (wallpaperLook.getLook() != null && !wallpaperLook.isLookHidden()) {
 								wallpaperLook.clear();
 							}
 							break Sprites;
@@ -148,12 +144,10 @@ public class LiveWallpaper extends WallpaperService {
 		}
 
 		@Override
-		public void onSurfaceChanged(SurfaceHolder holder, int format,
-				int width, int height) {
+		public void onSurfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
 			int rotation = display.getRotation();
-			if (rotation == Surface.ROTATION_0
-					|| rotation == Surface.ROTATION_180) {
+			if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_180) {
 				wallpaperHelper.setLandscape(false);
 
 			} else {
@@ -190,12 +184,9 @@ public class LiveWallpaper extends WallpaperService {
 					for (int position = 0; position < sprites.size(); position++) {
 						Sprites: for (Sprite sprite : sprites) {
 							wallpaperLook = sprite.getWallpaperLook();
-							if (wallpaperLook != null
-									&& wallpaperLook.getzPosition() == position) {
-								if (wallpaperLook.getLook() != null
-										&& !wallpaperLook.isLookHidden()) {
-									c.drawBitmap(wallpaperLook.getLook(),
-											wallpaperLook.getMatrix(),
+							if (wallpaperLook != null && wallpaperLook.getzPosition() == position) {
+								if (wallpaperLook.getLook() != null && !wallpaperLook.isLookHidden()) {
+									c.drawBitmap(wallpaperLook.getLook(), wallpaperLook.getMatrix(),
 											wallpaperLook.getPaint());
 
 								}
@@ -218,8 +209,7 @@ public class LiveWallpaper extends WallpaperService {
 
 			mHandler.removeCallbacks(mUpdateDisplay);
 			if (mVisible) {
-				mHandler.postDelayed(mUpdateDisplay,
-						wallpaperHelper.getRefreshRate());
+				mHandler.postDelayed(mUpdateDisplay, wallpaperHelper.getRefreshRate());
 			}
 
 		}
@@ -230,10 +220,8 @@ public class LiveWallpaper extends WallpaperService {
 			PointerCoords coords = new PointerCoords();
 
 			int action = event.getActionMasked();
-			if (action == MotionEvent.ACTION_DOWN
-					|| action == MotionEvent.ACTION_POINTER_DOWN) {
-				for (int pointerIndex = 0; pointerIndex < event
-						.getPointerCount(); pointerIndex++) {
+			if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_POINTER_DOWN) {
+				for (int pointerIndex = 0; pointerIndex < event.getPointerCount(); pointerIndex++) {
 
 					event.getPointerCoords(pointerIndex, coords);
 					WallpaperLook wallpaperLook;
@@ -241,10 +229,8 @@ public class LiveWallpaper extends WallpaperService {
 					Positions: for (int position = sprites.size() - 1; position >= 0; position--) {
 						Sprites: for (Sprite sprite : sprites) {
 							wallpaperLook = sprite.getWallpaperLook();
-							if (wallpaperLook != null
-									&& wallpaperLook.getzPosition() == position) {
-								if (wallpaperLook.touchedInsideTheLook(
-										coords.x, coords.y)) {
+							if (wallpaperLook != null && wallpaperLook.getzPosition() == position) {
+								if (wallpaperLook.touchedInsideTheLook(coords.x, coords.y)) {
 									sprite.startWhenScripts("Tapped");
 									draw();
 									break Positions;
