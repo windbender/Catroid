@@ -89,7 +89,7 @@ public class BroadcastBricksTest extends ActivityInstrumentationTestCase2<Script
 		String testString2 = "test2";
 		String testString3 = "test3";
 
-		enterNewTextIntoSpinner(1, testString);
+		enterNewTextIntoSpinner(R.id.brick_broadcast_receive_spinner, testString);
 		// just to get focus
 		String brickBroadcastString = solo.getString(R.string.brick_broadcast);
 		solo.clickOnText(brickBroadcastString);
@@ -112,7 +112,7 @@ public class BroadcastBricksTest extends ActivityInstrumentationTestCase2<Script
 		assertEquals("Wrong selection", testString, (String) solo.getCurrentSpinners().get(THIRD_BRICK_SPINNER_INDEX)
 				.getSelectedItem());
 
-		enterNewTextIntoSpinner(2, testString2);
+		enterNewTextIntoSpinner(R.id.brick_broadcast_spinner, testString2);
 		// just to get focus
 		solo.clickOnText(brickBroadcastString);
 		if (solo.searchText(solo.getString(R.string.brick_context_dialog_move_brick), true)) {
@@ -121,7 +121,7 @@ public class BroadcastBricksTest extends ActivityInstrumentationTestCase2<Script
 
 		checkIfSpinnerTextsCorrect(testString, testString2, testString);
 
-		enterNewTextIntoSpinner(3, testString3);
+		enterNewTextIntoSpinner(R.id.brick_broadcast_wait_spinner, testString3);
 		// just to get focus
 		solo.clickOnText(brickBroadcastString);
 		if (solo.searchText(solo.getString(R.string.brick_context_dialog_move_brick), true)) {
@@ -145,9 +145,9 @@ public class BroadcastBricksTest extends ActivityInstrumentationTestCase2<Script
 				(String) solo.getCurrentSpinners().get(THIRD_BRICK_SPINNER_INDEX).getSelectedItem());
 	}
 
-	private void enterNewTextIntoSpinner(int spinnerItemIndex, String text) {
-		solo.clickOnText(solo.getString(R.string.new_broadcast_message), spinnerItemIndex);
-		solo.clearEditText(0);
+	private void enterNewTextIntoSpinner(int spinnerId, String text) {
+		solo.clickOnView(solo.getView(spinnerId));
+		solo.clickInList(0);
 		solo.enterText(0, text);
 		solo.sleep(200);
 		solo.sendKey(Solo.ENTER);

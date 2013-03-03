@@ -24,32 +24,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/BrickContainer.Control.Medium"
     android:background="@drawable/brick_script"
+    android:gravity="center_vertical"
     android:orientation="vertical" >
 
     <TextView
         style="@style/BrickText.SingleLine"
         android:text="@string/brick_broadcast_receive" />
 
-    <LinearLayout
+    <Spinner
+        android:id="@+id/brick_broadcast_receive_spinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <Spinner
-            android:id="@+id/brick_broadcast_receive_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="5"
-            android:clickable="false"
-            android:focusable="false" />
-
-        <Button
-            android:id="@+id/brick_broadcast_receive_button_new_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:clickable="false"
-            android:focusable="false"
-            android:text="@string/new_broadcast_message" />
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusable="false" />
 
 </LinearLayout>

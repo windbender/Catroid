@@ -34,13 +34,17 @@ import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.dialogs.BrickTextDialog;
 
 import android.content.Context;
+import android.database.DataSetObserver;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 
 public class BroadcastBrick implements Brick {
 
@@ -48,12 +52,14 @@ public class BroadcastBrick implements Brick {
 	private transient ProjectManager projectManager;
 	private Sprite sprite;
 	private String broadcastMessage = "";
+	private String oldMessage;
 
 	private transient View view;
 
 	public BroadcastBrick(Sprite sprite) {
 		this.sprite = sprite;
 		this.projectManager = ProjectManager.getInstance();
+		this.oldMessage = "";
 	}
 
 	@Override
@@ -107,11 +113,21 @@ public class BroadcastBrick implements Brick {
 		view = View.inflate(context, R.layout.brick_broadcast, null);
 
 		final Spinner broadcastSpinner = (Spinner) view.findViewById(R.id.brick_broadcast_spinner);
-		broadcastSpinner.setAdapter(MessageContainer.getMessageAdapter(context));
+		broadcastSpinner.setFocusableInTouchMode(false);
+		broadcastSpinner.setFocusable(false);
 		broadcastSpinner.setClickable(true);
-		broadcastSpinner.setFocusable(true);
+		broadcastSpinner.setEnabled(true);
+
+		ArrayAdapter<String> spinnerAdapter = MessageContainer.getMessageAdapter(context);
+		MessageContainer.addMessage(context.getString(R.string.new_broadcast_message));
+
+		SpinnerAdapterWrapper spinnerAdapterWrapper = new SpinnerAdapterWrapper(context, broadcastSpinner,
+				spinnerAdapter);
+
+		broadcastSpinner.setAdapter(spinnerAdapterWrapper);
 
 		broadcastSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
 			private boolean start = true;
 
 			@Override
@@ -120,10 +136,8 @@ public class BroadcastBrick implements Brick {
 					start = false;
 					return;
 				}
+
 				broadcastMessage = ((String) parent.getItemAtPosition(position)).trim();
-				if (broadcastMessage == context.getString(R.string.broadcast_nothing_selected)) {
-					broadcastMessage = "";
-				}
 			}
 
 			@Override
@@ -133,46 +147,11 @@ public class BroadcastBrick implements Brick {
 
 		int position = MessageContainer.getPositionOfMessageInAdapter(broadcastMessage);
 		if (position > 0) {
-			broadcastSpinner.setSelection(position);
+			broadcastSpinner.setSelection(position, true);
+		} else {
+			broadcastSpinner.setSelection(MessageContainer.getPositionOfMessageInAdapter(this.oldMessage), true);
 		}
 
-		Button newBroadcastMessage = (Button) view.findViewById(R.id.brick_broadcast_button_new_message);
-		newBroadcastMessage.setClickable(true);
-		newBroadcastMessage.setFocusable(true);
-
-		newBroadcastMessage.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				ScriptActivity activity = (ScriptActivity) context;
-
-				BrickTextDialog editDialog = new BrickTextDialog() {
-					@Override
-					protected void initialize() {
-					}
-
-					@Override
-					protected boolean handleOkButton() {
-						String newMessage = (input.getText().toString()).trim();
-						if (newMessage.length() == 0
-								|| newMessage.equals(context.getString(R.string.broadcast_nothing_selected))) {
-							dismiss();
-							return false;
-						}
-
-						broadcastMessage = newMessage;
-						MessageContainer.addMessage(broadcastMessage);
-						int position = MessageContainer.getPositionOfMessageInAdapter(broadcastMessage);
-
-						broadcastSpinner.setSelection(position);
-
-						return true;
-					}
-				};
-
-				editDialog.show(activity.getSupportFragmentManager(), "dialog_broadcast_brick");
-			}
-		});
 		return view;
 	}
 
@@ -188,5 +167,139 @@ public class BroadcastBrick implements Brick {
 
 	public BroadcastBrick() {
 
+	}
+
+	private class SpinnerAdapterWrapper implements SpinnerAdapter {
+
+		protected Context context;
+		protected Spinner spinner;
+		protected ArrayAdapter<String> spinnerAdapter;
+
+		private String currentMessage;
+		private boolean dataSetObserverToggle;
+		private boolean isTouchInDropDownView;
+
+		public SpinnerAdapterWrapper(Context context, Spinner spinner, ArrayAdapter<String> spinnerAdapter) {
+			this.context = context;
+			this.spinnerAdapter = spinnerAdapter;
+			this.spinner = spinner;
+
+			this.currentMessage = "";
+			this.dataSetObserverToggle = false;
+			this.isTouchInDropDownView = false;
+		}
+
+		@Override
+		public void registerDataSetObserver(DataSetObserver paramDataSetObserver) {
+			this.dataSetObserverToggle = true;
+			spinnerAdapter.registerDataSetObserver(paramDataSetObserver);
+		}
+
+		@Override
+		public void unregisterDataSetObserver(DataSetObserver paramDataSetObserver) {
+			this.dataSetObserverToggle = false;
+
+			if (this.isTouchInDropDownView) {
+				this.isTouchInDropDownView = false;
+				if (this.currentMessage.equals(context.getString(R.string.new_broadcast_message))) {
+					showNewMessageDialog();
+				}
+			}
+
+			spinnerAdapter.unregisterDataSetObserver(paramDataSetObserver);
+		}
+
+		@Override
+		public int getCount() {
+			return spinnerAdapter.getCount();
+		}
+
+		@Override
+		public Object getItem(int paramInt) {
+			Object currentObject = spinnerAdapter.getItem(paramInt);
+			this.currentMessage = currentObject.toString();
+			return currentObject;
+		}
+
+		@Override
+		public long getItemId(int paramInt) {
+			if (this.dataSetObserverToggle) {
+				this.currentMessage = spinnerAdapter.getItem(paramInt).toString();
+				if (!this.currentMessage.equals(context.getString(R.string.new_broadcast_message))) {
+					oldMessage = this.currentMessage;
+				}
+			}
+
+			return spinnerAdapter.getItemId(paramInt);
+		}
+
+		@Override
+		public boolean hasStableIds() {
+			return spinnerAdapter.hasStableIds();
+		}
+
+		@Override
+		public View getView(int paramInt, View paramView, ViewGroup paramViewGroup) {
+			return spinnerAdapter.getView(paramInt, paramView, paramViewGroup);
+		}
+
+		@Override
+		public int getItemViewType(int paramInt) {
+			return spinnerAdapter.getItemViewType(paramInt);
+		}
+
+		@Override
+		public int getViewTypeCount() {
+			return spinnerAdapter.getViewTypeCount();
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return spinnerAdapter.isEmpty();
+		}
+
+		@Override
+		public View getDropDownView(int paramInt, View paramView, ViewGroup paramViewGroup) {
+			View dropDownView = spinnerAdapter.getDropDownView(paramInt, paramView, paramViewGroup);
+
+			dropDownView.setOnTouchListener(new OnTouchListener() {
+				@Override
+				public boolean onTouch(View paramView, MotionEvent paramMotionEvent) {
+					isTouchInDropDownView = true;
+					return false;
+				}
+			});
+
+			return dropDownView;
+		}
+
+		protected void showNewMessageDialog() {
+			BrickTextDialog editDialog = new BrickTextDialog() {
+				@Override
+				protected void initialize() {
+				}
+
+				@Override
+				protected boolean handleOkButton() {
+					String newMessage = (input.getText().toString()).trim();
+					if (newMessage.length() == 0
+							|| newMessage.equals(context.getString(R.string.new_broadcast_message))) {
+						dismiss();
+
+						return false;
+					}
+
+					broadcastMessage = newMessage;
+					oldMessage = newMessage;
+					MessageContainer.addMessage(broadcastMessage);
+					int position = MessageContainer.getPositionOfMessageInAdapter(broadcastMessage);
+					spinner.setSelection(position, true);
+
+					return true;
+				}
+			};
+
+			editDialog.show(((ScriptActivity) context).getSupportFragmentManager(), "dialog_broadcast_brick");
+		}
 	}
 }
