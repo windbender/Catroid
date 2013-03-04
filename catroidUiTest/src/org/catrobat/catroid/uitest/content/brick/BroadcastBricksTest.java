@@ -147,7 +147,9 @@ public class BroadcastBricksTest extends ActivityInstrumentationTestCase2<Script
 
 	private void enterNewTextIntoSpinner(int spinnerId, String text) {
 		solo.clickOnView(solo.getView(spinnerId));
+		solo.sleep(200);
 		solo.clickInList(0);
+		solo.sleep(200);
 		solo.enterText(0, text);
 		solo.sleep(200);
 		solo.sendKey(Solo.ENTER);
