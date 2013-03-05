@@ -41,6 +41,7 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.Smoke;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 
 import com.jayway.android.robotium.solo.Solo;
 
@@ -91,17 +92,19 @@ public class PointToBrickTest extends ActivityInstrumentationTestCase2<ScriptAct
 		solo.waitForView(EditText.class);
 		solo.enterText(0, newSpriteName);
 		solo.sendKey(Solo.ENTER);
-		solo.sendKey(Solo.ENTER);
 		solo.sleep(300);
 
-		assertEquals("Wrong selection", newSpriteName, solo.getCurrentSpinners().get(0).getSelectedItem().toString());
+		assertEquals("Wrong selection", newSpriteName, ((Spinner) solo.getView(R.id.brick_point_to_spinner))
+				.getSelectedItem().toString());
 
 		solo.clickOnView(solo.getCurrentActivity().findViewById(R.id.brick_point_to_spinner));
 		solo.waitForText(spinnerNewText);
 		solo.clickInList(0);
 		solo.waitForView(EditText.class);
-		solo.clickOnButton(solo.getString(R.string.cancel_button));
-		assertEquals("Wrong selection", newSpriteName, solo.getCurrentSpinners().get(0).getSelectedItem());
+		solo.goBack();
+
+		assertEquals("Wrong selection", newSpriteName, ((Spinner) solo.getView(R.id.brick_point_to_spinner))
+				.getSelectedItem().toString());
 	}
 
 	private void createProject() {
