@@ -41,8 +41,7 @@
         android:shadowRadius="1.5"
         android:singleLine="true"
         android:textColor="@color/spritelist_item_text_color"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        android:textSize="22sp" />
 
     <RelativeLayout
         android:layout_width="wrap_content"
