@@ -246,7 +246,7 @@
     </style>
 
     <style name="fragment_detail" parent="fragment_basic_style">
-        <item name="android:textColor">@color/look_fragment_detail_text_color</item>
+         <item name="android:textColor">@color/fragment_text_detail_color</item>
         <item name="android:textSize">14sp</item>
     </style>
         

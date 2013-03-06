@@ -64,6 +64,7 @@
 	        android:scaleType="fitXY"
 	        android:background="@drawable/spritelist_item_thumbnail_border"
 	     	android:layout_centerVertical="true"
+	     	android:padding="1.5dp"
 	     	android:layout_toRightOf="@+id/look_checkbox_layout"
 	        android:src="@drawable/catroid_banzai" />
 	    
@@ -82,7 +83,11 @@
 		        android:layout_height="wrap_content"
 		        android:text="default"
 		        android:textColor="@color/look_fragment_main_text_color"
-		        android:textSize="24sp" />
+		        android:textSize="24sp" 
+		        android:shadowColor="@color/main_menu_button_text_shadow_color"
+       			android:shadowRadius="1.5"
+      			android:shadowDx="0"
+        		android:shadowDy="3" />
 		
 		    <LinearLayout
 		        android:id="@+id/look_details"
