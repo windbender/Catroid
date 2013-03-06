@@ -24,7 +24,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="133dp"
-    android:background="@color/spritelist_item_background" >
+    android:background="@drawable/main_menu_button_background" >
 
     <ImageView
         android:id="@+id/my_projects_activity_project_image"
@@ -47,9 +47,13 @@
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:maxLines="2"
-        android:textColor="@color/solid_black"
+        android:textColor="@color/program_menu_button_text_color"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold" 
+        android:shadowColor="@color/main_menu_button_text_shadow_color"
+       	android:shadowRadius="1.5"
+      	android:shadowDx="0"
+        android:shadowDy="3" />
 
     <TextView
         android:id="@+id/my_projects_activity_project_changed_1"
