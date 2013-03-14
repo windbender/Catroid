@@ -38,6 +38,7 @@ import org.catrobat.catroid.ui.ProgramMenuActivity;
 import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.adapter.LookAdapter;
 import org.catrobat.catroid.ui.fragment.LookFragment;
+import org.catrobat.catroid.uitest.util.Reflection;
 import org.catrobat.catroid.uitest.util.UiTestUtils;
 import org.catrobat.catroid.utils.Utils;
 
@@ -72,6 +73,7 @@ public class LookFragmentTest extends ActivityInstrumentationTestCase2<MainMenuA
 	private String renameDialogTitle;
 	private String delete;
 	private String deleteDialogTitle;
+	private String editInPaintroid;
 
 	private LookData lookData;
 	private LookData lookData2;
@@ -127,8 +129,6 @@ public class LookFragmentTest extends ActivityInstrumentationTestCase2<MainMenuA
 		projectManager.getFileChecksumContainer().addChecksum(lookData.getChecksum(), lookData.getAbsolutePath());
 
 		Display display = getActivity().getWindowManager().getDefaultDisplay();
-		projectManager.getCurrentProject().getXmlHeader().virtualScreenWidth = display.getWidth();
-		projectManager.getCurrentProject().getXmlHeader().virtualScreenHeight = display.getHeight();
 
 		solo = new Solo(getInstrumentation(), getActivity());
 		UiTestUtils.getIntoLooksFromMainMenu(solo, true);
@@ -138,6 +138,7 @@ public class LookFragmentTest extends ActivityInstrumentationTestCase2<MainMenuA
 		renameDialogTitle = solo.getString(R.string.rename_look_dialog);
 		delete = solo.getString(R.string.delete);
 		deleteDialogTitle = solo.getString(R.string.delete_look_dialog);
+		editInPaintroid = solo.getString(R.string.edit_in_paintroid);
 
 		if (getLookAdapter().getShowDetails()) {
 			solo.clickOnMenuItem(solo.getString(R.string.hide_details), true);
@@ -351,6 +352,71 @@ public class LookFragmentTest extends ActivityInstrumentationTestCase2<MainMenuA
 
 		assertEquals("Wrong size of lookDataList", 2, lookDataList.size());
 		assertEquals("Picture changed", md5ChecksumImageFileBeforeIntent, md5ChecksumImageFileAfterIntent);
+	}
+
+	public void testEditImageInPaintroidThreeWorkflows() {
+
+		Reflection.setPrivateField(getLookFragment(), "paintroidIntentApplicationName", "destroy.intent");
+		Reflection.setPrivateField(getLookFragment(), "paintroidIntentActivityName", "for.science");
+
+		solo.clickOnView(solo.getView(R.id.look_main_layout));
+		assertTrue("Paintroid not installed dialog missing after click on look",
+				solo.searchText(solo.getString(R.string.paintroid_not_installed)));
+		solo.clickOnText(solo.getString(R.string.no));
+
+		solo.clickLongOnView(solo.getView(R.id.look_main_layout));
+		solo.clickOnText(solo.getString(R.string.edit_in_paintroid));
+		assertTrue("Paintroid not installed dialog missing after longclick on look and context menu selection",
+				solo.searchText(solo.getString(R.string.paintroid_not_installed)));
+		solo.clickOnText(solo.getString(R.string.no));
+
+		solo.clickOnActionBarItem(R.id.edit_in_paintroid);
+		solo.clickOnCheckBox(0);
+		UiTestUtils.acceptAndCloseActionMode(solo);
+		assertTrue("Paintroid not installed dialog missing after action mode selection",
+				solo.searchText(solo.getString(R.string.paintroid_not_installed)));
+		solo.clickOnText(solo.getString(R.string.no));
+	}
+
+	public void tesEditInPaintroidActionModeChecking() {
+		checkVisibilityOfViews(VISIBLE, VISIBLE, GONE, GONE);
+		UiTestUtils.openActionMode(solo, editInPaintroid, 0);
+
+		// Check if checkboxes are visible
+		checkVisibilityOfViews(VISIBLE, VISIBLE, GONE, VISIBLE);
+
+		checkIfCheckboxesAreCorrectlyChecked(false, false);
+		solo.clickOnCheckBox(0);
+		checkIfCheckboxesAreCorrectlyChecked(true, false);
+
+		// Check if only single-selection is possible
+		solo.clickOnCheckBox(1);
+		checkIfCheckboxesAreCorrectlyChecked(false, true);
+
+		solo.clickOnCheckBox(1);
+		checkIfCheckboxesAreCorrectlyChecked(false, false);
+	}
+
+	public void testEditInPaintroidActionModeIfNothingSelected() {
+		UiTestUtils.openActionMode(solo, editInPaintroid, 0);
+
+		// Check if rename ActionMode disappears if nothing was selected
+		checkIfCheckboxesAreCorrectlyChecked(false, false);
+		UiTestUtils.acceptAndCloseActionMode(solo);
+		assertFalse("Paintroid dialog showed up", solo.waitForText(renameDialogTitle, 0, TIME_TO_WAIT));
+		assertFalse("ActionMode didn't disappear", solo.waitForText(rename, 0, TIME_TO_WAIT));
+	}
+
+	public void testEditInPaintroidActionModeIfSomethingSelectedAndPressingBack() {
+		UiTestUtils.openActionMode(solo, editInPaintroid, 0);
+
+		solo.clickOnCheckBox(1);
+		checkIfCheckboxesAreCorrectlyChecked(false, true);
+		solo.goBack();
+
+		// Check if rename ActionMode disappears if back was pressed
+		assertFalse("Paintroid dialog showed up", solo.waitForText(renameDialogTitle, 0, TIME_TO_WAIT));
+		assertFalse("ActionMode didn't disappear", solo.waitForText(rename, 0, TIME_TO_WAIT));
 	}
 
 	public void testEditImageWithPaintroid() {
@@ -625,19 +691,17 @@ public class LookFragmentTest extends ActivityInstrumentationTestCase2<MainMenuA
 		int timeToWait = 300;
 		String addDialogTitle = solo.getString(R.string.new_look_dialog_title);
 		String lookSpinnerItemText = solo.getString(R.string.looks);
-		String lookResoltionPrefixText = solo.getString(R.string.look_resolution);
+		String lookResoltionPrefixText = solo.getString(R.string.look_measure);
 
 		assertTrue("Add button not clickable", addButton.isClickable());
 		assertTrue("Play button not clickable", playButton.isClickable());
-		assertTrue("Resolution prefix not visible", solo.searchText(lookResoltionPrefixText, true));
+		assertTrue("Measures prefix not visible", solo.searchText(lookResoltionPrefixText, true));
 
 		checkIfContextMenuAppears(true, ACTION_MODE_RENAME);
 
 		// Test on rename ActionMode
 		UiTestUtils.openActionMode(solo, rename, 0);
 		solo.waitForText(rename, 1, timeToWait, false, true);
-
-		assertFalse("Resolution prefix not gone on active ActionMode", solo.searchText(lookResoltionPrefixText, true));
 
 		checkIfContextMenuAppears(false, ACTION_MODE_RENAME);
 
@@ -664,8 +728,6 @@ public class LookFragmentTest extends ActivityInstrumentationTestCase2<MainMenuA
 		UiTestUtils.openActionMode(solo, delete, R.id.delete);
 		solo.waitForText(delete, 1, timeToWait, false, true);
 
-		assertFalse("Resolution prefix not gone on active ActionMode", solo.searchText(lookResoltionPrefixText, true));
-
 		checkIfContextMenuAppears(false, ACTION_MODE_DELETE);
 
 		assertFalse("Add button clickable", addButton.isClickable());
@@ -691,8 +753,6 @@ public class LookFragmentTest extends ActivityInstrumentationTestCase2<MainMenuA
 		UiTestUtils.openActionMode(solo, copy, R.id.copy);
 
 		solo.waitForText(copy, 1, timeToWait, false, true);
-
-		assertFalse("Resolution prefix not gone on active ActionMode", solo.searchText(lookResoltionPrefixText, true));
 
 		checkIfContextMenuAppears(false, ACTION_MODE_COPY);
 
@@ -1022,8 +1082,8 @@ public class LookFragmentTest extends ActivityInstrumentationTestCase2<MainMenuA
 		getLookFragment().setSelectedLookData(lookData);
 
 		String pathToImageFile = imageFile.getAbsolutePath();
-		int[] fileResolutionBeforeCrop = lookData.getResolution();
-		int[] displayedResolutionBeforeCrop = getDisplayedResolution(lookData);
+		int[] fileResolutionBeforeCrop = lookData.getMeasure();
+		int[] displayedResolutionBeforeCrop = getDisplayedMeasure(lookData);
 
 		int sampleSize = 2;
 
@@ -1039,8 +1099,8 @@ public class LookFragmentTest extends ActivityInstrumentationTestCase2<MainMenuA
 		solo.waitForActivity(MainMenuActivity.class.getSimpleName());
 		UiTestUtils.getIntoLooksFromMainMenu(solo, true);
 
-		int[] fileResolutionAfterCrop = lookData.getResolution();
-		int[] displayedResolutionAfterCrop = getDisplayedResolution(lookData);
+		int[] fileResolutionAfterCrop = lookData.getMeasure();
+		int[] displayedResolutionAfterCrop = getDisplayedMeasure(lookData);
 
 		assertTrue("Bitmap resolution in file was not cropped",
 				fileResolutionAfterCrop[0] < fileResolutionBeforeCrop[0]
@@ -1050,26 +1110,24 @@ public class LookFragmentTest extends ActivityInstrumentationTestCase2<MainMenuA
 						&& fileResolutionAfterCrop[1] < displayedResolutionBeforeCrop[1]);
 	}
 
-	private int[] getDisplayedResolution(LookData look) {
-		TextView resolutionTextView = (TextView) solo.getView(R.id.look_resolution);
-		String resolutionString = resolutionTextView.getText().toString();
-
-		int startIndex = "Resolution: ".length();
+	private int[] getDisplayedMeasure(LookData look) {
+		TextView measureTextView = (TextView) solo.getView(R.id.look_measure);
+		String measureString = measureTextView.getText().toString();
 
 		// Resolution string has form "Resolution: width x height"
-		int dividingPosition = resolutionString.indexOf(' ', startIndex);
+		int dividingPosition = measureString.indexOf(' ', 0);
 
-		String widthString = resolutionString.substring(startIndex, dividingPosition);
-		String heightString = resolutionString.substring(dividingPosition + 3, resolutionString.length());
+		String widthString = measureString.substring(0, dividingPosition);
+		String heightString = measureString.substring(dividingPosition + 3, measureString.length());
 
 		int width = Integer.parseInt(widthString);
 		int heigth = Integer.parseInt(heightString);
 
-		int[] resolution = new int[2];
-		resolution[0] = width;
-		resolution[1] = heigth;
+		int[] measure = new int[2];
+		measure[0] = width;
+		measure[1] = heigth;
 
-		return resolution;
+		return measure;
 	}
 
 	private void renameLook(String lookToRename, String newLookName) {
