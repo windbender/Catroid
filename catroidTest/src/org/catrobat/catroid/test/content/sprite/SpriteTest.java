@@ -101,7 +101,7 @@ public class SpriteTest extends AndroidTestCase {
 		HideBrick hideBrick = new HideBrick(testSprite);
 		ShowBrick showBrick = new ShowBrick(testSprite);
 
-		for (int i = 0; i < 10000; i++) {
+		for (int i = 0; i < 100000; i++) {
 			testScript.addBrick(hideBrick);
 			testScript.addBrick(showBrick);
 		}

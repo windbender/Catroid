@@ -29,6 +29,8 @@ import org.catrobat.catroid.common.LookData;
 import org.catrobat.catroid.content.actions.BroadcastNotifyAction;
 import org.catrobat.catroid.content.actions.ExtendedActions;
 
+import android.util.Log;
+
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -156,6 +158,7 @@ public class Look extends Image {
 
 	@Override
 	public void act(float delta) {
+		Log.e("info", "Look enter act");
 		Array<Action> actions = getActions();
 		allActionAreFinished = false;
 		int finishedCount = 0;
