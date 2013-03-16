@@ -89,6 +89,8 @@
     <string name="insert_below">Darunter einfügen</string>
     <string name="sprite">Objekt</string>
     <string name="sprites">Objekte</string>
+    <string name="spritelist_background_headline">HINTERGRUND</string>
+    <string name="spritelist_objects_headline">OBJEKTE</string>
     <!--  -->
 
 
@@ -126,6 +128,7 @@
     <string name="sound_select_source">Klang auswählen</string>
     <string name="sound_time_seperator">/</string>
     <string name="delete_sound_dialog">Klang löschen?</string>
+    <string name="length">Länge:</string>
     <!--  -->
 
 
