@@ -26,9 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.adapter.BrickCategoryAdapter;
-import org.catrobat.catroid.ui.fragment.ScriptFragment;
 
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
@@ -158,9 +156,9 @@ public class BrickCategoryDialog extends DialogFragment {
 	}
 
 	private void abort() {
-		ScriptActivity scriptActivity = (ScriptActivity) getActivity();
-		ScriptFragment scriptFragment = (ScriptFragment) scriptActivity.getFragment(ScriptActivity.FRAGMENT_SCRIPTS);
-		scriptFragment.setCreateNewBrick(false);
+		//		ScriptActivity scriptActivity = (ScriptActivity) getActivity();
+		//		ScriptFragment scriptFragment = (ScriptFragment) scriptActivity.getFragment(ScriptActivity.FRAGMENT_SCRIPTS);
+		//		scriptFragment.setCreateNewBrick(false);
 	}
 
 	private void setupBrickCategories(ListView listView, LayoutInflater inflater) {
